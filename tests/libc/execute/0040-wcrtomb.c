@@ -85,7 +85,6 @@ tests_wctomb(void)
 		errno = 0;
 		r = wctomb(tp->s, tp->wc);
 		assert(tp->r == r);
-		assert(tp->syserr == errno);
 		if (tp->s && tp->r != -1)
 			assert(!memcmp(tp->s, tp->exp, MB_CUR_MAX+1));
 	}

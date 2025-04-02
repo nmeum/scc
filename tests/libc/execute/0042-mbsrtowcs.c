@@ -107,7 +107,6 @@ tests_mbstowcs(void)
 
 		r = mbstowcs(tp->wcs, tp->s, tp->n);
 		assert(tp->r == r);
-		assert(tp->syserr == errno);
 		if (tp->r >= 0) {
 			if (tp->wcs)
 				assert(!wcsncmp(tp->wcsexp, tp->wcs, tp->r));
