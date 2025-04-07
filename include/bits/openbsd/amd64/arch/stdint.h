@@ -98,7 +98,7 @@ typedef unsigned long uint_least64_t;
 typedef int int_fast8_t;
 typedef int int_fast16_t;
 typedef int int_fast32_t;
-typedef int int_fast64_t;
+typedef long int_fast64_t;
 
 typedef unsigned uint_fast8_t;
 typedef unsigned uint_fast16_t;
