@@ -18,7 +18,7 @@ main()
 	assert(wcsrchr(buf, '1') == buf+5);
 	assert(wcsrchr(buf, '0') == buf);
 	assert(wcsrchr(buf, '3') == buf+3);
-	assert(wcsrchr("",  '0') == NULL);
+	assert(wcsrchr(L"",  '0') == NULL);
 	assert(wcsrchr(buf, 'a')  == NULL);
 	assert(wcsrchr(buf, 0) == buf+6);
 	puts("done");
