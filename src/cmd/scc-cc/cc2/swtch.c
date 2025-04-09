@@ -5,7 +5,7 @@
 
 #include "cc2.h"
 
-static Swtch *list;
+static Swtch *list = NULL;
 
 static Node *
 swtch_if(Node *np)
@@ -147,4 +147,5 @@ cleanswtch(void)
 		}
 		free(p);
 	}
+	list = NULL;
 }
