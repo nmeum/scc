@@ -21,9 +21,9 @@ main()
 	assert(s == buf);
 	assert(!wcscmp(s, test));
 
-	s = wcscpy(buf, "");
+	s = wcscpy(buf, L"");
 	assert(s == buf);
-	assert(!wcscmp(s, ""));
+	assert(!wcscmp(s, L""));
 
 	puts("done");
 

@@ -35,7 +35,7 @@ main()
 	p = wcschr(buf, 'h');
 	assert(p == NULL);
 
-	p = wcschr("", 'a');
+	p = wcschr(L"", 'a');
 	assert(p == NULL);
 
 	puts("done");
