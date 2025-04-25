@@ -391,7 +391,8 @@ emitdesig(Node *np, Type *tp, SIZET *addr)
 		break;
 	case UNION:
 		aux = (sym) ? sym->u.init[0] : NULL;
-		emitdesig(aux, aux->type, addr);
+		p = (aux) ? aux->type : tp->p.fields[0]->type;
+		emitdesig(aux, p, addr);
 		emitpadding(tp, addr);
 		break;
 	case STRUCT:
