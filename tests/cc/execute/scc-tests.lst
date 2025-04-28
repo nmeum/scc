@@ -119,7 +119,7 @@
 0126-macropar.c
 0127-doublecte.c [TODO]
 0128-kr_names.c
-0129-initi.c [TODO]
+0129-initi.c
 0130-mulpars.c
 0131-hello.c
 0132-forward.c
@@ -221,3 +221,4 @@
 0228-extrcast.c
 0229-commalog.c
 0230-init.c
+0231-init.c

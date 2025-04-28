@@ -6,6 +6,9 @@
 #include <scc/scc.h>
 #include "cc1.h"
 
+#define NOLIST 0
+#define INLIST 1
+
 
 typedef struct init Init;
 
@@ -111,7 +114,7 @@ str2ary(Type *tp)
 }
 
 static Node *
-initialize(Type *tp)
+initialize(Type *tp, int inlist)
 {
 	Node *np;
 	Symbol *sym;
@@ -119,7 +122,7 @@ initialize(Type *tp)
 	if (tp->op == ARY && yytoken == STRING)
 		return str2ary(tp);
 
-	if (yytoken == '{' || tp->op == STRUCT || tp->op == ARY)
+	if (yytoken == '{' || inlist && (tp->op == STRUCT || tp->op == ARY))
 		return initlist(tp);
 
 	np = assign();
@@ -277,7 +280,7 @@ initlist_helper(Type *tp)
 				outbound = 1;
 				break;
 			}
-			np = initialize(curtp);
+			np = initialize(curtp, INLIST);
 			if (outbound) {
 				freetree(np);
 				np = NULL;
@@ -343,18 +346,17 @@ repeat:
 		goto repeat;
 	case ARY:
 	case STRUCT:
-		if (!(np->flags & NCONST))
-			abort(); /* TODO */
-		hidden = newsym(NS_IDEN, NULL);
-		hidden->id = newid();
-		hidden->type = sym->type;
-		hidden->flags |= SLOCAL | SHASINIT;
-		emit(ODECL, hidden);
-		emit(OINIT, np);
-		emit(ODECL, sym);
-		emit(OEXPR,
-		     node(OASSIGN, tp, varnode(sym), varnode(hidden)));
-		break;
+		if (np->op == OSYM && np->sym->flags & SINITLST) {
+			if (!(np->flags & NCONST))
+				abort(); /* TODO */
+			hidden = newsym(NS_IDEN, NULL);
+			hidden->id = newid();
+			hidden->type = sym->type;
+			hidden->flags |= SLOCAL | SHASINIT;
+			emit(ODECL, hidden);
+			emit(OINIT, np);
+			np = varnode(hidden);
+		}
 	default:
 		emit(ODECL, sym);
 		np = node(OASSIGN, tp, varnode(sym), np);
@@ -374,7 +376,7 @@ initializer(Symbol *sym, Type *tp)
 		       sym->name);
 		tp = inttype;
 	}
-	np = initialize(tp);
+	np = initialize(tp, NOLIST);
 
 	if (flags & SDEFINED) {
 		errorp("redeclaration of '%s'", sym->name);
