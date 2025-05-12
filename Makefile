@@ -1,6 +1,6 @@
 .POSIX:
 
-SMAKE = $$PWD/scc-make
+SCCMAKE = $$PWD/scc-make
 
 all: deps
 
@@ -8,16 +8,16 @@ scc-make:
 	$(CC) -o $@ src/cmd/scc-make/*.c
 
 deps: scc-make
-	+@$(SMAKE) dep
+	+@$(SCCMAKE) dep
 	touch $@;\
 
 all dep tests install uninstall: scc-make check_config FORCE
-	+@$(SMAKE) -f main.mk $@
+	+@$(SCCMAKE) -f main.mk $@
 
 check_config: scc-make FORCE
 	@if ! test -f config.mk;\
 	then\
-		$(SMAKE) config;\
+		$(SCCMAKE) config;\
 	fi
 
 config: scc-make FORCE
@@ -29,10 +29,10 @@ config: scc-make FORCE
 	mkdir -p bin
 	$(CC) -o scc-make src/cmd/scc-make/*.c
 	./scripts/config
-	@$(SMAKE) -f main.mk config
+	@$(SCCMAKE) -f main.mk config
 
 config-musl: scc-make FORCE
-	$(SMAKE) LIBPROFILE=musl config
+	$(SCCMAKE) LIBPROFILE=musl config
 	gcc -v 2>&1 |\
 	sed -En '/COLLECT_LTO_WRAPPER=/ s/.*=(.*)\/lto-wrapper/\1/p' |\
 	(read -r path; \
