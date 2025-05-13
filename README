@@ -260,22 +260,25 @@ provides a specific target to configure scc for a correct support for musl:
 	$ make
 	$ make install
 
-or
+then you can use:
 
 	$ scc-cc hello.c
-	$ make LIBPREFIX=/usr/local/musl config-musl
-	$ make
-	$ SCCLIBPREFIX=/usr/local/musl scc hello.c
+
+or
+
+	$ SCCLIBPREFIX=/usr/local/musl bin/scc hello.c
 
 where `LIBPREFIX` points to the prefix used by your musl libc
 installation.  If the helper scc shell script is used instead of scc-cc
-then the environment variable SCCLIBPREFIX must be set. The target
-config-musl uses the output of gcc -v to get a working sys.h with the
-correct paths (it basically extracts the correct value for the macro
-GCCLIBPATH used to locate the gcc crt object files). If you are not
-able to use scc with musl after these steps, please take a look to
-include/bits/scc/sys.h to see if it fits your system setup.
+then the environment variable SCCLIBPREFIX must be set. Using the helper
+scc script makes easier to use scc without installing and running it
+directly from the bin directory after compilation.
 
+The target config-musl uses the output of gcc -v to get a working
+sys.h with the correct paths (it basically extracts the correct value
+for the macro GCCLIBPATH used to locate the gcc crt object files).  If
+you are not able to use scc with musl after these steps, please take a
+look to include/bits/scc/sys.h to see if it fits your system setup.
 
 Deviations from standard C
 ===========================
