@@ -27,7 +27,6 @@ config: scc-make FORCE
 		exit 1;\
 	fi
 	mkdir -p bin
-	$(CC) -o scc-make src/cmd/scc-make/*.c
 	./scripts/config
 	@$(SCCMAKE) -f main.mk config
 
