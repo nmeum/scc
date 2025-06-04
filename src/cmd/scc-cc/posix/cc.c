@@ -163,7 +163,7 @@ addarg(int tool, char *arg)
 static char *
 cc2fmt(int tool)
 {
-	if (Qflag && !strcmp(arch, "amd64") && !strcmp(abi, "sysv"))
+	if (Qflag)
 		return "%s/libexec/scc/%s-qbe_%s-%s";
 	return "%s/libexec/scc/%s-%s-%s";
 }
