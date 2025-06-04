@@ -242,6 +242,18 @@ settool(int tool, char *infile, int nexttool)
 		break;
 	case QBE:
 		strcpy(t->cmd, "qbe");
+
+		if (!strcmp(arch, "amd64") && !strcmp(abi, "sysv"))
+			fmt = "amd64_sysv";
+		else if (!strcmp(arch, "arm64") && !strcmp(abi, "sysv"))
+			fmt = "arm64";
+		else if (!strcmp(arch, "riscv64") && !strcmp(abi, "sysv"))
+			fmt = "rv64";
+		else
+			die("not supported arch-abi (%s-%s) for qbe", arch, abi);
+
+		addarg(tool, "-t");
+		addarg(tool, fmt);
 		break;
 	case LD:
 		if (!outfile)
