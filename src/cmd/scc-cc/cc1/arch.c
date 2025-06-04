@@ -32,6 +32,7 @@ getarch(void)
 	} *bp, defs[] = {
 		"amd64-sysv", amd64_sysv,
 		"arm64-sysv", arm64_sysv,
+		"riscv64-sysv", riscv64_sysv,
 		"i386-sysv", i386_sysv,
 		"z80-scc", z80_scc,
 		NULL, NULL,

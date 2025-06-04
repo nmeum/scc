@@ -531,6 +531,7 @@ extern int valid_va_list(Type *tp);
 extern Arch *amd64_sysv(void);
 extern Arch *z80_scc(void);
 extern Arch *arm64_sysv(void);
+extern Arch *riscv64_sysv(void);
 extern Arch *i386_sysv(void);
 
 /*
