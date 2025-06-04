@@ -7,6 +7,7 @@ DIRS =\
 	qbe\
 	qbe_amd64-sysv\
 	qbe_arm64-sysv\
+	qbe_riscv64-sysv\
 	z80-scc\
 
 PROJECTDIR = ../../../..
@@ -35,6 +36,10 @@ QBE_ARM64_SYSV_OBJS=\
 	qbe_arm64-sysv/builtin.o\
 	$(QBE_OBJS)\
 
+QBE_RISCV64_SYSV_OBJS=\
+	qbe_riscv64-sysv/builtin.o\
+	$(QBE_OBJS)\
+
 Z80_SCC_OBJS =\
 	z80-scc/builtin.o\
 	$(OBJS) \
@@ -42,6 +47,7 @@ Z80_SCC_OBJS =\
 TARGET  =\
 	cc2-qbe_amd64-sysv\
 	cc2-qbe_arm64-sysv\
+	cc2-qbe_riscv64-sysv\
 	cc2-z80-scc\
 
 all:
@@ -64,6 +70,9 @@ cc2-qbe_amd64-sysv: $(LIBSCC) $(QBE_AMD64_SYSV_OBJS)
 
 cc2-qbe_arm64-sysv: $(LIBSCC) $(QBE_ARM64_SYSV_OBJS)
 	$(CC) $(PROJ_LDFLAGS) $(QBE_ARM64_SYSV_OBJS) $(PROJ_LDLIBS) -o $@
+
+cc2-qbe_riscv64-sysv: $(LIBSCC) $(QBE_RISCV64_SYSV_OBJS)
+	$(CC) $(PROJ_LDFLAGS) $(QBE_RISCV64_SYSV_OBJS) $(PROJ_LDLIBS) -o $@
 
 cc2-z80-scc: $(LIBSCC) $(Z80_SCC_OBJS)
 	$(CC) $(PROJ_LDFLAGS) $(Z80_SCC_OBJS) $(PROJ_LDLIBS) -o $@
