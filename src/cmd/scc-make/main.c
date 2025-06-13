@@ -228,15 +228,20 @@ static void
 parseargv(char **argv, char ***targets, int where, int export)
 {
 	char *s;
+	char *hm = NULL;
 
 	for ( ; *argv; ++argv) {
 		s = *argv;
-		if (s[0] != '-') {
+		if (hm == NULL && strcmp(s, "--") == 0) {
+			hm = *argv;
+		} else if (hm && s[0] == '-') {
+			break;
+		} else if (s[0] != '-') {
 			if (!assign(s, where, export))
 				break;
 			continue;
 		}
-		while (*++s)
+		while (hm == NULL && *++s)
 			parseflag(*s, &s, &argv);
 	}
 
