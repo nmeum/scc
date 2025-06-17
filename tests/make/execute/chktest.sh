@@ -5,6 +5,7 @@ rm -f test.log
 
 unset CFLAGS
 unset CC
+unset MAKEFLAGS
 
 for i in *-*.sh
 do
