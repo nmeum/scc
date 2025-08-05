@@ -20,6 +20,7 @@ OBJS =\
 	arch.o\
 	amd64-sysv.o\
 	arm64-sysv.o \
+	riscv64-sysv.o \
 	i386-sysv.o \
 	z80-scc.o\
 

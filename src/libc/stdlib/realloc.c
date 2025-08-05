@@ -13,8 +13,8 @@ realloc(void *ptr, size_t nbytes)
 	size_t nunits, avail, onbytes, n;
 
 	if (nbytes == 0) {
-		errno = EINVAL;
-		return NULL;
+		free(ptr);
+		ptr = NULL;
 	}
 
 	if (nbytes > SIZE_MAX - sizeof(Header)-1) {

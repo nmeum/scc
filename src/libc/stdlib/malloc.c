@@ -1,3 +1,4 @@
+#include <errno.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
@@ -136,8 +137,10 @@ malloc(size_t nbytes)
 	Header *cur, *prev;
 	size_t nunits;
 
-        if (nbytes == 0 || nbytes > SIZE_MAX - sizeof(Header)-1)
+        if (nbytes > SIZE_MAX - sizeof(Header)-1) {
+		errno = ENOMEM;
 		return NULL;
+	}
 
 	/* 1 unit for header plus enough units to fit nbytes */
 	nunits = (nbytes+sizeof(Header)-1)/sizeof(Header) + 1;

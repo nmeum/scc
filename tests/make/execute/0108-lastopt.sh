@@ -1,0 +1,30 @@
+#!/bin/sh
+
+trap 'rm -f $tmp1 $tmp2' EXIT INT QUIT TERM HUP
+
+tmp1=tmp1.$$
+tmp2=tmp2.$$
+
+cat > $tmp1 <<EOF
+hyphen-target
+MYVAR is -42
+MYVAR is myval
+EOF
+
+(scc make -f- -- -42 <<'EOF'
+-42:
+	@echo 'hyphen-target'
+EOF
+
+scc make -f- -- MYVAR=-42 <<'EOF'
+all:
+	@@echo MYVAR is $(MYVAR)
+EOF
+
+scc make -f- -- MYVAR=myval -42 <<'EOF'
+-42:
+	@echo MYVAR is $(MYVAR)
+EOF
+) > $tmp2
+
+diff $tmp1 $tmp2
