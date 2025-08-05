@@ -59,7 +59,7 @@ lookup(char *name)
 	return tp;
 }
 
-static int
+static void
 cleanup(Target *tp)
 {
 	int precious;
