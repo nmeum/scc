@@ -4,7 +4,7 @@ DIRS  =\
 	src\
 	src/libc\
 	src/libcrt\
-	include/bits/scc\
+	include/scc/bits/scc\
 	tests\
 
 PROJECTDIR = .
@@ -18,7 +18,7 @@ all:
 	+@$(MAKE) -f main.mk $(ARCH)
 
 config: FORCE
-	+@cd include/bits/scc && $(MAKE)
+	+@cd include/scc/bits/scc && $(MAKE)
 
 install: all
 	$(SCRIPTDIR)/install $(ROOT)
@@ -44,9 +44,9 @@ clean:
 	rm -rf dirs coverage
 
 distclean: clean
-	rm -f include/bits/scc/cstd.h
-	rm -f include/bits/scc/sys.h
-	rm -f include/bits/scc/config.h
+	rm -f include/scc/bits/scc/cstd.h
+	rm -f include/scc/bits/scc/sys.h
+	rm -f include/scc/bits/scc/config.h
 
 include scripts/amd64.mk
 include scripts/arm.mk

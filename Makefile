@@ -36,7 +36,7 @@ config-musl: scc-make FORCE
 	sed -En '/COLLECT_LTO_WRAPPER=/ s/.*=(.*)\/lto-wrapper/\1/p' |\
 	(read -r path; \
 	 printf "g/define GCCLIBPATH/ s@.*@#define GCCLIBPATH \"$$path/\"@\nw\n") |\
-	ed -s include/bits/scc/sys.h
+	ed -s include/scc/bits/scc/sys.h
 
 clean: FORCE
 	touch config.mk

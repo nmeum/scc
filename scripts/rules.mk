@@ -12,7 +12,7 @@ include $(PROJECTDIR)/config.mk
 
 # Define helper macros for project directories
 DOCDIR    = $(PROJECTDIR)/doc
-INCDIR    = $(PROJECTDIR)/include
+INCDIR    = $(PROJECTDIR)/include/scc
 BINDIR    = $(PROJECTDIR)/bin
 SRCDIR    = $(PROJECTDIR)/src
 SCRIPTDIR = $(PROJECTDIR)/scripts

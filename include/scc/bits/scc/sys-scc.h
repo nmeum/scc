@@ -1,12 +1,12 @@
-#define LDBIN "ld.lld"
-#define ASBIN "clang"
+#define LDBIN "ld"
+#define ASBIN "as"
 
 /* configure below your standard sys include paths */
 char *sysincludes[] = {
-	"%p/include/bits/%a/",
-	"%p/include/bits/%s/",
-	"%p/include/bits/%s/%a/",
-	"%p/include/",
+	"%p/include/scc/bits/%a/",
+	"%p/include/scc/bits/%s/",
+	"%p/include/scc/bits/%s/%a/",
+	"%p/include/scc/",
 	NULL
 };
 
@@ -26,9 +26,6 @@ char *ldcmd[] = {
 
 /* configure below your system assembler command line */
 char *ascmd[] = {
-	"-x","assembler",
-	"-c",
-	"-o","%o",
-	"-",
+	"-o", "%o",
 	NULL
 };
