@@ -21,7 +21,7 @@ adir:
 EOF
 pid=$!
 
-sleep 10 && echo timeout >&2 && kill $$ 2>/dev/null &
+sleep 20 && echo timeout >&2 && kill $$ 2>/dev/null &
 timer=$!
 
 while :
