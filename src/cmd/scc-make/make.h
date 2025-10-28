@@ -67,6 +67,7 @@ extern char *getmacro(char *);
 extern void setmacro(char *, char *, int, int);
 
 /* system depdendant */
+extern void killchild(void);
 extern time_t stamp(char *);
 extern int launch(char *, int);
 extern int putenv(char *);
