@@ -15,11 +15,15 @@ PROJECTDIR = ..
 include $(PROJECTDIR)/scripts/rules.mk
 
 all:
-	@for i in $(DIRS);\
+	@trap 'rm -f $$$$.tmp' EXIT INT HUP TERM;\
+	for i in $(DIRS);\
 	do \
 		cd $$i;\
 		$(MAKE) tests;\
 		cd -;\
-	done | grep -e PASS -e FAIL -e SKIP;\
+	done | \
+	grep -e PASS -e FAIL -e SKIP |\
+	tee $$$$.tmp &&\
+	grep FAIL $$$$.tmp > /dev/null && exit 1 || exit 0
 
 dep:
