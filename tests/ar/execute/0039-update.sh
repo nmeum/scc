@@ -26,7 +26,7 @@ EOF
 cmp $tmp1 $tmp2
 
 echo Second > file1
-touch -t 197001010000 file.1
+touch -t 197001010000 file1
 $EXEC scc ar -ruv file.a file1
 
 $EXEC scc ar -p file.a file1 > $tmp1
