@@ -27,19 +27,19 @@ struct fprop {
 
 typedef struct alloc Alloc;
 
-void die(const char *fmt, ...);
-void dbg(const char *fmt, ...);
-void newitem(struct items *items, char *item);
-void *xmalloc(size_t size);
-void *xcalloc(size_t nmemb, size_t size);
-char *xstrdup(const char *s);
-void *xrealloc(void *buff, size_t size);
-Alloc *alloc(size_t size, size_t nmemb);
-void dealloc(Alloc *allocp);
-void *new(Alloc *allocp);
-void delete(Alloc *allocp, void *p);
-int casecmp(const char *s1, const char *s2);
-unsigned genhash(char *name);
+void die(const char *, ...);
+void dbg(const char *, ...);
+void newitem(struct items *, char *);
+void *xmalloc(size_t);
+void *xcalloc(size_t, size_t);
+char *xstrdup(const char *);
+void *xrealloc(void *, size_t);
+Alloc *alloc(size_t, size_t);
+void dealloc(Alloc *);
+void *new(Alloc *);
+void delete(Alloc *, void *);
+int casecmp(const char *, const char *);
+unsigned genhash(char *);
 char *canonical(char *);
 
 #ifdef CLOCKS_PER_SEC

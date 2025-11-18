@@ -22,7 +22,7 @@ struct _FILE;
 
 int vswscanf(const wchar_t *restrict, const wchar_t *restrict, __va_list);
 int vwprintf(const wchar_t *restrict, __va_list);
-int vwscanf(const wchar_t *restrict format, __va_list);
+int vwscanf(const wchar_t *restrict, __va_list);
 
 int fwprintf(struct _FILE *restrict, const wchar_t *restrict, ...);
 int fwscanf(struct _FILE *restrict, const wchar_t *restrict, ...);
@@ -32,7 +32,7 @@ int vfwscanf(struct _FILE *restrict, const wchar_t *restrict, __va_list);
 int vswprintf(wchar_t *restrict, size_t, const wchar_t *restrict, __va_list);
 
 wint_t fgetwc(struct _FILE *);
-wint_t fputwc(wchar_t c, struct _FILE *);
+wint_t fputwc(wchar_t, struct _FILE *);
 wint_t getwc(struct _FILE *);
 wint_t putwc(wchar_t, struct _FILE *);
 wint_t getwchar(void);

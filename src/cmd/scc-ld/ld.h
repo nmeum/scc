@@ -1,27 +1,27 @@
 /* passes */
-void pass1(int argc, char *argv[]);
-void pass2(int argc, char *argv[]);
-void pass3(int argc, char *argv[]);
-void pass4(int argc, char *argv[]);
-void pass5(int argc, char *argv[]);
+void pass1(int, char *[]);
+void pass2(int, char *[]);
+void pass3(int, char *[]);
+void pass4(int, char *[]);
+void pass5(int, char *[]);
 
 /* main.c */
-void error(char *fmt, ...);
-char *nextarg(char **argp, char ***argv);
+void error(char *, ...);
+char *nextarg(char **, char ***);
 
 /* symbol.c */
-int hasref(char *name);
-Symbol *lookupsym(char *name);
+int hasref(char *);
+Symbol *lookupsym(char *);
 int moreundef(void);
 void listundef(void);
-Symbol *define(Symbol *osym, Obj *obj);
+Symbol *define(Symbol *, Obj *);
 void debugsym(void);
 
 /* section.c */
-Section *lookupsec(char *name);
-void copy(Obj *obj, Section *osec, Section *sec);
-void grow(Section *sec, int nbytes);
-void merge(Section *seg);
+Section *lookupsec(char *);
+void copy(Obj *, Section *, Section *);
+void grow(Section *, int);
+void merge(Section *);
 void debugsec(void);
 
 /* globals */
