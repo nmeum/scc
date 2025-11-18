@@ -1,2 +1,2 @@
-extern void *_sys_brk(void *);
+void *_sys_brk(void *);
 

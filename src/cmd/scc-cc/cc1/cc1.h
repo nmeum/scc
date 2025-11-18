@@ -429,110 +429,110 @@ struct input {
 #endif
 
 /* error.c */
-extern void error(char *fmt, ...);
-extern void warn(char *fmt, ...);
-extern void unexpected(void);
-extern void errorp(char *fmt, ...);
-extern void cpperror(char *fmt, ...);
-extern Type *deftype(Type *tp);
+void error(char *fmt, ...);
+void warn(char *fmt, ...);
+void unexpected(void);
+void errorp(char *fmt, ...);
+void cpperror(char *fmt, ...);
+Type *deftype(Type *tp);
 
 /* types.c */
-extern int eqtype(Type *tp1, Type *tp2, int eqflag);
-extern Type *ctype(int type, int sign, int size);
-extern Type *mktype(Type *tp, int op, long long nelem, Type *data[]);
-extern Type *duptype(Type *base);
-extern struct limits *getlimits(Type *tp);
-extern void typesize(Type *tp);
-extern void flushtypes(void);
+int eqtype(Type *tp1, Type *tp2, int eqflag);
+Type *ctype(int type, int sign, int size);
+Type *mktype(Type *tp, int op, long long nelem, Type *data[]);
+Type *duptype(Type *base);
+struct limits *getlimits(Type *tp);
+void typesize(Type *tp);
+void flushtypes(void);
 
 /* symbol.c */
-extern void dumpstab(Symbol **tbl, char *msg);
-extern Symbol *lookup(int ns, char *name, int alloc);
-extern Symbol *nextsym(Symbol *sym, int ns);
-extern Symbol *install(int ns, Symbol *sym);
-extern Symbol *newsym(int ns, char *name);
-extern void pushctx(void), popctx(void);
-extern void killsym(Symbol *sym);
-extern Symbol *newlabel(void);
-extern void builtins(struct builtin *builts);
-extern Symbol *newstring(char *s, size_t len);
-extern unsigned newid(void);
-extern void isyms(void);
+void dumpstab(Symbol **tbl, char *msg);
+Symbol *lookup(int ns, char *name, int alloc);
+Symbol *nextsym(Symbol *sym, int ns);
+Symbol *install(int ns, Symbol *sym);
+Symbol *newsym(int ns, char *name);
+void pushctx(void), popctx(void);
+void killsym(Symbol *sym);
+Symbol *newlabel(void);
+void builtins(struct builtin *builts);
+Symbol *newstring(char *s, size_t len);
+unsigned newid(void);
+void isyms(void);
 
 /* stmt.c */
-extern void compound(Symbol *lbreak, Symbol *lcont, Switch *sw);
+void compound(Symbol *lbreak, Symbol *lcont, Switch *sw);
 
 /* decl.c */
-extern Type *typename(void);
-extern void decl(void);
+Type *typename(void);
+void decl(void);
 
 /* lex.c */
-extern int ahead(void);
-extern int next(void);
-extern void expect(int tok);
-extern void discard(void);
-extern int addinput(int, void *, int);
-extern void delinput(void);
-extern void setsafe(int type);
-extern void setloc(char *fname, unsigned line);
+int ahead(void);
+int next(void);
+void expect(int tok);
+void discard(void);
+int addinput(int, void *, int);
+void delinput(void);
+void setsafe(int type);
+void setloc(char *fname, unsigned line);
 #define accept(t) ((yytoken == (t)) ? next() : 0)
 
 /* code.c */
-extern Node *prtree(char *s, Node *np);
-extern void emit(int, void *);
-extern Node *node(int op, Type *tp, Node *left, Node *rigth);
-extern Node *varnode(Symbol *sym);
-extern Node *constnode(Symbol *sym);
-extern Node *sizeofnode(Type *tp);
-extern Node *offsetnode(Symbol *,  Type *);
-extern void freetree(Node *np);
-extern void icode(void);
+Node *prtree(char *s, Node *np);
+void emit(int, void *);
+Node *node(int op, Type *tp, Node *left, Node *rigth);
+Node *varnode(Symbol *sym);
+Node *constnode(Symbol *sym);
+Node *sizeofnode(Type *tp);
+Node *offsetnode(Symbol *,  Type *);
+void freetree(Node *np);
+void icode(void);
 #define BTYPE(np) ((np)->type->op)
 
 /* fold.c */
-extern Node *simplify(Node *np);
-extern unsigned long long ones(int nbytes);
+Node *simplify(Node *np);
+unsigned long long ones(int nbytes);
 
 /* expr.c */
-extern Node *decay(Node *), *negate(Node *np), *assign(void);
-extern Node *convert(Node *np, Type *tp1, int iscast);
-extern Node *constexpr(void), *condexpr(int neg), *expr(void);
-extern int isnodecmp(int op);
-extern int negop(int op);
-extern int cmpnode(Node *np, unsigned long long val);
-extern int power2node(Node *, int *);
+Node *decay(Node *), *negate(Node *np), *assign(void);
+Node *convert(Node *np, Type *tp1, int iscast);
+Node *constexpr(void), *condexpr(int neg), *expr(void);
+int isnodecmp(int op);
+int negop(int op);
+int cmpnode(Node *np, unsigned long long val);
+int power2node(Node *, int *);
 
 /* init.c */
-extern void initializer(Symbol *sym, Type *tp);
-extern Node *initlist(Type *tp);
+void initializer(Symbol *sym, Type *tp);
+Node *initlist(Type *tp);
 
 /* cpp.c */
-extern void icpp(void);
-extern int cpp(void);
-extern int expand(Symbol *);
-extern void incdir(char *dir);
-extern void outcpp(void);
-extern void defdefine(char *macro, char *val, char *source);
-extern void undefmacro(char *s);
-extern void ppragmaln(void);
-extern void delmacro(Macro *);
-extern Macro *newmacro(Symbol *);
-extern Node *defined(void);
+void icpp(void);
+int cpp(void);
+int expand(Symbol *);
+void incdir(char *dir);
+void outcpp(void);
+void defdefine(char *macro, char *val, char *source);
+void undefmacro(char *s);
+void ppragmaln(void);
+void delmacro(Macro *);
+Macro *newmacro(Symbol *);
+Node *defined(void);
 
 
 /* builtin.c */
-extern void ibuilts(void);
+void ibuilts(void);
 
 /* arch.c */
-extern void iarch(void);
-extern int valid_va_list(Type *tp);
+void iarch(void);
+int valid_va_list(Type *tp);
 
 /* architectures */
-extern Arch *amd64_sysv(void);
-extern Arch *z80_scc(void);
-extern Arch *arm64_sysv(void);
-extern Arch *riscv64_sysv(void);
-extern Arch *i386_sysv(void);
+Arch *amd64_sysv(void);
+Arch *z80_scc(void);
+Arch *arm64_sysv(void);
+Arch *riscv64_sysv(void);
+Arch *i386_sysv(void);
 
 /*
  * Definition of global variables

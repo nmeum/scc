@@ -11,6 +11,6 @@ union header {
 	_ALIGNTYPE most;
 };
 
-extern void *_prevchunk(Header *);
+void *_prevchunk(Header *);
 
 extern Header *_freep;

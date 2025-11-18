@@ -46,7 +46,7 @@ struct arch {
 	int flags;
 };
 
-extern char *coff32str(Coff32 *, void *);
+char *coff32str(Coff32 *, void *);
 
 
 /* globals */

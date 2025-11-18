@@ -255,67 +255,67 @@ struct inst {
 };
 
 /* main.c */
-extern void error(unsigned nerror, ...);
+void error(unsigned nerror, ...);
 
 /* parse.c */
-extern void parse(void);
+void parse(void);
 
 /* cgen.c */
-extern void genaddr(void);
-extern void genasm(void);
-extern Node *tsethi(Node *);
+void genaddr(void);
+void genasm(void);
+Node *tsethi(Node *);
 
 /* peep.c */
-extern void peephole(void);
+void peephole(void);
 
 /* code.c */
-extern void data(Node *np);
-extern void writeout(void), endinit(void);
-extern void code(int op, Node *to, Node *from1, Node *from2);
-extern void defvar(Symbol *), defpar(Symbol *), defglobal(Symbol *);
-extern void setlabel(Symbol *);
-extern Node *label2node(Node *np, Symbol *sym);
-extern Node *constnode(Node *np, unsigned long long n, Type *tp);
-extern Node *tmpnode(Type *, Symbol *);
-extern Node *idxnode(Node *, long);
-extern void delcode(void);
-extern Symbol *newlabel(void);
-extern void pprint(char *s);
-extern void deftype(Type *);
-extern Node *labelstmt(Node *, Symbol *);
+void data(Node *np);
+void writeout(void), endinit(void);
+void code(int op, Node *to, Node *from1, Node *from2);
+void defvar(Symbol *), defpar(Symbol *), defglobal(Symbol *);
+void setlabel(Symbol *);
+Node *label2node(Node *np, Symbol *sym);
+Node *constnode(Node *np, unsigned long long n, Type *tp);
+Node *tmpnode(Type *, Symbol *);
+Node *idxnode(Node *, long);
+void delcode(void);
+Symbol *newlabel(void);
+void pprint(char *s);
+void deftype(Type *);
+Node *labelstmt(Node *, Symbol *);
 
 /* node.c */
-extern void newfun(Symbol *, Node *);
-extern void apply(Node *(*fun)(Node *));
-extern void cleannodes(void);
-extern void delnode(Node *np);
-extern void deltree(Node *np);
-extern void prtree(Node *np), prforest(char *msg);
-extern Node *node(int op);
-extern Node *addstmt(Node *);
-extern Node *delstmt(Node *);
-extern Node *insstmt(Node *, Node *);
-extern Node *prestmt(Node *);
-extern void delrange(Node *, Node *);
-extern Node *unlinkstmt(Node *);
+void newfun(Symbol *, Node *);
+void apply(Node *(*fun)(Node *));
+void cleannodes(void);
+void delnode(Node *np);
+void deltree(Node *np);
+void prtree(Node *np), prforest(char *msg);
+Node *node(int op);
+Node *addstmt(Node *);
+Node *delstmt(Node *);
+Node *insstmt(Node *, Node *);
+Node *prestmt(Node *);
+void delrange(Node *, Node *);
+Node *unlinkstmt(Node *);
 
 /* symbol.c */
 #define TMPSYM  0
-extern Symbol *getsym(unsigned id);
-extern void popctx(void);
-extern void pushctx(void);
-extern void freesym(Symbol *sym);
+Symbol *getsym(unsigned id);
+void popctx(void);
+void pushctx(void);
+void freesym(Symbol *sym);
 
 /* cfg.c */
-extern void gencfg(void);
-extern void cleancfg(void);
-extern Node *sethi(Node *);
+void gencfg(void);
+void cleancfg(void);
+Node *sethi(Node *);
 
 /* swtch.c */
-extern void cleanswtch(void);
-extern Swtch *newswtch(Swtch *);
-extern Node *swtch(Node *);
-extern Node *swtchdefault(Swtch *);
+void cleanswtch(void);
+Swtch *newswtch(Swtch *);
+Node *swtch(Node *);
+Node *swtchdefault(Swtch *);
 
 /* globals */
 extern Symbol *curfun;

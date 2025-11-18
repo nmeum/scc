@@ -40,7 +40,7 @@ struct arch {
 	int type;
 };
 
-extern char *elf64str(Obj *, int n, long);
+char *elf64str(Obj *, int n, long);
 
 /* globals */
 extern struct arch elf64archs[];

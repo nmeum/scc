@@ -130,40 +130,40 @@ struct symbol {
 };
 
 #ifdef stdin
-extern int archive(FILE *);
-extern long armember(FILE *, char *, struct ar_hdr *);
+int archive(FILE *);
+long armember(FILE *, char *, struct ar_hdr *);
 
-extern int objprobe(FILE *, char **);
-extern int objpos(Obj *, FILE *, long);
+int objprobe(FILE *, char **);
+int objpos(Obj *, FILE *, long);
 
-extern int readobj(Obj *, FILE *);
-extern int writeobj(Obj *, Map *, FILE *);
+int readobj(Obj *, FILE *);
+int writeobj(Obj *, Map *, FILE *);
 
-extern Map *loadmap(Obj *, FILE *);
+Map *loadmap(Obj *, FILE *);
 
-extern int mapsec(Map *, Section *, FILE *, long);
-extern int mapseg(Map *, Section *, FILE *, long);
+int mapsec(Map *, Section *, FILE *, long);
+int mapseg(Map *, Section *, FILE *, long);
 
-extern int setindex(int, long, char **, long *, FILE *);
-extern int getindex(int, long *, char ***, long **, FILE *);
+int setindex(int, long, char **, long *, FILE *);
+int getindex(int, long *, char ***, long **, FILE *);
 
 #endif
 
-extern Map *newmap(int, int);
-extern Map *remap(Map *, int, int);
-extern void delmap(Map *);
+Map *newmap(int, int);
+Map *remap(Map *, int, int);
+void delmap(Map *);
 
-extern int objtype(char *);
-extern Obj *newobj(int);
-extern void delobj(Obj *);
+int objtype(char *);
+Obj *newobj(int);
+void delobj(Obj *);
 
-extern int strip(Obj *);
-extern int pc2line(Obj *, unsigned long long, char *, int *);
-extern int rebase(Obj *, int, unsigned long long);
+int strip(Obj *);
+int pc2line(Obj *, unsigned long long, char *, int *);
+int rebase(Obj *, int, unsigned long long);
 
-extern int findsec(Map *, char *);
+int findsec(Map *, char *);
 
-extern Symbol *getsym(Obj *, int *, Symbol *);
-extern Symbol *setsym(Obj *, int *, Symbol *);
-extern Section *getsec(Obj *, int *, Section *);
-extern Section *setsec(Obj *, int *, Section *);
+Symbol *getsym(Obj *, int *, Symbol *);
+Symbol *setsym(Obj *, int *, Symbol *);
+Section *getsec(Obj *, int *, Section *);
+Section *setsec(Obj *, int *, Section *);

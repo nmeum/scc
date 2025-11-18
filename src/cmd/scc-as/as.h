@@ -98,51 +98,51 @@ union yylval {
 };
 
 /* symbol.c */
-extern void cleansecs(void);
-extern void ibinfmt(void);
-extern void emit(char *, int);
-extern Section *defsec(char *, char *);
-extern Symbol *tmpsym(unsigned long long);
-extern void killtmp(void);
-extern int toobig(Node *, int);
-extern void dumpstab(char *);
-extern Symbol *lookup(char *);
-extern Symbol *deflabel(char *);
-extern unsigned long long getpc(void);
+void cleansecs(void);
+void ibinfmt(void);
+void emit(char *, int);
+Section *defsec(char *, char *);
+Symbol *tmpsym(unsigned long long);
+void killtmp(void);
+int toobig(Node *, int);
+void dumpstab(char *);
+Symbol *lookup(char *);
+Symbol *deflabel(char *);
+unsigned long long getpc(void);
 
 /* parser.c */
-extern Node **getargs(char *);
-extern void error(char *, ...);
+Node **getargs(char *);
+void error(char *, ...);
 /* Avoid errors in files where stdio is not included */
 #ifdef stdin
-extern int nextline(struct line *);
+int nextline(struct line *);
 #endif
-extern void unexpected(void);
-extern void expect(int);
+void unexpected(void);
+void expect(int);
 int next(void);
 #define accept(t) (yytoken == (t) ? next() : 0)
-extern void regctx(int mode);
-extern Node *getreg(void);
-extern Node *operand(char **);
-extern void addinput(char *);
-extern int delinput(void);
-extern int ahead(void);
+void regctx(int mode);
+Node *getreg(void);
+Node *operand(char **);
+void addinput(char *);
+int delinput(void);
+int ahead(void);
 
 /* expr.c */
-extern Node *expr(void);
-extern void deltree(Node *);
-extern Node *node(int, Node *, Node *);
+Node *expr(void);
+void deltree(Node *);
+Node *node(int, Node *, Node *);
 
 /* proc.c */
-extern void iarch(void);
-extern int match(Op *, Node **);
-extern Node *moperand(void);
+void iarch(void);
+int match(Op *, Node **);
+Node *moperand(void);
 
 /* ins.c */
-extern char *tobytes(unsigned long long, int, int);
+char *tobytes(unsigned long long, int, int);
 
 /* binfmt.c */
-extern void writeout(char *);
+void writeout(char *);
 
 /*
  * Definition of global variables

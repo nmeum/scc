@@ -24,15 +24,15 @@ struct tm {
 	long tm_gmtoff;
 };
 
-extern clock_t clock(void);
-extern double difftime(time_t, time_t);
-extern time_t mktime(struct tm *);
-extern time_t time(time_t *);
-extern char *asctime(const struct tm *);
-extern char *ctime(const time_t *);
-extern struct tm *gmtime(const time_t *);
-extern struct tm *localtime(const time_t *);
-extern size_t strftime(char *restrict, size_t, const char *restrict,
+clock_t clock(void);
+double difftime(time_t, time_t);
+time_t mktime(struct tm *);
+time_t time(time_t *);
+char *asctime(const struct tm *);
+char *ctime(const time_t *);
+struct tm *gmtime(const time_t *);
+struct tm *localtime(const time_t *);
+size_t strftime(char *restrict, size_t, const char *restrict,
                        const struct tm *restrict);
 
 #endif

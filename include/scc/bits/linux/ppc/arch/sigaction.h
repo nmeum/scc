@@ -7,4 +7,4 @@ struct sigaction {
         unsigned sa_mask[2];
 };
 
-extern int __sigaction(int, struct sigaction *, struct sigaction *, size_t);
+int __sigaction(int, struct sigaction *, struct sigaction *, size_t);

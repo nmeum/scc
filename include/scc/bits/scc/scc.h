@@ -27,24 +27,24 @@ struct fprop {
 
 typedef struct alloc Alloc;
 
-extern void die(const char *fmt, ...);
-extern void dbg(const char *fmt, ...);
-extern void newitem(struct items *items, char *item);
-extern void *xmalloc(size_t size);
-extern void *xcalloc(size_t nmemb, size_t size);
-extern char *xstrdup(const char *s);
-extern void *xrealloc(void *buff, size_t size);
-extern Alloc *alloc(size_t size, size_t nmemb);
-extern void dealloc(Alloc *allocp);
-extern void *new(Alloc *allocp);
-extern void delete(Alloc *allocp, void *p);
-extern int casecmp(const char *s1, const char *s2);
-extern unsigned genhash(char *name);
-extern char *canonical(char *);
+void die(const char *fmt, ...);
+void dbg(const char *fmt, ...);
+void newitem(struct items *items, char *item);
+void *xmalloc(size_t size);
+void *xcalloc(size_t nmemb, size_t size);
+char *xstrdup(const char *s);
+void *xrealloc(void *buff, size_t size);
+Alloc *alloc(size_t size, size_t nmemb);
+void dealloc(Alloc *allocp);
+void *new(Alloc *allocp);
+void delete(Alloc *allocp, void *p);
+int casecmp(const char *s1, const char *s2);
+unsigned genhash(char *name);
+char *canonical(char *);
 
 #ifdef CLOCKS_PER_SEC
-extern long long fromepoch(time_t);
-extern time_t totime(long long);
-extern int getstat(char *, struct fprop *);
-extern int setstat(char *, struct fprop *);
+long long fromepoch(time_t);
+time_t totime(long long);
+int getstat(char *, struct fprop *);
+int setstat(char *, struct fprop *);
 #endif

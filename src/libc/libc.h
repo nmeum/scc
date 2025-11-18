@@ -28,14 +28,14 @@ struct tzone {
 	int isdst;
 };
 
-extern void *_getheap(void);
-extern int _dtoi(char c);
+void *_getheap(void);
+int _dtoi(char c);
 
 
 #ifdef stdin
-extern int _allocbuf(FILE *);
-extern int _flsbuf(FILE *);
-extern FILE *_fpopen(const char * restrict, const char *restrict,
+int _allocbuf(FILE *);
+int _flsbuf(FILE *);
+FILE *_fpopen(const char * restrict, const char *restrict,
                      FILE *restrict);
 #endif
 
@@ -43,24 +43,23 @@ extern FILE *_fpopen(const char * restrict, const char *restrict,
 extern time_t _tzstdoff, _tzdstoff;
 extern time_t _tzstart, _tzend;
 
-extern time_t _systime(struct tm *);
+time_t _systime(struct tm *);
 #endif
 
-extern void _tzset(void);
-extern int _daysyear(int);
-extern int _newyear(int);
+void _tzset(void);
+int _daysyear(int);
+int _newyear(int);
 
 extern int _tzjulian;
 extern int _daysmon[12];
 extern char *_tzname[2];
 extern struct tzone tzones[];
 
-extern void (*_exitf[])(void);
 extern unsigned _exitn;
 extern void (*_flushall)(void);
 extern void (*_atexithdl)(void);
 
 #ifdef _WCHAR_H
-extern int _validutf8(wchar_t, int *);
-extern wint_t _fputwc(wchar_t, struct _FILE *, int *);
+int _validutf8(wchar_t, int *);
+wint_t _fputwc(wchar_t, struct _FILE *, int *);
 #endif

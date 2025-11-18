@@ -30,22 +30,22 @@ struct flags {
 };
 
 /* coff32.c */
-extern void coff32syms(Obj *);
-extern void coff32scns(Obj *);
-extern void coff32fhdr(Obj *, unsigned long long *, Flags *);
-extern int coff32hasrelloc(Obj *, Section *);
+void coff32syms(Obj *);
+void coff32scns(Obj *);
+void coff32fhdr(Obj *, unsigned long long *, Flags *);
+int coff32hasrelloc(Obj *, Section *);
 
 /* elf64.c */
-extern void elfsyms(Obj *);
-extern void elfscns(Obj *);
-extern void elffhdr(Obj *, unsigned long long *, Flags *);
-extern int elfhasrelloc(Obj *, Section *);
+void elfsyms(Obj *);
+void elfscns(Obj *);
+void elffhdr(Obj *, unsigned long long *, Flags *);
+int elfhasrelloc(Obj *, Section *);
 
 /* main.c */
-extern void error(char *, ...);
-extern void setflag(Flags *, int, int);
-extern void printflags(Flags *);
-extern int selected(char *);
+void error(char *, ...);
+void setflag(Flags *, int, int);
+void printflags(Flags *);
+int selected(char *);
 
 /* globals */
 extern int pflag;

@@ -1,17 +1,17 @@
-extern int elfnew(Obj *, int);
-extern int elfread(Obj *, FILE *);
-extern int elfsetidx(long, char **, long *, FILE *);
-extern int elfgetidx(long *, char ***, long **, FILE *);
-extern int elfpc2line(Obj *, unsigned long long , char *, int *);
-extern int elfstrip(Obj *);
-extern void elfdel(Obj *);
-extern int elfwrite(Obj *, Map *, FILE *);
-extern int elfprobe(unsigned char *, char **);
-extern int elftype(char *);
+int elfnew(Obj *, int);
+int elfread(Obj *, FILE *);
+int elfsetidx(long, char **, long *, FILE *);
+int elfgetidx(long *, char ***, long **, FILE *);
+int elfpc2line(Obj *, unsigned long long , char *, int *);
+int elfstrip(Obj *);
+void elfdel(Obj *);
+int elfwrite(Obj *, Map *, FILE *);
+int elfprobe(unsigned char *, char **);
+int elftype(char *);
 
-extern int elfxsetidx(int long , char *[], long [], FILE *);
-extern int elfxgetidx(int, long *, char ***, long **, FILE *);
+int elfxsetidx(int long , char *[], long [], FILE *);
+int elfxgetidx(int, long *, char ***, long **, FILE *);
 
-extern Symbol *elfgetsym(Obj *, int *, Symbol *);
-extern Section *elfgetsec(Obj *, int *, Section *);
-extern Map *elfloadmap(Obj *, FILE *);
+Symbol *elfgetsym(Obj *, int *, Symbol *);
+Section *elfgetsec(Obj *, int *, Section *);
+Map *elfloadmap(Obj *, FILE *);

@@ -1,28 +1,28 @@
 /* passes */
-extern void pass1(int argc, char *argv[]);
-extern void pass2(int argc, char *argv[]);
-extern void pass3(int argc, char *argv[]);
-extern void pass4(int argc, char *argv[]);
-extern void pass5(int argc, char *argv[]);
+void pass1(int argc, char *argv[]);
+void pass2(int argc, char *argv[]);
+void pass3(int argc, char *argv[]);
+void pass4(int argc, char *argv[]);
+void pass5(int argc, char *argv[]);
 
 /* main.c */
-extern void error(char *fmt, ...);
-extern char *nextarg(char **argp, char ***argv);
+void error(char *fmt, ...);
+char *nextarg(char **argp, char ***argv);
 
 /* symbol.c */
-extern int hasref(char *name);
-extern Symbol *lookupsym(char *name);
-extern int moreundef(void);
-extern void listundef(void);
-extern Symbol *define(Symbol *osym, Obj *obj);
-extern void debugsym(void);
+int hasref(char *name);
+Symbol *lookupsym(char *name);
+int moreundef(void);
+void listundef(void);
+Symbol *define(Symbol *osym, Obj *obj);
+void debugsym(void);
 
 /* section.c */
-extern Section *lookupsec(char *name);
-extern void copy(Obj *obj, Section *osec, Section *sec);
-extern void grow(Section *sec, int nbytes);
-extern void merge(Section *seg);
-extern void debugsec(void);
+Section *lookupsec(char *name);
+void copy(Obj *obj, Section *osec, Section *sec);
+void grow(Section *sec, int nbytes);
+void merge(Section *seg);
+void debugsec(void);
 
 /* globals */
 extern char *libpaths[];
