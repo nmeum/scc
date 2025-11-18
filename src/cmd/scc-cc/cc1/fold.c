@@ -5,17 +5,17 @@
 #include "cc1.h"
 
 
-TUINT
+unsigned long long
 ones(int nbytes)
 {
 	return (nbytes == 8) ? -1 : ~(-1ull << nbytes * 8);
 }
 
 static int
-addi(TINT l, TINT r, Type *tp)
+addi(long long l, long long r, Type *tp)
 {
 	struct limits *lim = getlimits(tp);
-	TINT max = lim->max.i, min = lim->min.i;
+	long long max = lim->max.i, min = lim->min.i;
 
 	if (l < 0 && r < 0 && l >= min - r ||
 	    l == 0 ||
@@ -30,10 +30,10 @@ addi(TINT l, TINT r, Type *tp)
 }
 
 static int
-addf(TFLOAT l, TFLOAT r, Type *tp)
+addf(double l, double r, Type *tp)
 {
 	struct limits *lim = getlimits(tp);
-	TFLOAT max = lim->max.f, min = lim->min.f;
+	double max = lim->max.f, min = lim->min.f;
 
 	if (l < 0 && r < 0 && l >= min - r ||
 	    l == 0 ||
@@ -48,22 +48,22 @@ addf(TFLOAT l, TFLOAT r, Type *tp)
 }
 
 static int
-subi(TINT l, TINT r, Type *tp)
+subi(long long l, long long r, Type *tp)
 {
 	return addi(l, -r, tp);
 }
 
 static int
-subf(TFLOAT l, TFLOAT r, Type *tp)
+subf(double l, double r, Type *tp)
 {
 	return addf(l, -r, tp);
 }
 
 static int
-muli(TINT l, TINT r, Type *tp)
+muli(long long l, long long r, Type *tp)
 {
 	struct limits *lim = getlimits(tp);
-	TINT max = lim->max.i, min = lim->min.i;
+	long long max = lim->max.i, min = lim->min.i;
 
 	if (l > -1 && l <= 1 ||
 	    r > -1 && r <= 1 ||
@@ -78,10 +78,10 @@ muli(TINT l, TINT r, Type *tp)
 }
 
 static int
-mulf(TFLOAT l, TFLOAT r, Type *tp)
+mulf(double l, double r, Type *tp)
 {
 	struct limits *lim = getlimits(tp);
-	TFLOAT max = lim->max.f, min = lim->min.f;
+	double max = lim->max.f, min = lim->min.f;
 
 	if (l > -1 && l <= 1 ||
 	    r > -1 && r <= 1 ||
@@ -96,7 +96,7 @@ mulf(TFLOAT l, TFLOAT r, Type *tp)
 }
 
 static int
-divi(TINT l, TINT r,  Type *tp)
+divi(long long l, long long r,  Type *tp)
 {
 	struct limits *lim = getlimits(tp);
 
@@ -108,7 +108,7 @@ divi(TINT l, TINT r,  Type *tp)
 }
 
 static int
-divf(TFLOAT l, TFLOAT r,  Type *tp)
+divf(double l, double r,  Type *tp)
 {
 	struct limits *lim = getlimits(tp);
 
@@ -123,7 +123,7 @@ divf(TFLOAT l, TFLOAT r,  Type *tp)
 }
 
 static int
-lshi(TINT l, TINT r, Type *tp)
+lshi(long long l, long long r, Type *tp)
 {
 	if (r < 0 || r >= tp->size * 8) {
 		warn("shifting %d bits is undefined", r);
@@ -133,7 +133,7 @@ lshi(TINT l, TINT r, Type *tp)
 }
 
 static int
-rshi(TINT l, TINT r, Type *tp)
+rshi(long long l, long long r, Type *tp)
 {
 	if (r < 0 || r >= tp->size * 8) {
 		warn("shifting %d bits is undefined", r);
@@ -143,11 +143,11 @@ rshi(TINT l, TINT r, Type *tp)
 }
 
 static int
-foldint(int op, Symbol *res, TINT l, TINT r)
+foldint(int op, Symbol *res, long long l, long long r)
 {
-	TINT i;
+	long long i;
 	Type *tp = res->type;
-	int (*validate)(TINT, TINT, Type *tp);
+	int (*validate)(long long, long long, Type *tp);
 
 	switch (op) {
 	case OADD: validate = addi; break;
@@ -194,10 +194,10 @@ foldint(int op, Symbol *res, TINT l, TINT r)
 }
 
 static int
-folduint(int op, Symbol *res, TUINT l, TUINT r)
+folduint(int op, Symbol *res, unsigned long long l, unsigned long long r)
 {
-	TINT i;
-	TUINT u;
+	long long i;
+	unsigned long long u;
 
 	switch (op) {
 	case OADD:  u = l + r;  break;
@@ -236,11 +236,11 @@ sign:
 }
 
 static int
-foldfloat(int op, Symbol *res, TFLOAT l, TFLOAT r)
+foldfloat(int op, Symbol *res, double l, double r)
 {
-	TFLOAT f;
-	TINT i;
-	int (*validate)(TFLOAT, TFLOAT, Type *tp);
+	double f;
+	long long i;
+	int (*validate)(double, double, Type *tp);
 
 	switch (op) {
 	case OADD: validate = addf; break;
@@ -282,9 +282,9 @@ static Node *
 foldconst(int type, int op, Type *tp, Symbol *ls, Symbol *rs)
 {
 	Symbol *sym, aux;
-	TINT i;
-	TUINT u;
-	TFLOAT f;
+	long long i;
+	unsigned long long u;
+	double f;
 
 	aux.type = tp;
 	switch (type) {
@@ -317,7 +317,7 @@ foldconst(int type, int op, Type *tp, Symbol *ls, Symbol *rs)
 static Node *
 foldcast(Node *np, Node *l)
 {
-	TUINT negmask, mask, u;
+	unsigned long long negmask, mask, u;
 	Type *newtp = np->type, *oldtp = l->type;
 	Symbol aux, *sym, *osym = l->sym;
 

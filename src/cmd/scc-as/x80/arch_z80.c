@@ -6,7 +6,7 @@
 #include "../as.h"
 #include "../x80/proc.h"
 
-TUINT maxaddr = 0xFFFFFFFF;
+unsigned long long maxaddr = 0xFFFFFFFF;
 int endian = LITTLE_ENDIAN;
 
 void

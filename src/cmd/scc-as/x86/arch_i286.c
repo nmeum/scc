@@ -4,7 +4,7 @@
 #include "../as.h"
 #include "../x86/proc.h"
 
-TUINT maxaddr = 0xFFFF;
+unsigned long long maxaddr = 0xFFFF;
 int endian = LITTLE_ENDIAN;
 int left2right = 0;
 

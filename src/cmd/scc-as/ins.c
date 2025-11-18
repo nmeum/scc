@@ -26,9 +26,9 @@ reloc(Symbol *sym,
 }
 
 char *
-tobytes(TUINT v, int nbytes, int inc)
+tobytes(unsigned long long v, int nbytes, int inc)
 {
-	static char buf[sizeof(TUINT)];
+	static char buf[sizeof(unsigned long long)];
 	int idx;
 
 	idx = (inc < 0) ? nbytes-1 : 0;
@@ -230,7 +230,7 @@ void
 align(Op *op, Node **args)
 {
 	Symbol *sym = args[0]->sym;
-	TUINT pcal, pc, al;
+	unsigned long long pcal, pc, al;
 
 	if ((sym->flags & FABS) == 0)
 		error("align expression is not an absolute expression");

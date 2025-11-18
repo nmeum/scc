@@ -92,7 +92,7 @@ number(void)
 {
 	int c, base = 10;
 	char *p;
-	TUINT n;
+	unsigned long long n;
 	static char digits[] = "0123456789ABCDEF";
 
 	if (*endp == '0') {
@@ -108,7 +108,7 @@ number(void)
 		c = p - digits;
 		if (c > base)
 			error("invalid digit in number");
-		if (n >= TUINT_MAX/base - c)
+		if (n >= ULLONG_MAX/base - c)
 			error("overflow in number");
 		n *= base;
 		endp++;

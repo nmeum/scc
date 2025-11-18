@@ -12,7 +12,7 @@ int
 power2node(Node *np, int *log)
 {
 	int n;
-	TUINT u;
+	unsigned long long u;
 	Symbol *sym;
 
 	if (!np || !(np->flags & NCONST) || !np->sym)
@@ -35,11 +35,11 @@ power2node(Node *np, int *log)
 }
 
 int
-cmpnode(Node *np, TUINT val)
+cmpnode(Node *np, unsigned long long val)
 {
 	Symbol *sym;
 	Type *tp;
-	TUINT mask, nodeval;
+	unsigned long long mask, nodeval;
 
 	if (!np || !(np->flags & NCONST) || !np->sym)
 		return 0;

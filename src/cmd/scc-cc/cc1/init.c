@@ -13,22 +13,22 @@
 typedef struct init Init;
 
 struct designator {
-	TINT pos;
+	long long pos;
 	Node *expr;
 	struct designator *next;
 };
 
 struct init {
-	TUINT pos;
-	TUINT max;
+	unsigned long long pos;
+	unsigned long long max;
 	struct designator *tail;
 	struct designator *head;
 };
 
-static TINT
+static long long
 arydesig(Type *tp, Init *ip)
 {
-	TINT npos;
+	long long npos;
 	Node *np;
 
 	if (tp->op != ARY)
@@ -45,7 +45,7 @@ arydesig(Type *tp, Init *ip)
 	return npos;
 }
 
-static TINT
+static long long
 fielddesig(Type *tp, Init *ip)
 {
 	int ons;
@@ -218,7 +218,7 @@ initlist_helper(Type *tp)
 	Node *np;
 	Type *curtp;
 	int braces, scalar, toomany, outbound;
-	TINT nelem = tp->n.elem;
+	long long nelem = tp->n.elem;
 
 	init(&in);
 	braces = scalar = toomany = 0;

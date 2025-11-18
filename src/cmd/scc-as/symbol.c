@@ -203,7 +203,7 @@ incpc(int nbytes)
 {
 	struct lsection *lsec;
 	unsigned long long siz;
-	TUINT pc, curpc;
+	unsigned long long pc, curpc;
 
 	lsec = (struct lsection *) cursec;
 
@@ -427,7 +427,7 @@ emit(char *bytes, int n)
 }
 
 Symbol *
-tmpsym(TUINT val)
+tmpsym(unsigned long long val)
 {
 	Symbol *sym;
 

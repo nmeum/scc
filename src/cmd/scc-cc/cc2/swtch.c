@@ -50,10 +50,10 @@ swtch_if(Node *np)
 }
 
 static Node *
-swtch_dir(Node *np, TINT min, TINT max)
+swtch_dir(Node *np, long long min, long long max)
 {
 	int i;
-	TINT cur, nval;
+	long long cur, nval;
 	Swtch *swt;
 	Symbol *tbl;
 	Node *p, *def, **cases;
@@ -97,7 +97,7 @@ swtch(Node *np)
 {
 	Swtch *swt;
 	int n;
-	TINT min, max, range;
+	long long min, max, range;
 
 	swt = np->u.swtch;
 	min = swt->min;

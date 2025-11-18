@@ -210,7 +210,7 @@ constant(char *token, union tokenop u)
 {
 	static char letters[] = "0123456789ABCDEF";
 	Node *np;
-	TUINT v;
+	unsigned long long v;
 	unsigned c;
 
 	++token;
@@ -337,7 +337,7 @@ oreturn(char *token, union tokenop u)
 static void
 addcase(Node *np)
 {
-	TINT val;
+	long long val;
 	Node **bp;
 	Swtch *cur;
 
@@ -372,8 +372,8 @@ bswitch(char *token, union tokenop u)
 		error(EWTACKO);
 	cur = swp++;
 	cur->nr = 0;
-	cur->min = TINT_MAX;
-	cur->max = TINT_MIN;
+	cur->min = LLONG_MAX;
+	cur->max = LLONG_MIN;
 	cur->defnode = NULL;
 	cur->cases = NULL;
 	eval(strtok(NULL, "\t\n"));
@@ -385,7 +385,7 @@ bswitch(char *token, union tokenop u)
 static int
 cmpcase(const void *p1, const void *p2)
 {
-	TINT d;
+	long long d;
 	Node *np1, *np2;
 
 	np1 = *(Node **) p1;

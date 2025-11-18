@@ -172,7 +172,7 @@ struct mach {
 
 struct swtch {
 	int nr;
-	TINT min, max;
+	long long min, max;
 	Node *bswtch;
 	Node *eswtch;
 	Node **cases;
@@ -212,8 +212,8 @@ struct node {
 	int address;
 	unsigned flags;
 	union {
-		TUINT i;
-		TFLOAT f;
+		unsigned long long i;
+		double f;
 		char *s;
 		Symbol *sym;
 		Swtch *swtch;
@@ -240,7 +240,7 @@ struct addr {
 	char kind;
 	union {
 		int reg;
-		TUINT i;
+		unsigned long long i;
 		Symbol *sym;
 		long off;
 	} u;
@@ -275,7 +275,7 @@ extern void code(int op, Node *to, Node *from1, Node *from2);
 extern void defvar(Symbol *), defpar(Symbol *), defglobal(Symbol *);
 extern void setlabel(Symbol *);
 extern Node *label2node(Node *np, Symbol *sym);
-extern Node *constnode(Node *np, TUINT n, Type *tp);
+extern Node *constnode(Node *np, unsigned long long n, Type *tp);
 extern Node *tmpnode(Type *, Symbol *);
 extern Node *idxnode(Node *, long);
 extern void delcode(void);

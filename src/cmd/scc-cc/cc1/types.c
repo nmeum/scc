@@ -13,8 +13,8 @@
 static Type *typetab[NR_TYPE_HASH], *localtypes;
 
 /* FIXME:
- * Compiler can generate warnings here if the ranges of TINT,
- * TUINT and TFLOAT are smaller than any of the constants in this
+ * Compiler can generate warnings here if the ranges of long long,
+ * unsigned long long and double are smaller than any of the constants in this
  * array. Ignore them if you know that the target types are correct
  */
 static struct limits limits[][4] = {
@@ -182,7 +182,7 @@ typesize(Type *tp)
 	Type *type;
 	unsigned long size, offset;
 	int align, a;
-	TINT n;
+	long long n;
 
 	switch (tp->op) {
 	case ARY:
@@ -287,7 +287,7 @@ newtype(Type *base)
 }
 
 Type *
-mktype(Type *tp, int op, TINT nelem, Type *pars[])
+mktype(Type *tp, int op, long long nelem, Type *pars[])
 {
 	Type **tbl, type;
 	Type *bp;
@@ -369,7 +369,7 @@ mktype(Type *tp, int op, TINT nelem, Type *pars[])
 static int
 eqfuns(Type *tp1, Type *tp2, int equiv)
 {
-	TINT n;
+	long long n;
 	int f1kr, f2kr;
 	Type *krf, *ansi, **pp, *p;
 
@@ -428,7 +428,7 @@ check_base:
 int
 eqtype(Type *tp1, Type *tp2, int equiv)
 {
-	TINT n;
+	long long n;
 	Symbol **s1, **s2;
 
 	if (tp1 == tp2)

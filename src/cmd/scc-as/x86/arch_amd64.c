@@ -3,7 +3,7 @@
 
 #include "../as.h"
 
-TUINT maxaddr = 0xFFFFFFFFFFFFFFFF;
+unsigned long long maxaddr = 0xFFFFFFFFFFFFFFFF;
 int endian = LITTLE_ENDIAN;
 
 void

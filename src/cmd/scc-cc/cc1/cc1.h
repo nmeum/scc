@@ -296,12 +296,12 @@ typedef uint32_t Rune;
 
 struct limits {
 	union {
-		TUINT i;
-		TFLOAT f;
+		unsigned long long i;
+		double f;
 	} max;
 	union {
-		TUINT i;
-		TFLOAT f;
+		unsigned long long i;
+		double f;
 	} min;
 };
 
@@ -326,7 +326,7 @@ struct type {
 	} p;
 	union {
 		unsigned char rank;     /* convertion rank */
-		TINT elem;              /* number of type parameters */
+		long long elem;         /* number of type parameters */
 	} n;
 	Type *next;                 /* local list pointer */
 	Type *h_next;               /* hash collision list */
@@ -342,9 +342,9 @@ struct symbol {
 	Type *type;
 	unsigned char token;
 	union {
-		TINT i;
-		TUINT u;
-		TFLOAT f;
+		long long i;
+		unsigned long long u;
+		double f;
 		char *s;
 		unsigned char token;
 		Node **init;
@@ -439,7 +439,7 @@ extern Type *deftype(Type *tp);
 /* types.c */
 extern int eqtype(Type *tp1, Type *tp2, int eqflag);
 extern Type *ctype(int type, int sign, int size);
-extern Type *mktype(Type *tp, int op, TINT nelem, Type *data[]);
+extern Type *mktype(Type *tp, int op, long long nelem, Type *data[]);
 extern Type *duptype(Type *base);
 extern struct limits *getlimits(Type *tp);
 extern void typesize(Type *tp);
@@ -491,7 +491,7 @@ extern void icode(void);
 
 /* fold.c */
 extern Node *simplify(Node *np);
-extern TUINT ones(int nbytes);
+extern unsigned long long ones(int nbytes);
 
 /* expr.c */
 extern Node *decay(Node *), *negate(Node *np), *assign(void);
@@ -499,7 +499,7 @@ extern Node *convert(Node *np, Type *tp1, int iscast);
 extern Node *constexpr(void), *condexpr(int neg), *expr(void);
 extern int isnodecmp(int op);
 extern int negop(int op);
-extern int cmpnode(Node *np, TUINT val);
+extern int cmpnode(Node *np, unsigned long long val);
 extern int power2node(Node *, int *);
 
 /* init.c */

@@ -187,7 +187,7 @@ idxnode(Node *np, long off)
 }
 
 Node *
-constnode(Node *np, TUINT n, Type *tp)
+constnode(Node *np, unsigned long long n, Type *tp)
 {
 	if (!np)
 		np = node(OCONST);

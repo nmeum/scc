@@ -26,7 +26,7 @@ struct declarators {
 	Symbol **pars;
 	struct declarator {
 		unsigned char op;
-		TINT  nelem;
+		long long  nelem;
 		Symbol *sym;
 		Type **tpars;
 		Symbol **pars;
@@ -82,7 +82,7 @@ push(struct declarators *dp, int op, ...)
 
 	switch (op) {
 	case ARY:
-		p->nelem = va_arg(va, TINT);
+		p->nelem = va_arg(va, long long);
 		break;
 	case KRFTN:
 	case FTN:
@@ -130,7 +130,7 @@ static void
 arydcl(struct declarators *dp)
 {
 	Node *np = NULL;
-	TINT n = 0;
+	long long n = 0;
 	int ns;
 
 	ns = namespace;
@@ -899,11 +899,11 @@ field(struct decl *dcl)
 	Symbol *sym = dcl->sym;
 	char *name = (sym->name) ? sym->name : anon;
 	Type *structp = dcl->parent, *tp = dcl->type;
-	TINT n = structp->n.elem;
+	long long n = structp->n.elem;
 
 	if (accept(':')) {
 		Node *np;
-		TINT n;
+		long long n;
 
 		if ((np = constexpr()) == NULL) {
 			unexpected();

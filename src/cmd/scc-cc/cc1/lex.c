@@ -351,7 +351,7 @@ readint(char *s, int base, int sign, Symbol *sym)
 {
 	Type *tp = sym->type;
 	struct limits *lim;
-	TUINT u, val, max;
+	unsigned long long u, val, max;
 	int c;
 
 	lim = getlimits(tp);

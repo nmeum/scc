@@ -93,7 +93,7 @@ struct node {
 };
 
 union yylval {
-	TUINT val;
+	unsigned long long val;
 	Symbol *sym;
 };
 
@@ -102,7 +102,7 @@ extern void cleansecs(void);
 extern void ibinfmt(void);
 extern void emit(char *, int);
 extern Section *defsec(char *, char *);
-extern Symbol *tmpsym(TUINT);
+extern Symbol *tmpsym(unsigned long long);
 extern void killtmp(void);
 extern int toobig(Node *, int);
 extern void dumpstab(char *);
@@ -139,7 +139,7 @@ extern int match(Op *, Node **);
 extern Node *moperand(void);
 
 /* ins.c */
-extern char *tobytes(TUINT, int, int);
+extern char *tobytes(unsigned long long, int, int);
 
 /* binfmt.c */
 extern void writeout(char *);
@@ -153,7 +153,7 @@ extern Section *cursec;
 extern Ins instab[];
 extern Op optab[];
 extern int pass;
-extern TUINT maxaddr;
+extern unsigned long long maxaddr;
 extern int endian;
 extern Symbol *linesym;
 extern char *infile, *outfile;

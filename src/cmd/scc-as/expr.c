@@ -52,7 +52,7 @@ static Node *
 fold(int op, Node *l, Node *r)
 {
 	Node *np;
-	TUINT val, lv, rv;
+	unsigned long long val, lv, rv;
 
 	if (!constant(l) || !constant(r))
 		return NULL;
@@ -143,7 +143,7 @@ binary(int op, Node *l, Node *r)
 static Node *
 unaryop(int op, Node *np)
 {
-	TUINT val;
+	unsigned long long val;
 
 	if (np->addr != ANUMBER)
 		error("invalid argument for unary operator");

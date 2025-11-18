@@ -158,7 +158,7 @@ tsethi(Node *np)
 	case OCPL:
 		assert(np->type.flags & INTF);
 		np->op = OBXOR;
-		r = constnode(NULL, ~(TUINT) 0, &np->type);
+		r = constnode(NULL, ~0ULL, &np->type);
 		goto binary;
 	case OEFUN:
 		/*
@@ -346,7 +346,7 @@ static Node *
 field(Node *np, int islhs)
 {
 	Node *tmp, *addr;
-	TUINT offset = np->right->u.sym->u.off;
+	unsigned long long offset = np->right->u.sym->u.off;
 
 	addr = rhs(np->left);
 	tmp = node(OADD);

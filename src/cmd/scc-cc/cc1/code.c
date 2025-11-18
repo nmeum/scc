@@ -217,17 +217,17 @@ emitconst(Node *np)
 {
 	Symbol *sym = np->sym;
 	Type *tp = np->type;
-	TUINT u;
+	unsigned long long u;
 
 	switch (tp->op) {
 	case PTR:
 	case INT:
 	case ENUM:
-		u = (tp->prop & TSIGNED) ? (TUINT) sym->u.i : sym->u.u;
+		u = (tp->prop & TSIGNED) ? sym->u.i : sym->u.u;
 		fprintf(outfp,
 		        "#%c%llX",
 		        np->type->letter,
-		        (long long) u & ones(tp->size));
+		        u & ones(tp->size));
 		break;
 	default:
 		abort();
@@ -269,7 +269,7 @@ emitletter(Type *tp)
 static void
 emittype(int op, void *arg)
 {
-	TINT n;
+	long long n;
 	Symbol **sp;
 	char *tag;
 	Type *tp = arg;
@@ -343,10 +343,10 @@ zeronode(Type *tp)
 }
 
 static int
-emitpadding(Type *tp, SIZET *addr)
+emitpadding(Type *tp, unsigned long long *addr)
 {
-	SIZET n;
 	int i;
+	unsigned long long n;
 
 	n = *addr & tp->align-1;
 	for (i = 0; i < n; i++)
@@ -357,10 +357,10 @@ emitpadding(Type *tp, SIZET *addr)
 }
 
 static void
-emitdesig(Node *np, Type *tp, SIZET *addr)
+emitdesig(Node *np, Type *tp, unsigned long long *addr)
 {
 	Symbol *sym;
-	SIZET n;
+	unsigned long long n;
 	Node *aux;
 	Type *p;
 
@@ -424,7 +424,7 @@ static void
 emitinit(int op, void *arg)
 {
 	Node *np = arg;
-	SIZET addr = 0;
+	unsigned long long addr = 0;
 
 	fputs("\t(\n", outfp);
 	emitdesig(np, np->type, &addr);
