@@ -1,15 +1,9 @@
 #!/bin/sh
 
-trap 'rm -f $tmp1 $tmp2 t1.c t?.o t2' EXIT INT TERM HUP QUIT
+trap 'rm -f $tmp1 t1.c t?.o t2' EXIT
+trap 'exit 1' HUP INT TERM
 
 tmp1=tmp1.$$
-tmp2=tmp2.$$
-
-cat > $tmp2 <<EOF
-t1
-t2
-t2
-EOF
 
 echo Hello > t1.c
 
@@ -27,4 +21,8 @@ t2:
 	@echo $* > $@
 EOF
 
-diff $tmp1 $tmp2
+diff $tmp1 - <<EOF
+t1
+t2
+t2
+EOF

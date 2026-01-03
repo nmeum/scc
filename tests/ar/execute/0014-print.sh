@@ -2,21 +2,19 @@
 
 set -e
 
-tmp1=`mktemp`
-tmp2=`mktemp`
+trap 'rm -f file.a $tmp1' EXIT
+trap 'exit 1' HUP INT TERM
 
-trap "rm -f file.a $tmp1 $tmp2" 0 2 3 15
+tmp1=tmp1.$$
 
 ############################################################################
 #print 3rd member
 
 cp master.a file.a
-$EXEC scc ar -p file.a file3 > $tmp1
 
-cat <<! > $tmp2
+$EXEC scc ar -p file.a file3 > $tmp1
+diff -u $tmp1 - <<EOF
 and at the end, this is the last file
 that should go at the end of the file,
 thus it should go in the third position.
-!
-
-cmp $tmp1 $tmp2
+EOF

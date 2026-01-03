@@ -1,15 +1,13 @@
 #!/bin/sh
 
-trap 'rm -f $tmp1 $tmp2' EXIT INT QUIT TERM HUP
+trap 'rm -f $tmp1' EXIT
+trap 'exit 1' HUP INT TERM
 
 tmp1=tmp1.$$
-tmp2=tmp2.$$
-
-cat >$tmp2 <<EOF
--s
-Hello World!
-EOF
 
 MAKEFLAGS=-s scc make -f test.mk print-makeflags echo-hello > $tmp1 2>&1
 
-diff $tmp1 $tmp2
+diff $tmp1 - <<EOF
+-s
+Hello World!
+EOF

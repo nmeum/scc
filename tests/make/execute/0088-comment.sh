@@ -1,14 +1,9 @@
 #!/bin/sh
 
-trap 'rm -f $tmp1 $tmp2' EXIT INT TERM QUIT HUP
+trap 'rm -f $tmp1' EXIT
+trap 'exit 1' HUP INT TERM
 
 tmp1=tmp1.$$
-tmp2=tmp2.$$
-
-cat >$tmp2 <<EOF
-Hello
-World!
-EOF
 
 scc make -f- <<'EOF' > $tmp1 2>&1
 all:
@@ -17,4 +12,7 @@ all:
 	@echo World!
 EOF
 
-diff $tmp1 $tmp2
+diff $tmp1 - <<EOF
+Hello
+World!
+EOF

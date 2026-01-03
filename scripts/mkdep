@@ -2,8 +2,10 @@
 
 set -e
 
+trap 'rm -f $tmp' EXIT
+trap 'exit 1' HUP INT TERM
+
 tmp=$$.tmp
-trap "rm -f $tmp" EXIT INT TERM HUP
 
 (cat Makefile
 printf "\n#deps\n"

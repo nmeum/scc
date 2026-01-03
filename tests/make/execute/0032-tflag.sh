@@ -1,6 +1,7 @@
 #!/bin/sh
 
-trap 'rm -f $tmp1 $tmp2 file1' EXIT INT TERM QUIT HUP
+trap 'rm -f $tmp1 $tmp2 file1' EXIT
+trap 'exit 1' HUP INT TERM
 
 tmp1=tmp1.$$
 tmp2=tmp2.$$

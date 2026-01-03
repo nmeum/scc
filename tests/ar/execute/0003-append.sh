@@ -2,10 +2,10 @@
 
 set -e
 
-tmp1=`mktemp`
-tmp2=`mktemp`
+trap 'rm -f file* $tmp1' EXIT
+trap 'exit 1' HUP INT TERM
 
-trap "rm -f file* f1 f2 f3 $tmp1 $tmp2" 0 2 3 15
+tmp1=tmp1.$$
 
 ###########################################################################
 #Append generated files at once to an existing archive
@@ -18,21 +18,15 @@ cp master.a file.a
 $EXEC scc ar -qv file.a file-1 file-2 file-3
 
 $EXEC scc ar -t file.a file-1 file-2 file-3 > $tmp1
-
-cat <<EOF > $tmp2
+diff -u $tmp1 - <<EOF
 file-1
 file-2
 file-3
 EOF
 
-cmp $tmp1 $tmp2
-
 $EXEC scc ar -p file.a file-1 file-2 file-3 > $tmp1
-
-cat <<EOF > $tmp2
+diff -u $tmp1 - <<EOF
 First
 Second
 Third
 EOF
-
-cmp $tmp1 $tmp2

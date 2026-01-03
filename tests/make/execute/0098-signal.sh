@@ -2,12 +2,15 @@
 
 cleanup()
 {
+	r=$?
 	rm -f test.txt
 	kill -KILL $pid 2>/dev/null
 	if test $1 -ne 0
 	then
 		kill -KILL $$
 	fi
+	trap - EXIT
+	exit $?
 }
 
 rm -f file.txt

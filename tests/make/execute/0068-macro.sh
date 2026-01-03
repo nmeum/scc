@@ -1,11 +1,9 @@
 #!/bin/sh
 
-trap 'rm -f $tmp1 $tmp2' EXIT INT TERM QUIT HUP
+trap 'rm -f $tmp1' EXIT
+trap 'exit 1' HUP INT TERM
 
 tmp1=tmp1.$$
-tmp2=tmp2.$$
-
-echo file1.o file2.o > $tmp2
 
 scc make -f- <<'EOF' > $tmp1 2>&1
 SRC = file1.c file2.c
@@ -14,4 +12,6 @@ all:
 	@echo $(SRC:.c=.o)
 EOF
 
-diff $tmp1 $tmp2
+diff $tmp1 - <<EOF
+file1.o file2.o
+EOF

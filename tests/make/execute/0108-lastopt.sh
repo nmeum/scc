@@ -1,15 +1,9 @@
 #!/bin/sh
 
-trap 'rm -f $tmp1 $tmp2' EXIT INT QUIT TERM HUP
+trap 'rm -f $tmp1' EXIT
+trap 'exit 1' HUP INT TERM
 
 tmp1=tmp1.$$
-tmp2=tmp2.$$
-
-cat > $tmp1 <<EOF
-hyphen-target
-MYVAR is -42
-MYVAR is myval
-EOF
 
 (scc make -f- -- -42 <<'EOF'
 -42:
@@ -25,6 +19,10 @@ scc make -f- -- MYVAR=myval -42 <<'EOF'
 -42:
 	@echo MYVAR is $(MYVAR)
 EOF
-) > $tmp2
+) > $tmp1
 
-diff $tmp1 $tmp2
+diff $tmp1 - <<EOF
+hyphen-target
+MYVAR is -42
+MYVAR is myval
+EOF

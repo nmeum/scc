@@ -1,24 +1,22 @@
 #!/bin/sh
 
-trap 'rm -f f.? $tmp1 $tmp2 $tmp3 f.?' EXIT INT TERM QUIT HUP
+trap 'rm -f f.? $tmp1 $tmp2 f.?' EXIT
+trap 'exit 1' HUP INT TERM
 
 tmp1=tmp1.$$
 tmp2=tmp2.$$
-tmp3=tmp3.$$
 
-cat >$tmp1<<EOF
-c99 -O -c f.c
-EOF
-
-cat >$tmp2 <<'EOF'
+cat >$tmp1 <<'EOF'
 f.o: f.h
 
 all: f.o
 EOF
 
 (touch f.c f.h
-scc make -f $tmp2
+scc make -f $tmp1
 touch f.c
-scc make -f $tmp2) > $tmp3
+scc make -f $tmp1) > $tmp2
 
-diff $tmp1 $tmp3
+diff $tmp2 - <<EOF
+c99 -O -c f.c
+EOF

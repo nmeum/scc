@@ -1,11 +1,14 @@
 #!/bin/sh
 
 file=${1?' empty input file'}
-tmp1=`mktemp`
-tmp2=`mktemp`
-trap "rm -f *.o  $tmp1 $tmp2" EXIT INT QUIT TERM
-ulimit -c 0
+
+trap 'rm -f *.o  $tmp1 $tmp2' EXIT
+trap 'exit 1' INT QUIT TERM
+
 rm -f test.log
+
+tmp1=tmp1.$$
+tmp2=tmp2.$$
 
 while read i state
 do

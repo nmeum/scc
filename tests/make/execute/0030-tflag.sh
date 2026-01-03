@@ -1,17 +1,15 @@
 #!/bin/sh
 
-trap 'rm -f $tmp1 $tmp2 file.o file.c' EXIT INT TERM QUIT HUP
+trap 'rm -f $tmp1 file.o file.c' EXIT
+trap 'exit 1' HUP INT TERM
 
 tmp1=tmp1.$$
-tmp2=tmp2.$$
 
 touch file.c
-
-cat > $tmp2 <<EOF
-touch file.c
-touch file.o
-EOF
 
 scc make -tf test.mk file.o > $tmp1 2>&1
 
-diff $tmp1 $tmp2 && test -f file.c -a -f file.o
+diff $tmp1 - <<EOF && test -f file.c -a -f file.o
+touch file.c
+touch file.o
+EOF

@@ -2,17 +2,23 @@
 
 set -e
 
-tmp1=`mktemp`
-tmp2=`mktemp`
+cleanup()
+{
+	st=$?
+	rm -f file.a $tmp1 $tmp2
+	exit $st
+}
 
-trap "rm -f file.a $tmp1 $tmp2" 0 2 3 15
+trap 'rm -f file.a $tmp1' EXIT
+trap 'exit 1' HUP INT TERM
+
+tmp1=tmp1.$$
 
 #and now with no members in command line
-
 cp master.a file.a
-$EXEC scc ar -p file.a > $tmp1
 
-cat <<! > $tmp2
+$EXEC scc ar -p file.a > $tmp1
+diff -u $tmp1 - <<EOF
 This is the first file,
 and it should go in the
 first position in the archive.
@@ -22,6 +28,4 @@ because it should go in the second position.
 and at the end, this is the last file
 that should go at the end of the file,
 thus it should go in the third position.
-!
-
-cmp $tmp1 $tmp2
+EOF

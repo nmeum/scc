@@ -1,9 +1,9 @@
 #!/bin/sh
 
-trap "rm -rf file*" EXIT HUP INT QUIT TERM
-ulimit -c 0
+trap "rm -rf file*" EXIT
+trap "exit 1" HUP INT TERM
+
 rm -f test.log
-rm -rf file*
 
 export TZ=${TZ:-UTC}
 

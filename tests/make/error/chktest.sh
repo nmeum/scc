@@ -1,6 +1,5 @@
 #!/bin/sh
 
-ulimit -c 0
 rm -f test.log
 
 for i in *-*.sh

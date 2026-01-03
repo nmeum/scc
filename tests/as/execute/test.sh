@@ -40,5 +40,4 @@ sed -n '/^data:/,$ {
 }' |
 nl -b a > $tmp2
 
-echo diff
 diff -u $tmp1 $tmp2
