@@ -1,11 +1,10 @@
 .POSIX:
 
 ROOT=../../..
-SCCPREFIX=$(ROOT)
-CC=$(ROOT)/bin/scc
+CC=$(SHELL) $(ROOT)/bin/scc cc
 
 all:
-	@CC=$(CC) ./chktest.sh scc-tests.lst
+	@CC='$(CC)' ./chktest.sh scc-tests.lst
 
 tests:
 	@$(MAKE) |\

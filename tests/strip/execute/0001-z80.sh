@@ -9,8 +9,8 @@ tmp1=tmp1.$$
 tmp2=tmp2.$$
 
 cp z80.out $tmp1
-scc strip $tmp1 > $tmp2
-scc nm $tmp1 >> $tmp2 2>&1 || true
+$EXEC scc strip $tmp1 > $tmp2
+$EXEC scc nm $tmp1 >> $tmp2 2>&1 || true
 
 diff $tmp2 - <<EOF
 nm: $tmp1: no symbols

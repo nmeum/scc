@@ -5,17 +5,17 @@ trap 'exit 1' HUP INT TERM
 
 tmp1=tmp1.$$
 
-(scc make -f- -- -42 <<'EOF'
+($EXEC scc make -f- -- -42 <<'EOF'
 -42:
 	@echo 'hyphen-target'
 EOF
 
-scc make -f- -- MYVAR=-42 <<'EOF'
+$EXEC scc make -f- -- MYVAR=-42 <<'EOF'
 all:
 	@@echo MYVAR is $(MYVAR)
 EOF
 
-scc make -f- -- MYVAR=myval -42 <<'EOF'
+$EXEC scc make -f- -- MYVAR=myval -42 <<'EOF'
 -42:
 	@echo MYVAR is $(MYVAR)
 EOF

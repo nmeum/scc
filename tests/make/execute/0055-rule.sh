@@ -6,7 +6,7 @@ trap 'exit 1' HUP INT TERM
 tmp1=tmp1.$$
 
 (set -e
- scc make -if- <<'EOF'
+ $EXEC scc make -if- <<'EOF'
 .POSIX:
 
 all:

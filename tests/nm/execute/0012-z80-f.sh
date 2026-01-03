@@ -6,7 +6,7 @@ trap 'rm -f $tmp1' EXIT
 trap 'exit 1' HUP INT TERM
 
 tmp1=tmp1.$$
-scc nm -f z80.out > $tmp1
+$EXEC scc nm -f z80.out > $tmp1
 
 diff $tmp1 - <<!
 0000000000000000 b .bss

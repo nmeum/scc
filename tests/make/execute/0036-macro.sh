@@ -5,7 +5,7 @@ trap 'exit 1' HUP INT TERM
 
 tmp1=tmp1.$$
 
-scc make -f test.mk CC=pcc print-env-cc > $tmp1 2>&1
+$EXEC scc make -f test.mk CC=pcc print-env-cc > $tmp1 2>&1
 
 diff $tmp1 - <<EOF
 pcc

@@ -5,7 +5,7 @@ trap 'exit 1' HUP INT TERM
 
 echo hello > f.c
 
-scc make -sf- <<'EOF'
+$EXEC scc make -sf- <<'EOF'
 .c:
 	echo hello > $@
 

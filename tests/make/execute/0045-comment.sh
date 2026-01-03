@@ -5,7 +5,7 @@ trap 'exit 1 ' HUP INT TERM
 
 tmp1=tmp1.$$
 
-scc make -f - target1 <<EOF > $tmp1 2>&1
+$EXEC scc make -f - target1 <<EOF > $tmp1 2>&1
 #esto es un comentario \
 target1: ; echo hello
 target2: ; echo bye

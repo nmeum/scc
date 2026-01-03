@@ -5,7 +5,8 @@ trap 'exit 1' HUP INT TERM
 
 tmp1=tmp1.$$
 
-MAKEFLAGS=-S scc make -kf test.mk print-makeflags follow 2>&1 |
+MAKEFLAGS=-S \
+$EXEC scc make -kf test.mk print-makeflags follow 2>&1 |
 sed 's/:.*: *no-/: no-/' > $tmp1
 
 diff $tmp1 - <<EOF

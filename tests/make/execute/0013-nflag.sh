@@ -6,7 +6,8 @@ trap 'exit 1' HUP INT TERM
 tmp1=tmp1.$$
 
 (set -e
- MAKEFLAGS=-n scc make -f test.mk print-makeflags error
+ MAKEFLAGS=-n \
+ $EXEC scc make -f test.mk print-makeflags error
  echo correct) > $tmp1 2>&1
 
 diff $tmp1 - <<EOF

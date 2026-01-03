@@ -5,7 +5,7 @@ trap 'exit 1' HUP INT TERM
 
 tmp1=tmp1.$$
 
-scc make -f- <<'EOF' > $tmp1 2>&1
+$EXEC scc make -f- <<'EOF' > $tmp1 2>&1
 all:
 	@echo '#error line'
 EOF

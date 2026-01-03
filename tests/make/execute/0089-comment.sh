@@ -5,7 +5,7 @@ trap 'rm -f $tmp1' HUP INT TERM
 
 tmp1=tmp1.$$
 
-scc make -f- <<'EOF' > $tmp1 2>&1
+$EXEC scc make -f- <<'EOF' > $tmp1 2>&1
 VAR = Hello World!  # This is a comment
 all:
 	@echo '$(VAR)'

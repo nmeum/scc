@@ -17,7 +17,7 @@ touch -d '1970-01-01 00:00:01' f.h
 touch -d '1970-01-01 00:00:03' f
 touch -d '1970-01-01 00:00:04' f.c
 
-scc make -f- <<'EOF' > $tmp1 2>&1
+$EXEC scc make -f- <<'EOF' > $tmp1 2>&1
 f: f.h
 
 f.h:

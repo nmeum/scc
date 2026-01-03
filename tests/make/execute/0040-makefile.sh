@@ -10,7 +10,7 @@ hello:
 	@echo Hello World!, makefile!
 EOF
 
-scc make > $tmp1 2>&1
+$EXEC scc make > $tmp1 2>&1
 
 diff $tmp1 - <<EOF
 Hello World!, makefile!

@@ -13,7 +13,7 @@ all: f.o
 EOF
 
 (touch f.c f.h
-scc make -f $tmp1
+$EXEC scc make -f $tmp1
 touch f.c
 scc make -f $tmp1) > $tmp2
 

@@ -6,7 +6,7 @@ trap 'exit 1' HUP INT TERM
 tmp1=tmp1.$$
 
 (set -e
- scc make -kf test.mk print-makeflags follow
+ $EXEC scc make -kf test.mk print-makeflags follow
  echo fail) 2>&1 |
 sed 's/:.*: *no-/: no-/' > $tmp1
 

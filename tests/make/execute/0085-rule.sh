@@ -7,7 +7,7 @@ tmp1=tmp1.$$
 
 echo Hello > t1.c
 
-scc make -f- <<'EOF' > $tmp1 2>&1
+$EXEC scc make -f- <<'EOF' > $tmp1 2>&1
 .c.o:
 	@echo $* > $@
 

@@ -8,7 +8,7 @@ tmp2=tmp2.$$
 
 touch $tmp2
 
-scc make -f- hello <<EOF > $tmp1 2>&1
+$EXEC scc make -f- hello <<EOF > $tmp1 2>&1
 FILE = test.mk
 F = $tmp2
 

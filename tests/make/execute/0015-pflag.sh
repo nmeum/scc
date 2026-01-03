@@ -7,7 +7,7 @@ tmp1=tmp1.$$
 
 unset MAKEFLAGS
 
-(scc make -pf - all | grep -v MAKE > $tmp1 2>&1) <<'EOF'
+($EXEC scc make -pf - all | grep -v MAKE > $tmp1 2>&1) <<'EOF'
 all:
 	@echo hello
 EOF

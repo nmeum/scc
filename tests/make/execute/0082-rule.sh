@@ -7,7 +7,7 @@ tmp1=tmp1.$$
 
 echo hello > f.c
 
-scc make -sf- <<'EOF' > $tmp1 2>&1
+$EXEC scc make -sf- <<'EOF' > $tmp1 2>&1
 
 .SUFFIXES:
 
