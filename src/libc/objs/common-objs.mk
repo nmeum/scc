@@ -81,13 +81,13 @@ COMMON_OBJS =\
 	stdlib/errno.$O\
 	stdlib/exit.$O\
 	stdlib/labs.$O\
-	stdlib/llabs.$O\
 	stdlib/ldiv.$O\
+	stdlib/llabs.$O\
 	stdlib/lldiv.$O\
 	stdlib/malloc.$O\
 	stdlib/mblen.$O\
-	stdlib/mbtowc.$O\
 	stdlib/mbstowcs.$O\
+	stdlib/mbtowc.$O\
 	stdlib/qsort.$O\
 	stdlib/rand.$O\
 	stdlib/realloc.$O\
@@ -120,33 +120,33 @@ COMMON_OBJS =\
 	time/mktime.$O\
 	time/strftime.$O\
 	time/tz.$O\
+	wchar/_validutf8.$O\
 	wchar/fputwc.$O\
 	wchar/mbrlen.$O\
 	wchar/mbrtowc.$O\
 	wchar/mbsinit.$O\
 	wchar/mbsrtowcs.$O\
+	wchar/putwc.$O\
 	wchar/wcrtomb.$O\
-	wchar/wcslen.$O\
+	wchar/wcscat.$O\
+	wchar/wcschr.$O\
 	wchar/wcscmp.$O\
 	wchar/wcscoll.$O\
-	wchar/wcsncmp.$O\
 	wchar/wcscpy.$O\
-	wchar/wcscat.$O\
+	wchar/wcscspn.$O\
+	wchar/wcslen.$O\
 	wchar/wcsncat.$O\
-	wchar/wcschr.$O\
+	wchar/wcsncmp.$O\
+	wchar/wcsncpy.$O\
+	wchar/wcspbrk.$O\
 	wchar/wcsrchr.$O\
+	wchar/wcsrtombs.$O\
+	wchar/wcsspn.$O\
 	wchar/wcsstr.$O\
 	wchar/wcsxfrm.$O\
-	wchar/wcsspn.$O\
-	wchar/wcscspn.$O\
-	wchar/wcspbrk.$O\
-	wchar/wcsrtombs.$O\
 	wchar/wcwidth.$O\
 	wchar/wmemchr.$O\
+	wchar/wmemcmp.$O\
 	wchar/wmemcpy.$O\
-	wchar/wcsncpy.$O\
 	wchar/wmemmove.$O\
 	wchar/wmemset.$O\
-	wchar/wmemcmp.$O\
-	wchar/putwc.$O\
-	wchar/_validutf8.$O\
