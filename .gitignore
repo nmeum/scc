@@ -7,7 +7,7 @@ libexec/
 deps.mk
 *.gcno
 *.gcda
-/scc-make
+/scripts/scc-make
 /deps
 /src/cmd/scc-addr2line
 /src/cmd/scc-objcopy
