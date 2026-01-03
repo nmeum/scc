@@ -2,10 +2,17 @@
 
 set -e
 
-tmp1=`mktemp`
-tmp2=`mktemp`
+cleanup()
+{
+	st=$?
+	rm -f file* $tmp1 $tmp2
+	exit $st
+}
 
-trap "rm -f file* $tmp1 $tmp2" 0 2 3 15
+trap 'rm -f file* $tmp1' EXIT
+trap 'exit 1' HUP INT TERM
+
+tmp1=tmp1.$$
 
 ############################################################################
 #extract without parameters
@@ -13,7 +20,8 @@ trap "rm -f file* $tmp1 $tmp2" 0 2 3 15
 cp master.a file.a
 $EXEC scc ar -xv file.a
 
-cat <<EOF > $tmp1
+cat file1 file2 file3 > $tmp1
+diff -u $tmp1 - <<EOF
 This is the first file,
 and it should go in the
 first position in the archive.
@@ -25,12 +33,8 @@ that should go at the end of the file,
 thus it should go in the third position.
 EOF
 
-cat file1 file2 file3 > $tmp2
-
-cmp $tmp1 $tmp2
-
 if test `ls file? | wc -l` -ne 3
 then
 	echo some error extracting files
-	exit
+	exit 1
 fi

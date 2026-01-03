@@ -2,19 +2,22 @@
 
 cleanup()
 {
+	r=$?
 	rm -f test.txt
 	kill -KILL $pid 2>/dev/null
 	if test $1 -ne 0
 	then
 		kill -KILL $$
 	fi
+	trap - EXIT
+	exit $?
 }
 
 rm -f file.txt
 trap 'cleanup 0' EXIT
 trap 'cleanup 1' INT TERM HUP
 
-scc make -f - <<'EOF' &
+$EXEC scc make -f - <<'EOF' &
 file.txt:
 	@touch $@
 	@while : ; do sleep 1 ; done

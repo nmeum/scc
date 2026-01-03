@@ -26,13 +26,13 @@ tests:
 	printf '\tld/execute\n'
 
 a.out: $(OBJS) f.a
-	scc ld $(OBJS) f.a >/dev/null 2>&1 || true
+	$(EXEC) scc ld $(OBJS) f.a >/dev/null 2>&1 || true
 
 f.a: $(OBJLIB)
-	scc ar -rv $@ $? >/dev/null 2>&1
+	$(EXEC) scc ar -rv $@ $? >/dev/null 2>&1
 
 size:
-	scc size *.o *.a
+	$(EXEC) scc size *.o *.a
 
 clean:
 	rm -f *.o *.a a.out core* *.dat

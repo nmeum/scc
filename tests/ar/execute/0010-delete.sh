@@ -1,9 +1,9 @@
 #!/bin/sh
 
-
 set -e
 
-trap "rm -f file.a" 0 2 3 15
+trap 'rm -f file.a' EXIT
+trap 'exit 1' HUP INT TERM
 
 ############################################################################
 #remove all the members

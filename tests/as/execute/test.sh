@@ -11,7 +11,7 @@ file=$cpu.s
 
 trap "rm -f a.out $tmp1 $tmp2" 0 2 3
 
-scc as -m $cpu $file
+$EXEC scc as -m $cpu $file
 
 sed -n '/^\#/ ! {
 	/\#/ ! d
@@ -26,7 +26,7 @@ sed -n '/^\#/ ! {
 nl -b a > $tmp1
 
 
-scc dump |
+$EXEC scc dump |
 sed -n '/^data:/,$ {
 	/^data:/ ! {
 		s%.*:%%
@@ -40,5 +40,4 @@ sed -n '/^data:/,$ {
 }' |
 nl -b a > $tmp2
 
-echo diff
 diff -u $tmp1 $tmp2

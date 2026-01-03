@@ -2,10 +2,10 @@
 
 ROOT=../../..
 SCCPREFIX=$(ROOT)
-CC=$(ROOT)/bin/scc
+CC=$(EXEC) $(ROOT)/bin/scc cc
 
 all:
-	@CC=$(CC) ./chktest.sh scc-tests.lst
+	@CC='$(CC)' ./chktest.sh scc-tests.lst
 
 tests:
 	@$(MAKE) |\

@@ -1,15 +1,11 @@
 #!/bin/sh
 
-trap 'rm -f $tmp1 $tmp2' EXIT INT TERM HUP
+trap 'rm -f $tmp1' EXIT
+trap 'exit 1' INT TERM HUP
 
 tmp1=tmp1.$$
-tmp2=tmp2.$$
 
-cat > $tmp1 <<EOF
-make: error: <stdin>:5: missing target
-EOF
-
-scc make -f - <<'EOF' > $tmp2 2>&1
+$EXEC scc make -f - <<'EOF' > $tmp1 2>&1
 FLAGS=Hello $(EFLAGS)
 all: $(DIRS)
 	@echo Hello World
@@ -20,4 +16,6 @@ $(DIRS): FORCE
 FORCE:
 EOF
 
-diff $tmp1 $tmp2
+diff $tmp1  - <<EOF
+make: error: <stdin>:5: missing target
+EOF

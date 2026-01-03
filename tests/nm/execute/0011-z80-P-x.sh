@@ -2,13 +2,14 @@
 
 set -e
 
-tmp1=`mktemp`
-tmp2=`mktemp`
-trap "rm -f $tmp1 $tmp2; exit" 0 2 3
+trap 'rm -f $tmp1' EXIT
+trap 'exit 1' HUP INT TERM
 
-scc nm -P -t x z80.out > $tmp1
+tmp1=tmp1.$$
 
-cat <<! > $tmp2
+$EXEC scc nm -P -t x z80.out > $tmp1
+
+diff $tmp1 - <<!
 .bss b 0000000000000000 0
 .data d 0000000000000000 0
 .text t 0000000000000000 0
@@ -29,5 +30,3 @@ text4 C 000000000000000a a
 text5 C 0000000000000012 12
 text6 U
 !
-
-diff $tmp1 $tmp2

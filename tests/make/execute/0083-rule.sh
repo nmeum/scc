@@ -1,14 +1,13 @@
 #!/bin/sh
 
-trap 'rm -f $tmp1 $tmp2 f.c f.o' EXIT INT TERM QUIT HUP
+trap 'rm -f $tmp1 f.c f.o' EXIT
+trap 'exit 1' HUP INT TERM
 
 tmp1=tmp1.$$
-tmp2=tmp2.$$
 
 echo dude > f.c
-echo hello > $tmp2
 
-(scc make -f- <<'EOF'
+($EXEC scc make -f- <<'EOF'
 f.o:
 	@echo hello > $@
 
@@ -16,4 +15,6 @@ all: f.o
 EOF
 cat f.o) > $tmp1 2>&1
 
-diff $tmp1 $tmp2
+diff $tmp1 - <<EOF
+hello
+EOF

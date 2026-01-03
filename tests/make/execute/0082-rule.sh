@@ -1,17 +1,13 @@
 #!/bin/sh
 
-trap 'rm -f $tmp1 $tmp2 f.c f.o f' EXIT INT QUIT TERM HUP
+trap 'rm -f $tmp1 f.c f.o f' EXIT
+trap 'exit 1' HUP INT TERM
 
 tmp1=tmp1.$$
-tmp2=tmp2.$$
 
 echo hello > f.c
 
-cat > $tmp2 <<EOF
-make: error: don't know how to make f
-EOF
-
-scc make -sf- <<'EOF' > $tmp1 2>&1
+$EXEC scc make -sf- <<'EOF' > $tmp1 2>&1
 
 .SUFFIXES:
 
@@ -21,4 +17,6 @@ scc make -sf- <<'EOF' > $tmp1 2>&1
 all: f
 EOF
 
-diff $tmp1 $tmp2
+diff $tmp1 - <<EOF
+make: error: don't know how to make f
+EOF

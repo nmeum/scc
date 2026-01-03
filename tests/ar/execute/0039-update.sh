@@ -2,10 +2,10 @@
 
 set -e
 
-tmp1=`mktemp`
-tmp2=`mktemp`
+trap 'rm -f file* $tmp1' EXIT
+trap 'exit 1' HUP INT TERM
 
-trap "rm -f file* $tmp1 $tmp2" 0 2 3 15
+tmp1=tmp1.$$
 
 ############################################################################
 #Update one member that already exist
@@ -18,21 +18,15 @@ touch file1
 $EXEC scc ar -ruv file.a file1
 
 $EXEC scc ar -p file.a file1 > $tmp1
-
-cat <<EOF > $tmp2
+diff -u $tmp1 - <<EOF
 First
 EOF
-
-cmp $tmp1 $tmp2
 
 echo Second > file1
 touch -t 197001010000 file1
 $EXEC scc ar -ruv file.a file1
 
 $EXEC scc ar -p file.a file1 > $tmp1
-
-cat <<EOF > $tmp2
+diff -u $tmp1 - <<EOF
 First
 EOF
-
-cmp $tmp1 $tmp2

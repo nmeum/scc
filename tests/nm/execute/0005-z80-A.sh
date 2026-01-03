@@ -2,17 +2,18 @@
 
 set -e
 
-tmp1=`mktemp`
-tmp2=`mktemp`
-trap "rm -f f.out f.a $tmp1 $tmp2; exit" 0 2 3
+trap 'rm -f f.out f.a $tmp1' EXIT
+trap 'exit 1' HUP INT TERM
+
+tmp1=tmp1.$$
 
 rm -f f.a
-scc-ar -qv f.a z80.out
+$EXEC scc-ar -qv f.a z80.out
 cp z80.out f.out
-scc-ar -qv f.a f.out
-scc nm -A f.a z80.out > $tmp1
+$EXEC scc-ar -qv f.a f.out
+$EXEC scc nm -A f.a z80.out > $tmp1
 
-cat <<! > $tmp2
+diff $tmp1 - <<!
 f.a[z80.out]: 0000000000000000 b .bss
 f.a[z80.out]: 0000000000000000 d .data
 f.a[z80.out]: 0000000000000000 t .text
@@ -71,5 +72,3 @@ z80.out: 000000000000000a C text4
 z80.out: 0000000000000012 C text5
 z80.out:                  U text6
 !
-
-diff $tmp1 $tmp2
