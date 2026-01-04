@@ -15,9 +15,7 @@ realloc(void *ptr, size_t nbytes)
 	if (nbytes == 0) {
 		free(ptr);
 		ptr = NULL;
-	}
-
-	if (nbytes > SIZE_MAX - sizeof(Header)-1) {
+	} else if (nbytes > SIZE_MAX - sizeof(Header)-1) {
 		errno = ENOMEM;
 		return NULL;
 	}
