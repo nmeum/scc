@@ -5,10 +5,10 @@
 char *
 strrchr(const char *s, int c)
 {
-	const char *t = s;
+	const char *t;
 
-	while (*t)
-		++t;
+	for (t = s; *t; ++t)
+		;
 	while (t > s && *t != c)
 		--t;
 

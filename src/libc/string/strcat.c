@@ -5,11 +5,10 @@
 char *
 strcat(char *restrict s1, const char *restrict s2)
 {
-	char *ret = s1;
+	char *ret;
 
-	while (*s1)
-		++s1;
-
+	for (ret = s1; *s1; ++s1)
+		;
 	while ((*s1++ = *s2++) != 0)
 		;
 
