@@ -11,7 +11,6 @@ struct range {
 int
 _validutf8(wchar_t wc, int *nbytes)
 {
-
 	static struct range ranges[] = {
 		{0,         0x80,       1, 1},
 		{0x80,      0x800,      1, 2},
