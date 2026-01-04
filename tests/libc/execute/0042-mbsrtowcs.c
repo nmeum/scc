@@ -60,8 +60,7 @@ tests_mbsrtowcs(void)
 	puts("testing mbsrtowcs1");
 	for (tp = tests; tp < &tests[NELEM(tests)]; ++tp) {
 		errno = 0;
-		if (tp->s != NULL)
-			s = strcpy(str, tp->s);			
+		s = strcpy(str, tp->s);			
 		memset(wcs, -1, sizeof(wcs));
 
 		r = mbsrtowcs(tp->wcs, &s, tp->n, NULL);
@@ -77,8 +76,7 @@ tests_mbsrtowcs(void)
 	puts("testing mbsrtowcs2");
 	for (tp = tests; tp < &tests[NELEM(tests)]; ++tp) {
 		errno = 0;
-		if (tp->s != NULL)
-			s = strcpy(str, tp->s);			
+		s = strcpy(str, tp->s);			
 		memset(wcs, -1, sizeof(wcs));
 		memset(&st, 0, sizeof(st));
 
@@ -107,10 +105,8 @@ tests_mbstowcs(void)
 
 		r = mbstowcs(tp->wcs, tp->s, tp->n);
 		assert(tp->r == r);
-		if (tp->r >= 0) {
-			if (tp->wcs)
-				assert(!wcsncmp(tp->wcsexp, tp->wcs, tp->r));
-		}
+		if (tp->r >= 0 && tp->wcs)
+			assert(!wcsncmp(tp->wcsexp, tp->wcs, tp->r));
 	}
 }
 
