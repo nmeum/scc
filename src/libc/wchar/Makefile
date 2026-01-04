@@ -13,6 +13,7 @@ OBJS =\
 	wcrtomb.$O\
 	wcslen.$O\
 	wcsrtombs.$O\
+	wctob.$O\
 	wcwidth.$O\
 	putwc.$O\
 	_validutf8.$O\
