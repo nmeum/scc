@@ -1,9 +1,6 @@
-#ifdef _NEED_VA_LIST
-#ifndef _VA_LIST
+#ifndef _CDEF_H
 typedef __builtin_va_list __va_list;
-#define _VA_LIST
-#endif
-#undef _NEED_VA_LIST
+typedef int __wchar_t;
 #endif
 
 #ifdef _NEED_SIZET
@@ -31,7 +28,7 @@ typedef short ptrdiff_t;
 
 #ifdef _NEED_WCHART
 #ifndef _WCHART
-typedef int wchar_t;
+typedef __wchar_t wchar_t;
 #define _WCHART
 #endif
 #undef _NEED_WCHART

@@ -1,6 +1,8 @@
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <wchar.h>
 
 #include <sys.h>
 
@@ -62,6 +64,7 @@ _fpopen(const char *restrict fname,
 	if ((fd = _open(fname, flags, rights)) < 0)
 		return NULL;
 
+	memset(&fp->mbs, 0, sizeof(mbstate_t));
 	fp->buf = NULL;
 	fp->fd = fd;
 

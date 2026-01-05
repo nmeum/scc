@@ -3,9 +3,9 @@
 
 #define _NEED_NULL
 #define _NEED_SIZET
-#define _NEED_VA_LIST
 #include <sys/stdio.h>
 #include <arch/cdefs.h>
+#include <bits/wchar.h>
 
 #ifndef FOPEN_MAX
 #define FOPEN_MAX 12
@@ -64,6 +64,7 @@ typedef struct _FILE {
 	size_t len;
 	unsigned short flags;
 	unsigned char unbuf[1];
+	__mbstate_t mbs;
 } FILE;
 
 extern FILE __iob[FOPEN_MAX];

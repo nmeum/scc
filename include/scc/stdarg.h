@@ -1,7 +1,6 @@
 #ifndef _STDARG_H
 #define _STDARG_H
 
-#define _NEED_VA_LIST
 #include <arch/cdefs.h>
 
 typedef __va_list va_list;

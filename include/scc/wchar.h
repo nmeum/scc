@@ -7,15 +7,11 @@
 #define _NEED_WEOF
 #define _NEED_WCHARLIM
 #define _NEED_WINT
-#define _NEED_VA_LIST
 #include <arch/cdefs.h>
 #include <sys/cdefs.h>
+#include <bits/wchar.h>
 
-typedef struct {
-	unsigned char oc;
-	unsigned char sh;
-	wchar_t wc;
-} mbstate_t;
+typedef __mbstate_t mbstate_t;
 
 struct tm;
 struct _FILE;

@@ -11,7 +11,7 @@ _fputwc(wchar_t wc, FILE *fp, int *np)
 	int n;
 	char buf[MB_LEN_MAX];
 
-	if ((n = wcrtomb(buf, wc, NULL)) == -1)
+	if ((n = wcrtomb(buf, wc, &fp->mbs)) == -1)
 		goto err;
 	if (fwrite(buf, 1, n, fp) < n)
 		goto err;
