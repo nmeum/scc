@@ -168,7 +168,7 @@ dumpscns(Obj *obj)
 		if (!selected(sec.name))
 			continue;
 
-		printf("%3d %-13s %08llx  %08llx  %08llx  %08llx  2**%d\n",
+		printf("%3d %-13s %08llx  %08llx  %08llx  %08lx  2**%d\n",
 		       sec.index,
 		       sec.name,
 		       sec.size,
