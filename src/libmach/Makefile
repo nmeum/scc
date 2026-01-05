@@ -16,6 +16,7 @@ OBJS =\
 	delmap.o\
 	delobj.o\
 	findsec.o\
+	findseg.o\
 	getindex.o\
 	getsec.o\
 	getsym.o\

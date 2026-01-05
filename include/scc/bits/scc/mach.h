@@ -162,6 +162,7 @@ int pc2line(Obj *, unsigned long long, char *, int *);
 int rebase(Obj *, int, unsigned long long);
 
 int findsec(Map *, char *);
+int findseg(Map *, unsigned long long);
 
 Symbol *getsym(Obj *, int *, Symbol *);
 Symbol *setsym(Obj *, int *, Symbol *);
