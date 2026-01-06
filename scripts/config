@@ -1,7 +1,8 @@
 #!/bin/sh
 
 exec > $$.tmp
-trap "rm -f $$.tmp" EXIT INT TERM
+trap "rm -f $$.tmp" EXIT
+trap "exit $?" HUP INT TERM
 
 arch=`uname -m`
 sys=`uname -s | tr 'A-Z' 'a-z'`
