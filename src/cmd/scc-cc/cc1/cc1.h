@@ -325,7 +325,7 @@ struct type {
 		Symbol **fields;        /* fields of aggregate type */
 	} p;
 	union {
-		unsigned char rank;     /* convertion rank */
+		unsigned char rank;     /* conversion rank */
 		long long elem;         /* number of type parameters */
 	} n;
 	Type *next;                 /* local list pointer */
