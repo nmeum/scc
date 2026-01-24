@@ -5,8 +5,8 @@ set -e
 trap 'rm -f file* $tmp1' EXIT
 trap 'exit $?' HUP INT TERM
 
-tmp1=`mktemp`
-tmp2=`mktemp`
+tmp1=tmp1.$$
+tmp2=tmp2.$$
 
 ############################################################################
 #Update without parameters

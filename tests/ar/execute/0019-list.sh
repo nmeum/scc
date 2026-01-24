@@ -5,7 +5,7 @@ set -e
 trap 'rm -f file.a $tmp1' EXIT
 trap 'exit $?' HUP INT TERM
 
-tmp1=`mktemp`
+tmp1=tmp1.$$
 
 ############################################################################
 #print 3rd member
