@@ -314,7 +314,7 @@ f(int g())
 	return g();
 }
 
-Function type names seem unnecesary , because they are used as
+Function type names seem unnecessary, because they are used as
 an alias of the function pointer types, but it is weird that something
 like sizeof(int (int)) is not allowed (because here it should be
 understood as the size of a function), but f(int (int)) is allowed

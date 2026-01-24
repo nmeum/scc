@@ -199,7 +199,7 @@ typesize(Type *tp)
 		/* FIXME: Control overflow */
 		/*
 		 * The alignment of the struct/union is
-		 * he alignment of the largest included type.
+		 * the alignment of the largest included type.
 		 * The size of an union is the size of the largest
 		 * field, and the size of a struct is the sum
 		 * of the size of every field plus padding bits.
