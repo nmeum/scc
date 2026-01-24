@@ -1,7 +1,7 @@
 #!/bin/sh
 
 trap 'rm -f f.c f.o f' EXIT
-trap 'exit 1' HUP INT TERM
+trap 'exit $?' HUP INT TERM
 
 echo hello > f.c
 

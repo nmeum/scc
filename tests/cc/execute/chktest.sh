@@ -1,7 +1,7 @@
 #!/bin/sh
 
 file=${1?' empty input file'}
-trap "rm -f a.out; exit" 0 1 2 3 15
+trap 'rm -f a.out; exit' EXIT HUP INT TERM
 ulimit -c 0
 rm -f test.log
 

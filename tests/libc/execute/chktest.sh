@@ -3,7 +3,7 @@
 file=${1?' empty input file'}
 
 trap 'rm -f *.o  $tmp1 $tmp2' EXIT
-trap 'exit 1' INT QUIT TERM
+trap 'exit $?' INT QUIT TERM
 
 rm -f test.log
 

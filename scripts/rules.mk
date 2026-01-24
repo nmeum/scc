@@ -133,28 +133,28 @@ $(DIRS) DUMMY : FORCE
 	$(OC) -O binary $< $@
 
 .o.dump:
-	trap "rm -f $$$$.dump" EXIT;\
-	trap "exit 1" HUP INT TERM;\
+	trap 'rm -f $$$$.dump' EXIT;\
+	trap 'exit $?' HUP INT TERM;\
 	$(OD) -D $< > $$$$.dump && mv $$$$.dump $@
 
 .elf.map:
 	$(LD) -Map=$@ $< -o /dev/null
 
 .puml.eps:
-	trap "rm -f $$$$.eps" EXIT;\
-	trap "exit 1" HUP INT TERM;\
+	trap 'rm -f $$$$.eps' EXIT;\
+	trap 'exit $?' HUP INT TERM;\
 	plantuml -p -teps < $< > $$$$.eps && mv $$$$.eps $@
 
 .ms.ps:
-	trap "rm -f $$$$.ps" EXIT;\
-	trap "exit 1" HUP INT TERM;\
+	trap 'rm -f $$$$.ps' EXIT;\
+	trap 'exit $?' HUP INT TERM;\
 	$(SOELIM) $< | $(GRAP) | $(PIC) | $(EQN) | $(TBL) |\
 	$(TROFF) -ms | $(DPOST) > $$$$.ps &&\
 	mv $$$$.ps $@
 
 .1.ps .2.ps .3.ps .4.ps .5.ps .6.ps .7.ps:
-	trap "rm -f $$$$.ps" EXIT;\
-	trap "exit 1" HUP INT TERM;\
+	trap 'rm -f $$$$.ps' EXIT;\
+	trap 'exit $?' HUP INT TERM;\
 	$(TBL) $< | $(TROFF) -man | $(DPOST) > $$$$.ps && mv $$$$.ps $@
 
 .ps.pdf:

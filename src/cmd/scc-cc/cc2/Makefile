@@ -62,7 +62,7 @@ qbe_arm64-sysv: arm64-sysv
 
 error.h: cc2.h
 	trap 'rm -f $$$$.h' EXIT;\
-	trap 'exit 1' HUP INT TERM;\
+	trap 'exit $?' HUP INT TERM;\
 	awk -f generror.awk cc2.h > $$$$.h && mv $$$$.h $@
 
 cc2-qbe_amd64-sysv: $(LIBSCC) $(QBE_AMD64_SYSV_OBJS)

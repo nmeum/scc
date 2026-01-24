@@ -12,7 +12,8 @@ cstd.h: FORCE
 
 config.h: FORCE
 	rm -f $@;\
-	trap "rm -f $$$$.h" EXIT INT QUIT HUP TERM;\
+	trap 'rm -f $$$$.h' EXIT ;\
+	trap 'exit $?' INT HUP TERM;\
 	(echo '#define PREFIX "$(PREFIX)"';\
 	 echo '#define ARCH "$(ARCH)"';\
 	 echo '#define SYS  "$(SYS)"';\
@@ -22,7 +23,8 @@ config.h: FORCE
 
 sys.h: FORCE
 	rm -f $@;\
-	trap "rm -f $$$$.tmp" INT QUIT TERM HUP;\
+	trap 'rm -f $$$$.tmp' EXIT;\
+	trap 'exit $?' HUP INT TERM;\
 	sed -e 's/%NOPIE%/"$(NOPIE_LDFLAGS)",/' \
 	    -e 's/"",//' sys-$(LIBPROFILE).h > $$$$.tmp && \
 	mv $$$$.tmp $@

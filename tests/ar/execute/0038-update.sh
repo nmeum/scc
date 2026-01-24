@@ -3,7 +3,7 @@
 set -e
 
 trap 'rm -f file* $tmp1' EXIT
-trap 'exit 1' HUP INT TERM
+trap 'exit $?' HUP INT TERM
 
 tmp1=`mktemp`
 tmp2=`mktemp`

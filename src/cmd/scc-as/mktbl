@@ -20,8 +20,8 @@ do
 done
 
 rm -f  $$.c $family/${cpu}tbl.c
-trap "rm -f $$.c" EXIT
-trap "exit 1" HUP INT TERM
+trap 'rm -f $$.c' EXIT
+trap 'exit $?' HUP INT TERM
 
 awk '!/^$/ {print $1,NR,$2,$3,$4,$5,$6}' ops.dat |
 sort -k1 -k2n |

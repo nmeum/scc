@@ -2,15 +2,8 @@
 
 set -e
 
-cleanup()
-{
-	st=$?
-	rm -f file.a $tmp1 $tmp2
-	exit $st
-}
-
 trap 'rm -f file.a $tmp1' EXIT
-trap 'exit 1' HUP INT TERM
+trap 'exit $?' HUP INT TERM
 
 tmp1=tmp1.$$
 

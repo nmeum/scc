@@ -1,7 +1,7 @@
 #!/bin/sh
 
 trap 'rm -f $tmp1' EXIT
-trap 'exit 1' INT TERM HUP
+trap 'exit $?' INT TERM HUP
 
 tmp1=tmp1.$$
 

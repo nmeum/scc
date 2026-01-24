@@ -3,7 +3,7 @@
 set -e
 
 trap 'rm -f $tmp1 $tmp2' EXIT
-trap 'exit 1' HUP INT TERM
+trap 'exit $?' HUP INT TERM
 
 tmp1=tmp1.$$
 tmp2=tmp2.$$

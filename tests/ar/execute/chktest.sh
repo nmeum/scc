@@ -1,7 +1,7 @@
 #!/bin/sh
 
-trap "rm -rf file*" EXIT
-trap "exit 1" HUP INT TERM
+trap 'rm -rf file*' EXIT
+trap 'exit $?' HUP INT TERM
 
 rm -f test.log
 

@@ -15,7 +15,8 @@ PROJECTDIR = ..
 include $(PROJECTDIR)/scripts/rules.mk
 
 all:
-	@trap 'rm -f $$$$.tmp' EXIT INT HUP TERM;\
+	@trap 'rm -f $$$$.tmp' EXIT ;\
+	trap 'exit $?' INT HUP TERM;\
 	for i in $(DIRS);\
 	do \
 		cd $$i;\

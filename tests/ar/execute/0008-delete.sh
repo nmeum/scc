@@ -3,7 +3,7 @@
 set -e
 
 trap 'rm -f file.a' EXIT
-trap 'exit 1' HUP INT TERM
+trap 'exit $?' HUP INT TERM
 
 ############################################################################
 #delete two members, 1st and 2nd

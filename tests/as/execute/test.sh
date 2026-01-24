@@ -9,7 +9,8 @@ tmp1=tmp1.$$
 tmp2=tmp2.$$
 file=$cpu.s
 
-trap "rm -f a.out $tmp1 $tmp2" 0 2 3
+trap 'rm -f a.out $tmp1 $tmp2' EXIT
+trap 'exit $?' HUP INT TERM
 
 $EXEC scc as -m $cpu $file
 

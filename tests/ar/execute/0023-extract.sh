@@ -3,7 +3,7 @@
 set -e
 
 trap 'rm -f file*' EXIT
-trap 'exit 1' HUP INT TERM
+trap 'exit $?' HUP INT TERM
 
 ############################################################################
 #extract 1st member
