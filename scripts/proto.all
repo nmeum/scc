@@ -163,6 +163,7 @@ f 644 include/scc/bits/ppc/arch/limits.h
 f 644 include/scc/bits/ppc/arch/setjmp.h
 f 644 include/scc/bits/ppc/arch/stdlib.h
 f 644 include/scc/bits/ppc/arch/string.h
+f 644 include/scc/bits/wchar.h
 d 755 include/scc/bits/z80
 d 755 include/scc/bits/z80/arch
 f 644 include/scc/bits/z80/arch/cdefs.h
