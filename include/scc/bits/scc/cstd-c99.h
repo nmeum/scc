@@ -105,7 +105,3 @@
  * struct-declaration-list
  */
 #define NR_STRUCT_LEVEL 63
-/*
- * number of defined structs/unions in one translation unit
- */
-#define NR_MAXSTRUCTS   127

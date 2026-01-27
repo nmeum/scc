@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <limits.h>
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
@@ -772,7 +773,7 @@ newtag(void)
 	if (!sym->type) {
 		Type *tp;
 
-		if (tpns == NS_STRUCTS + NR_MAXSTRUCTS)
+		if (tpns == INT_MAX)
 			error("too many tags declared");
 		tp = mktype(NULL, tag, 0, NULL);
 		tp->ns = tpns++;
