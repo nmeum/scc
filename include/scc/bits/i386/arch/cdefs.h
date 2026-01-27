@@ -1,4 +1,5 @@
 #ifndef _CDEF_H
+#define _CDEF_H
 typedef __builtin_va_list __va_list;
 typedef int __wchar_t;
 #endif
