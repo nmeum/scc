@@ -835,9 +835,6 @@ operator(void)
 	case '!':
 		t = follow('=', NE, '!');
 		break;
-	case '#':
-		t = follow('#', CONCAT, STRINGIZE);
-		break;
 	case '-':
 		t = minus();
 		break;
