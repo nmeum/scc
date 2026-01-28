@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <ctype.h>
 #include <limits.h>
 #include <stdio.h>
@@ -485,14 +486,13 @@ getpars(Symbol *args[NR_MACROARG])
 	int n, c;
 	Symbol *sym;
 
-	c = *input->p;
-	next();
-	if (c != '(')
+	if (*input->p != '(')
 		return -1;
 
 	/* skip the '(' */
 	next();
-	if (accept(')'))
+	next();
+	if (yytoken == ')')
 		return 0;
 
 	n = 0;
@@ -517,65 +517,111 @@ getpars(Symbol *args[NR_MACROARG])
 		}
 		next();
 	} while (accept(','));
-	expect(')');
+
+	if (yytoken != ')') {
+		cpperror("expected ')' at the end of macro argument list");
+		return NR_MACROARG;
+	}
 
 	return n;
 }
 
 static int
-getdefs(Symbol *args[NR_MACROARG], int nargs, char *bp, size_t bufsiz)
+getdefs(Symbol *args[NR_MACROARG], int nargs, char *buffer, size_t bufsiz)
 {
-	Symbol **argp;
-	int siz;
 	size_t len;
-	int prevc = 0, ispar;
+	Symbol **argp, *sym;
+	int c, id, token, prevc, ispar;
+	char *bp, *p, iden[INTIDENTSIZ + 1];
 
-	if (yytoken == CONCAT)
-		goto wrong_concat;
+	while (isspace(*input->p))
+		++input->p;
 
-	for (;;) {
+	bp = buffer;
+	for (prevc = 0; (c = *input->p) != '\n' && c != '\0'; ++input->p) {
+		len = 1;
 		ispar = 0;
-		if (yytoken == IDEN && nargs >= 0) {
+		token = c;
+		sym = NULL;
+
+		if (c == '#') {
+			if (input->p[1] == '#') {
+				token = CONCAT;
+				++input->p;
+			} else {
+				token = STRINGIZE;
+			}
+		} else if (c == '_' || isalpha(c)) {
+			token = IDEN;
+			for (p = input->p; isalpha(*p) || *p == '_'; ++p)
+				;
+			len = p - input->p;
+			if (len >  INTIDENTSIZ) {
+				cpperror("identifier too long in macro definition");
+				return 0;
+			}
+			memcpy(iden, input->p, len);
+			iden[len] = '\0';
+			input->p = p - 1;
+			sym = lookup(NS_IDEN, iden, NOALLOC);
+		} else if (c == '"') {
+			next();
+			assert(yytoken == STRING);
+			token = STRING;
+			len = yylen;
+		}
+
+		if (sym && nargs > 0) {
 			for (argp = args; argp < &args[nargs]; ++argp) {
-				if (*argp == yylval.sym)
+				if (*argp == sym)
 					break;
 			}
 			if (argp != &args[nargs]) {
-				siz = argp - args;
-				sprintf(yytext,
-				        "%c%02d%c", MACROPAR, siz, MACROPAR);
+				id = argp - args;
+				sprintf(iden,
+					"%c%02d%c", MACROPAR, id, MACROPAR);
 				ispar = 1;
+				len = 4;
 			}
 		}
+
+		if (prevc == 0 && token == CONCAT)
+			goto wrong_concat;
+
 		if (prevc == STRINGIZE && !ispar) {
 			cpperror("'#' is not followed by a macro parameter");
 			return 0;
 		}
-		if (yytoken == '\n')
-			break;
 
-		if ((len = strlen(yytext)) >= bufsiz) {
+		if (len >= bufsiz) {
 			cpperror("macro too long");
 			return 0;
 		}
-		if (yytoken == CONCAT || yytoken == STRINGIZE) {
-			*bp++ = yytoken;
-			 --bufsiz;
-		} else {
-			memcpy(bp, yytext, len);
-			bp += len;
-			bufsiz -= len;
+
+		switch (token) {
+		case IDEN:
+			memcpy(bp, iden, len);
+			break;
+		case STRING:
+			memcpy(bp, yytext, yylen);
+			break;
+		default:
+			*bp = token;
+			break;
 		}
-		if ((prevc = yytoken) != STRINGIZE) {
-			*bp++ = ' ';
-			--bufsiz;
-		}
-		next();
+
+		bp += len;
+		bufsiz -= len;
+		prevc = token;
 	}
 
+end_loop:
+	if ((yytoken = c) == '\0')
+		yytoken = EOFTOK;
 	if (prevc == CONCAT)
 		goto wrong_concat;
-
+	for ( ; bp > buffer && isspace(bp[-1]); --bp);
+		;
 	*bp = '\0';
 	return 1;
 
