@@ -751,7 +751,7 @@ newtag(void)
 {
 	Symbol *sym;
 	int ns, op, tag = yylval.token;
-	static unsigned tpns = NS_STRUCTS;
+	static int tpns = NS_STRUCTS;
 
 	ns = namespace;
 	namespace = NS_TAG;

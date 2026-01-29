@@ -312,7 +312,7 @@ struct builtin {
 
 struct type {
 	unsigned char op;           /* type builder operator */
-	unsigned char ns;           /* namespace for struct members */
+	int ns;                     /* namespace for struct members */
 	short id;                   /* type id, used in dcls */
 	char letter;                /* letter of the type */
 	unsigned char prop;         /* type properties */
@@ -335,7 +335,7 @@ struct type {
 struct symbol {
 	unsigned char ctx;
 	unsigned char hide;
-	char ns;
+	int ns;
 	unsigned short id;
 	unsigned short flags;
 	char *name;
