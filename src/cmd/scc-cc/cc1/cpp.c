@@ -11,6 +11,7 @@
 #include "cc1.h"
 
 struct ifstate {
+	unsigned char done;
 	unsigned char enabled;
 	unsigned char iselse;
 };
@@ -867,15 +868,16 @@ ifclause(int negate, int isifdef)
 {
 	Symbol *sym;
 	unsigned n;
-	int status;
+	int enabled, done;
 	Node *expr;
 
 	if (cppctx == NR_COND-1)
 		error("too many nesting levels of conditional inclusion");
 	n = cppctx++;
 
-	if (cppoff) {
-		status = 0;
+	if (n > 0 && !ifstate[n-1].enabled) {
+		done = 1;
+		enabled = 0;
 		goto disabled;
 	}
 
@@ -890,8 +892,8 @@ ifclause(int negate, int isifdef)
 		}
 		sym = yylval.sym;
 		next();
-		status = (sym->flags & SDECLARED) != 0;
-		if (!status)
+		enabled = (sym->flags & SDECLARED) != 0;
+		if (!enabled)
 			killsym(sym);
 	} else {
 		/* TODO: catch recovery here */
@@ -900,18 +902,19 @@ ifclause(int negate, int isifdef)
 			return;
 		}
 		DBG("CPP if expr=%d", expr->sym->u.i);
-		status = expr->sym->u.i != 0;
+		enabled = expr->sym->u.i != 0;
 		freetree(expr);
 	}
 
 	if (negate)
-		status = !status;
+		enabled = !enabled;
+	done = enabled;
 
 disabled:
-	if (status == 0)
-		++cppoff;
-	DBG("CPP if result=%d", status);
-	ifstate[n].enabled = status;
+	cppoff = !enabled;
+	DBG("CPP if result=%d", enabled);
+	ifstate[n].done = done;
+	ifstate[n].enabled = enabled;
 	ifstate[n].iselse = 0;
 }
 
@@ -935,16 +938,6 @@ ifndef(void)
 }
 
 static void
-elseclause(void)
-{
-	int status;
-
-	status = ifstate[cppctx-1].enabled;
-	ifstate[cppctx-1].enabled = !status;
-	cppoff += (status) ? 1 : -1;
-}
-
-static void
 cppelse(void)
 {
 	if (cppctx == 0 || ifstate[cppctx-1].iselse) {
@@ -952,8 +945,21 @@ cppelse(void)
 		return;
 	}
 
-	ifstate[cppctx-1].iselse = 1;
-	elseclause();
+	/*
+	 * If we are disabled by a upper ifdef then ifclause() already
+	 * marked us as disabled and done. So if we are done then we
+	 * disable cpp because or ifclause was true, or it was disabled
+	 * by the upper. If we are not done, then it is our turn.
+	 */
+	if (ifstate[cppctx-1].done) {
+		ifstate[cppctx-1].enabled = 0;
+		cppoff = 1;
+	} else {
+		ifstate[cppctx-1].done = 1;
+		ifstate[cppctx-1].enabled = 1;
+		cppoff = 0;
+	}
+
 	next();
 }
 
@@ -965,8 +971,17 @@ elif(void)
 		return;
 	}
 
-	elseclause();
-	if (ifstate[cppctx-1].enabled) {
+	/*
+	 * If we are disabled by a upper ifdef then ifclause() already
+	 * marked us as disabled and done. So if we are done then we
+	 * disable cpp because or ifclause was true, or it was disabled
+	 * by the upper. If we are not done, then we have to evaluate
+	 * the if condition.
+	 */
+	if (ifstate[cppctx-1].done) {
+		ifstate[cppctx-1].enabled = 0;
+		cppoff = 1;
+	} else {
 		--cppctx;
 		cppif();
 	}
@@ -977,8 +992,13 @@ endif(void)
 {
 	if (cppctx == 0)
 		error("#endif without #if");
-	if (!ifstate[--cppctx].enabled)
-		--cppoff;
+
+	if (cppctx > 1)
+		cppoff = !ifstate[cppctx - 2].enabled;
+	else
+		cppoff = 0;
+
+	--cppctx;
 	next();
 }
 
