@@ -554,7 +554,7 @@ getdefs(Symbol *args[NR_MACROARG], int nargs, char *buffer, size_t bufsiz)
 			}
 		} else if (c == '_' || isalpha(c)) {
 			token = IDEN;
-			for (p = input->p; isalpha(*p) || *p == '_'; ++p)
+			for (p = input->p; isalnum(*p) || *p == '_'; ++p)
 				;
 			len = p - input->p;
 			if (len >  INTIDENTSIZ) {
