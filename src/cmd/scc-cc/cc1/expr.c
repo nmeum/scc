@@ -851,28 +851,6 @@ typeof(Node *np)
 
 static Node *unary(void);
 
-static Type *
-sizeexp(void)
-{
-	Type *tp;
-
-	if (!accept('('))
-		return typeof(unary());
-
-	switch (yytoken) {
-	case TYPE:
-	case TYPEIDEN:
-		tp = typename();
-		break;
-	default:
-		tp = typeof(expr());
-		break;
-	}
-	expect(')');
-
-	return tp;
-}
-
 static Node *
 postfix(Node *lp)
 {
@@ -907,6 +885,31 @@ postfix(Node *lp)
 			return lp;
 		}
 	}
+}
+
+static Type *
+sizeexp(void)
+{
+	Node *np;
+	Type *tp;
+
+	if (!accept('('))
+		return typeof(unary());
+
+	switch (yytoken) {
+	case TYPE:
+	case TYPEIDEN:
+		tp = typename();
+		expect(')');
+		break;
+	default:
+		np = expr();
+		expect(')');
+		tp = typeof(postfix(np));
+		break;
+	}
+
+	return tp;
 }
 
 static Node *cast(void);
