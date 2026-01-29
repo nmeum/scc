@@ -874,6 +874,7 @@ ifclause(int negate, int isifdef)
 	if (cppctx == NR_COND-1)
 		error("too many nesting levels of conditional inclusion");
 	n = cppctx++;
+	DBG("CPP ifclause updates cppctx=%d", cppctx);
 
 	if (n > 0 && !ifstate[n-1].enabled) {
 		done = 1;
@@ -921,6 +922,7 @@ disabled:
 static void
 cppif(void)
 {
+	DBG("CPP line=%u if cppctx=%d", lineno, cppctx);
 	disexpand = 0;
 	ifclause(0, 0);
 }
@@ -928,18 +930,22 @@ cppif(void)
 static void
 ifdef(void)
 {
+	DBG("CPP line=%u ifdef cppctx=%d", lineno, cppctx);
 	ifclause(0, 1);
 }
 
 static void
 ifndef(void)
 {
+	DBG("CPP line=%u ifndef cppctx=%d", lineno, cppctx);
 	ifclause(1, 1);
 }
 
 static void
 cppelse(void)
 {
+	DBG("CPP line=%u else cppctx=%d", lineno, cppctx);
+
 	if (cppctx == 0 || ifstate[cppctx-1].iselse) {
 		cpperror("#else without #ifdef/ifndef");
 		return;
@@ -966,6 +972,8 @@ cppelse(void)
 static void
 elif(void)
 {
+	DBG("CPP line=%u elif cppctx=%d", lineno, cppctx);
+
 	if (cppctx == 0 || ifstate[cppctx-1].iselse) {
 		cpperror("#elif without #ifdef/ifndef");
 		return;
@@ -983,6 +991,7 @@ elif(void)
 		cppoff = 1;
 	} else {
 		--cppctx;
+		DBG("elif updates cppctx=%d", cppctx);
 		cppif();
 	}
 }
@@ -990,6 +999,8 @@ elif(void)
 static void
 endif(void)
 {
+	DBG("CPP line=%u endif cppctx=%d", lineno, cppctx);
+
 	if (cppctx == 0)
 		error("#endif without #if");
 
@@ -999,6 +1010,7 @@ endif(void)
 		cppoff = 0;
 
 	--cppctx;
+	DBG("CPP endif updates cppctx=%d", cppctx);
 	next();
 }
 

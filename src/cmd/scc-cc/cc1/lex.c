@@ -211,8 +211,9 @@ comment(int type)
 {
 	int c;
 
+	c = readchar();
 repeat:
-	while ((c = readchar()) != EOF && c != type)
+	for ( ; c != EOF && c != type; c = readchar())
 		;
 
 	if (c == EOF) {
