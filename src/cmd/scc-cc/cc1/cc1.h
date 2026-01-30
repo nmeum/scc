@@ -344,7 +344,9 @@ struct symbol {
 	union {
 		long long i;
 		unsigned long long u;
-		double f;
+		float f;
+		double d;
+		long double ld;
 		char *s;
 		unsigned char token;
 		Node **init;

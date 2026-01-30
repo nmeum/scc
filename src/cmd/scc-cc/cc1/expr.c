@@ -52,8 +52,8 @@ cmpnode(Node *np, unsigned long long val)
 		mask = (val > 1) ? ones(np->type->size) : -1;
 		nodeval = (tp->prop & TSIGNED) ? sym->u.i : sym->u.u;
 		return (nodeval & mask) == (val & mask);
-	case FLOAT:
-		return sym->u.f == val;
+	default:
+		abort();
 	}
 	return 0;
 }
@@ -77,9 +77,7 @@ promote(Node *np)
 		tp = (lim->max.i <= ilim->max.i) ? inttype : uinttype;
 		break;
 	case FLOAT:
-		/* TODO: Add support for C99 float math */
-		tp = doubletype;
-		break;
+		return np;
 	default:
 		abort();
 	}

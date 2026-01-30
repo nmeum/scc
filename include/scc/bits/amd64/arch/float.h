@@ -1,3 +1,9 @@
+#ifdef __FLT_EVAL_METHOD__
+#define FLT_EVAL_METHOD __FLT_EVAL_METHOD__
+#else
+#define FLT_EVAL_METHOD 1
+#endif
+
 #define FLT_RADIX      2
 #define FLT_MANT_DIG   24
 #define FLT_DIG        6

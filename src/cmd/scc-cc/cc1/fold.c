@@ -236,7 +236,50 @@ sign:
 }
 
 static int
-foldfloat(int op, Symbol *res, double l, double r)
+foldldouble(int op, Symbol *res, long double l, long double r)
+{
+	long double f;
+	long long i;
+	int (*validate)(double, double, Type *tp);
+
+	switch (op) {
+	case OADD: validate = addf; break;
+	case OSUB: validate = subf; break;
+	case OMUL: validate = mulf; break;
+	case ODIV: validate = divf; break;
+	default:   validate = NULL; break;
+	}
+
+	if (validate && !(*validate)(l, r, res->type))
+		return 0;
+
+	switch (op) {
+	case OADD: f = l + r;  break;
+	case OSUB: f = l - r;  break;
+	case OMUL: f = l * r;  break;
+	case ODIV: f = l / r;  break;
+	case OLT:  i = l < r;  goto comparison;
+	case OGT:  i = l > r;  goto comparison;
+	case OGE:  i = l >= r; goto comparison;
+	case OLE:  i = l <= r; goto comparison;
+	case OEQ:  i = l == r; goto comparison;
+	case ONE:  i = l != r; goto comparison;
+	default:   return 0;
+	}
+	res->u.ld = f;
+
+	DBG("FOLD f l=%llf %d r=%llf = %llf", l, op, r, f);
+	return 1;
+
+comparison:
+	res->u.i = i;
+
+	DBG("FOLD if l=%lf %d r=%lf = %lld", l, op, r, i);
+	return 1;
+}
+
+static int
+folddouble(int op, Symbol *res, double l, double r)
 {
 	double f;
 	long long i;
@@ -266,7 +309,7 @@ foldfloat(int op, Symbol *res, double l, double r)
 	case ONE:  i = l != r; goto comparison;
 	default:   return 0;
 	}
-	res->u.f = f;
+	res->u.d = f;
 
 	DBG("FOLD f l=%lf %d r=%lf = %lf", l, op, r, f);
 	return 1;
@@ -278,13 +321,59 @@ comparison:
 	return 1;
 }
 
+static int
+foldfloat(int op, Symbol *res, float l, float r)
+{
+	float f;
+	long long i;
+	int (*validate)(double, double, Type *tp);
+
+	switch (op) {
+	case OADD: validate = addf; break;
+	case OSUB: validate = subf; break;
+	case OMUL: validate = mulf; break;
+	case ODIV: validate = divf; break;
+	default:   validate = NULL; break;
+	}
+
+	if (validate && !(*validate)(l, r, res->type))
+		return 0;
+
+	switch (op) {
+	case OADD: f = l + r;  break;
+	case OSUB: f = l - r;  break;
+	case OMUL: f = l * r;  break;
+	case ODIV: f = l / r;  break;
+	case OLT:  i = l < r;  goto comparison;
+	case OGT:  i = l > r;  goto comparison;
+	case OGE:  i = l >= r; goto comparison;
+	case OLE:  i = l <= r; goto comparison;
+	case OEQ:  i = l == r; goto comparison;
+	case ONE:  i = l != r; goto comparison;
+	default:   return 0;
+	}
+	res->u.f = f;
+
+	DBG("FOLD f l=%f %d r=%f = %f", l, op, r, f);
+	return 1;
+
+comparison:
+	res->u.i = i;
+
+	DBG("FOLD if l=%lf %d r=%lf = %lld", l, op, r, i);
+	return 1;
+}
+
+
 static Node *
 foldconst(int type, int op, Type *tp, Symbol *ls, Symbol *rs)
 {
 	Symbol *sym, aux;
 	long long i;
 	unsigned long long u;
-	double f;
+	float f;
+	double d;
+	long double ld;
 
 	aux.type = tp;
 	switch (type) {
@@ -300,9 +389,19 @@ foldconst(int type, int op, Type *tp, Symbol *ls, Symbol *rs)
 			return NULL;
 		break;
 	case FLOAT:
-		f = (rs) ? rs->u.f : 0.0;
-		if (!foldfloat(op, &aux, ls->u.f, f))
-			return NULL;
+		if (tp == floattype) {
+			f = (rs) ? rs->u.f : 0.0;
+			if (!foldfloat(op, &aux, ls->u.f, f))
+				return NULL;
+		} else if (tp == doubletype) {
+			d = (rs) ? rs->u.d : 0.0;
+			if (!folddouble(op, &aux, ls->u.d, d))
+				return NULL;
+		} else {
+			ld = (rs) ? rs->u.ld : 0.0;
+			if (!foldldouble(op, &aux, ls->u.ld, ld))
+				return NULL;
+		}
 		break;
 	default:
 		abort();

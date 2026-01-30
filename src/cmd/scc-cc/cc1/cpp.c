@@ -75,6 +75,7 @@ icpp(void)
 		{"__STDC_VERSION__", STDC_VERSION},
 		{"__LINE__", NULL},
 		{"__FILE__", NULL},
+		{"__FLT_EVAL_METHOD__", 0},
 		{NULL, NULL}
 	};
 
