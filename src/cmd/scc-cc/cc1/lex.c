@@ -348,8 +348,9 @@ tok2str(void)
 }
 
 static Symbol *
-readint(char *s, int base, int sign, Symbol *sym)
+readint(int base, int sign, Symbol *sym)
 {
+	char *s = yytext;
 	Type *tp = sym->type;
 	struct limits *lim;
 	unsigned long long u, val, max;
@@ -402,7 +403,7 @@ overflow:
 }
 
 static int
-integer(char *s, int base)
+integer(int base)
 {
 	Type *tp;
 	Symbol *sym;
@@ -433,11 +434,11 @@ convert:
 	sym = newsym(NS_IDEN, NULL);
 	sym->type = tp;
 	sym->flags |= SCONSTANT;
-	yylval.sym = readint(s, base, sign, sym);
+	yylval.sym = readint(base, sign, sym);
 	return CONSTANT;
 }
 
-static char *
+static void
 digits(int base)
 {
 	char *p;
@@ -461,13 +462,15 @@ digits(int base)
 	}
 end:
 	input->p = p;
-	return yytext;
 }
 
 static int
 number(void)
 {
-	int base;
+	Type *tp;
+	Symbol *sym;
+	int ch, base;
+	long double ld;
 
 	if (*input->p != '0') {
 		base = 10;
@@ -479,8 +482,36 @@ number(void)
 			base = 8;
 		}
 	}
+	digits(base);
 
-	return integer(digits(base), base);
+	if (*input->p != '.')
+		return integer(base);
+
+	sym = newsym(NS_IDEN, NULL);
+
+	ld = strtold(input->begin, &input->p);
+	switch (toupper(*input->p)) {
+	case 'F':
+		++input->p;
+		tp = floattype;
+		sym->u.f = ld;
+		break;
+	case 'L':
+		++input->p;
+		tp = ldoubletype;
+		sym->u.ld = ld;
+		break;
+	default:
+		tp = doubletype;
+		sym->u.d = ld;
+		break;
+	}
+
+	tok2str();
+	sym->type = tp;
+	sym->flags |= SCONSTANT;
+	yylval.sym = sym;
+	return CONSTANT;
 }
 
 static int
@@ -792,6 +823,8 @@ dot(void)
 {
 	int c;
 
+	if (isdigit(*input->p))
+		return number();
 	if ((c = *input->p) != '.')
 		return '.';
 	if ((c = *++input->p) != '.')

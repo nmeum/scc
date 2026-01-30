@@ -451,7 +451,8 @@ foldcast(Node *np, Node *l)
 		}
 		break;
 	case FLOAT:
-		/* FIXME: The cast can be from another float type */
+		if (oldtp->op == FLOAT)
+			return np;
 		aux.u.f = (oldtp->prop & TSIGNED) ? osym->u.i : osym->u.u;
 		break;
 	default:

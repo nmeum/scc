@@ -215,6 +215,8 @@ emitvar(Symbol *sym)
 static void
 emitconst(Node *np)
 {
+	int n;
+	unsigned char *fp, *p;
 	Symbol *sym = np->sym;
 	Type *tp = np->type;
 	unsigned long long u;
@@ -226,8 +228,22 @@ emitconst(Node *np)
 		u = (tp->prop & TSIGNED) ? sym->u.i : sym->u.u;
 		fprintf(outfp,
 		        "#%c%llX",
-		        np->type->letter,
+		        tp->letter,
 		        u & ones(tp->size));
+		break;
+	case FLOAT:
+		fp = (char *) &sym->u.f;
+
+		if (tp == floattype)
+			n = sizeof(sym->u.f);
+		else if (tp == doubletype)
+			n = sizeof(sym->u.d);
+		else
+			n = sizeof(sym->u.ld);
+
+		fprintf(outfp, "#%c", tp->letter);
+		for (p = fp; p < &fp[n]; ++p)
+			fprintf(outfp, "%02X", *p);
 		break;
 	default:
 		abort();
