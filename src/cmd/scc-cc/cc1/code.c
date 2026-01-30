@@ -232,7 +232,7 @@ emitconst(Node *np)
 		        u & ones(tp->size));
 		break;
 	case FLOAT:
-		fp = (char *) &sym->u.f;
+		fp = (unsigned char *) &sym->u.f;
 
 		if (tp == floattype)
 			n = sizeof(sym->u.f);
