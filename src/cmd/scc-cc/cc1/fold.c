@@ -719,6 +719,7 @@ static Node *
 xxsimplify(Node *np)
 {
 	int op;
+	int isfloat = np->type->op == FLOAT;
 
 	np->left = xsimplify(np->left);
 	np->right = xsimplify(np->right);
@@ -756,10 +757,13 @@ repeat:
 		np = fold(np);
 		break;
 	default:
-		commutative(np);
-		associative(np);
+		if (!isfloat) {
+			commutative(np);
+			associative(np);
+		}
 		np = fold(np);
-		np = identity(np);
+		if (!isfloat)
+			np = identity(np);
 		reduce(np);
 		break;
 	}
