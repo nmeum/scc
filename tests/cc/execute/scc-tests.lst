@@ -106,18 +106,18 @@
 0113-externredecl.c
 0114-shortassig.c
 0115-null_comparision.c
-0116-floatcmp.c [TODO]
+0116-floatcmp.c
 0117-pointarith.c
 0118-voidmain.c
 0119-macrostr.c
 0120-funpar.c
 0121-localinit.c
 0122-localinit.c
-0123-doubleconst.c [TODO]
+0123-doubleconst.c
 0124-enumstruct.c
 0125-fundcl.c
 0126-macropar.c
-0127-doublecte.c [TODO]
+0127-doublecte.c
 0128-kr_names.c
 0129-initi.c
 0130-mulpars.c

@@ -213,7 +213,6 @@ struct node {
 	unsigned flags;
 	union {
 		unsigned long long i;
-		double f;
 		char *s;
 		Symbol *sym;
 		Swtch *swtch;

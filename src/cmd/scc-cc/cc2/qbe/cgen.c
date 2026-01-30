@@ -568,7 +568,7 @@ rhs(Node *np)
 		isfloat = (tp->flags & FLOATF) != 0;
 		op = opbin[isfloat][size][np->op][sign];
 		rhs_rhs(&l, &r);
-		tmp = tmpnode(tp, NULL);
+		tmp = tmpnode(&int32type, NULL);
 		code(op, tmp, l, r);
 		return tmp;
 	case OCALL:

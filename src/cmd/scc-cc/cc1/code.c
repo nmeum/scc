@@ -222,28 +222,23 @@ emitconst(Node *np)
 	unsigned long long u;
 
 	switch (tp->op) {
+	case FLOAT:
+		if (tp == floattype)
+			u = *(uint32_t *) &sym->u.f;
+		else if (tp == doubletype)
+			u = *(uint64_t *) &sym->u.d;
+		else
+			abort(); /* TODO: What here?? */
+		goto print;
 	case PTR:
 	case INT:
 	case ENUM:
 		u = (tp->prop & TSIGNED) ? sym->u.i : sym->u.u;
+	print:
 		fprintf(outfp,
 		        "#%c%llX",
 		        tp->letter,
 		        u & ones(tp->size));
-		break;
-	case FLOAT:
-		fp = (unsigned char *) &sym->u.f;
-
-		if (tp == floattype)
-			n = sizeof(sym->u.f);
-		else if (tp == doubletype)
-			n = sizeof(sym->u.d);
-		else
-			n = sizeof(sym->u.ld);
-
-		fprintf(outfp, "#%c", tp->letter);
-		for (p = fp; p < &fp[n]; ++p)
-			fprintf(outfp, "%02X", *p);
 		break;
 	default:
 		abort();
