@@ -416,6 +416,7 @@ foldconst(int type, int op, Type *tp, Symbol *ls, Symbol *rs)
 static Node *
 foldcast(Node *np, Node *l)
 {
+	long double ld;
 	unsigned long long negmask, mask, u;
 	Type *newtp = np->type, *oldtp = l->type;
 	Symbol aux, *sym, *osym = l->sym;
@@ -451,9 +452,29 @@ foldcast(Node *np, Node *l)
 		}
 		break;
 	case FLOAT:
-		if (oldtp->op == FLOAT)
+		if (oldtp->op != FLOAT) {
+			if (oldtp->prop & TSIGNED)
+				ld = osym->u.i;
+			else
+				ld = osym->u.u;
+		} else if (oldtp == floattype) {
+			ld = osym->u.f;
+		} else if (oldtp == doubletype) {
+			ld = osym->u.d;
+		} else if (oldtp == ldoubletype) {
+			ld = osym->u.ld;
+		} else {
 			return np;
-		aux.u.f = (oldtp->prop & TSIGNED) ? osym->u.i : osym->u.u;
+		}
+
+		if (newtp == floattype)
+			aux.u.f = ld;
+		else if (newtp == doubletype)
+			aux.u.d = ld;
+		else if (newtp == ldoubletype)
+			aux.u.ld = ld;
+		else
+			abort();
 		break;
 	default:
 		return np;
