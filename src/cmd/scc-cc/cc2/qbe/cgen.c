@@ -282,7 +282,7 @@ cast(Type *td, Node *np)
 		op = i2f_conv[sidx][didx][sign];
 	} else {
 		/* conversion from float to float */
-		op = (didx == I4BYTES) ? ASEXTS : ASTRUNCD;
+		op = (didx == I4BYTES) ? ASTRUNCD : ASEXTS;
 	}
 
 	assert(op != 0);
