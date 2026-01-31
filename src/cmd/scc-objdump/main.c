@@ -428,7 +428,7 @@ main(int argc, char *argv[])
 
 	if (!aflag && !fflag && !hflag
 	&& !tflag && !sflag) {
-		fputs("objdump: At lest one of [afhts] flags must be used\n",
+		fputs("objdump: At least one of [afhts] flags must be used\n",
 		      stderr);
 		usage();
 	}
