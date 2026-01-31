@@ -531,7 +531,7 @@ rhs(Node *np)
 	Node *tmp, aux1, aux2;
 	Node *phi, *l = np->left, *r = np->right;
 	Type *tp;
-	int sign, size, isfloat, op;
+	int cmp, sign, size, isfloat, op;
 	Symbol *true, *false;
 
 	tp = &np->type;
@@ -544,6 +544,14 @@ rhs(Node *np)
 	case OREG:
 	case OAUTO:
 		return load(tp, np);
+	case OLT:
+	case OGT:
+	case OLE:
+	case OGE:
+	case OEQ:
+	case ONE:
+		cmp = 1;
+		goto binary;
 	case OMOD:
 	case OSHL:
 	case OBAND:
@@ -552,15 +560,11 @@ rhs(Node *np)
 	case OSHR:
 		assert(tp->flags & INTF);
 	case ODIV:
-	case OLT:
-	case OGT:
-	case OLE:
-	case OGE:
 	case OADD:
 	case OSUB:
 	case OMUL:
-	case OEQ:
-	case ONE:
+		cmp = 0;
+	binary:
 		assert(tp->size == 4 || tp->size == 8);
 
 		sign = (tp->flags & SIGNF) == 0;
@@ -568,7 +572,9 @@ rhs(Node *np)
 		isfloat = (tp->flags & FLOATF) != 0;
 		op = opbin[isfloat][size][np->op][sign];
 		rhs_rhs(&l, &r);
-		tmp = tmpnode(&int32type, NULL);
+		if (cmp)
+			tp = &int32type;
+		tmp = tmpnode(tp, NULL);
 		code(op, tmp, l, r);
 		return tmp;
 	case OCALL:
