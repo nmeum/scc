@@ -208,7 +208,7 @@
 0215-ret_struct.c
 0216-initialize.c [TODO]
 0217-lchar.c
-0218-initialize.c [TODO]
+0218-initialize.c
 0219-abbrev.c
 0220-comma.c
 0221-ifdef.c
@@ -228,3 +228,4 @@
 0235-comment.c
 0236-sizeof.c
 0237-down.c
+0238-align.c

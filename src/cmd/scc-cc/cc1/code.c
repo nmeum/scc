@@ -353,18 +353,19 @@ zeronode(Type *tp)
 	return simplify(convert(constnode(zero), tp, 0));
 }
 
-static int
+static void
 emitpadding(Type *tp, unsigned long long *addr)
 {
-	int i;
-	unsigned long long n;
+	int i, align;
+	unsigned long long a, n;
 
-	n = *addr & tp->align-1;
-	for (i = 0; i < n; i++)
+	align = tp->align - 1;
+	a = *addr;
+	n = a+align & ~align;
+
+	for ( ; a != n; ++a)
 		emitexp(OEXPR, zeronode(chartype));
-	*addr += n;
-
-	return n;
+	*addr = n;
 }
 
 static void
