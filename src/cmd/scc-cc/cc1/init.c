@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
@@ -24,6 +25,8 @@ struct init {
 	struct designator *tail;
 	struct designator *head;
 };
+
+int disstring;
 
 static long long
 arydesig(Type *tp, Init *ip)
@@ -85,28 +88,35 @@ str2ary(Type *tp)
 	Node *np;
 	Type *btp = tp->type;
 	Symbol *sym;
-	size_t len;
+	long long i, olen, len;
 	char *s;
 
+	disstring = 1;
 	np = assign();
+	disstring = 0;
 	sym = np->left->sym;
 	if (btp != chartype && btp != uchartype && btp != schartype) {
 		errorp("array of inappropriate type initialized from string constant");
 		return constnode(zero);
 	}
 
-	len = sym->type->n.elem-1;
+	len = tp->n.elem;
+	olen = sym->type->n.elem-1;
 	if (!(tp->prop & TDEFINED)) {
-		tp->n.elem = len+1;
+		len = tp->n.elem = olen+1;
 		deftype(tp);
-	} else if (tp->n.elem < len) {
+	} else if (len < olen) {
 		warn("initializer-string for array of chars is too long");
 	}
 
-	len = tp->n.elem;
 	s = sym->u.s;
 	sym = newstring(NULL, len);
-	strncpy(sym->u.s, s, len);
+	for (i = 0; i < len; i++)
+		sym->u.s[i] = (i < olen) ? *s++ : '\0';
+
+	assert(np->op == OADDR);
+	np->left->sym = sym;
+	np->left->type = sym->type;
 	np->sym = sym;
 	np->type = sym->type;
 
@@ -333,6 +343,28 @@ initlist(Type *tp)
 }
 
 static void
+emitstrings(Node *np)
+{
+	unsigned f;
+	Symbol *sym;
+
+	if (!np)
+		return;
+
+	if (np->op == OSYM) {
+		sym = np->sym;
+		f = sym->flags & (SSTRING|SEMITTED);
+		if (f == SSTRING) {
+			emit(ODECL, sym);
+			emit(OINIT, constnode(sym));
+		}
+	}
+
+	emitstrings(np->left);
+	emitstrings(np->right);
+}
+
+static void
 autoinit(Symbol *sym, Node *np)
 {
 	Symbol *hidden;
@@ -345,19 +377,24 @@ repeat:
 		tp = np->type;
 		goto repeat;
 	case ARY:
+		if (np->op == OADDR && np->sym->flags & SSTRING)
+			goto hidden_data;
 	case STRUCT:
-		if (np->op == OSYM && np->sym->flags & SINITLST) {
-			if (!(np->flags & NCONST))
-				abort(); /* TODO */
-			hidden = newsym(NS_IDEN, NULL);
-			hidden->id = newid();
-			hidden->type = sym->type;
-			hidden->flags |= SLOCAL | SHASINIT;
-			emit(ODECL, hidden);
-			emit(OINIT, np);
-			np = varnode(hidden);
-		}
+		if (np->op != OSYM || (np->sym->flags & SINITLST) == 0)
+			goto expr;
+	hidden_data:
+		if (!(np->flags & NCONST))
+			abort(); /* TODO */
+		hidden = newsym(NS_IDEN, NULL);
+		hidden->id = newid();
+		hidden->type = sym->type;
+		hidden->flags |= SLOCAL | SHASINIT;
+		emit(ODECL, hidden);
+		emit(OINIT, np);
+		np = varnode(hidden);
 	default:
+	expr:
+		emitstrings(np);
 		emit(ODECL, sym);
 		np = node(OASSIGN, tp, varnode(sym), np);
 		emit(OEXPR, np);

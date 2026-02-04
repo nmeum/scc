@@ -709,10 +709,12 @@ primary(void)
 	sym = yylval.sym;
 	switch (yytoken) {
 	case STRING:
-		np = constnode(adjstrings(sym));
+		adjstrings(sym);
 		sym->flags |= SHASINIT;
-		emit(ODECL, sym);
-		emit(OINIT, np);
+		if (!disstring) {
+			emit(ODECL, sym);
+			emit(OINIT, constnode(sym));
+		}
 		return varnode(sym);
 	case BUILTIN:
 		fun = sym->u.fun;
@@ -927,8 +929,10 @@ unary(void)
 	case '&': op = OADDR; fun = address;      break;
 	case '*': op = OPTR;  fun = content;      break;
 	case SIZEOF:
+		disstring = 1;
 		next();
 		tp = sizeexp();
+		disstring = 0;
 		if (!(tp->prop & TDEFINED))
 			errorp("sizeof applied to an incomplete type");
 		return sizeofnode(tp);

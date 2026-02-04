@@ -341,7 +341,7 @@ emitstring(Symbol *sym, Type *tp)
 			break;
 		do {
 			fprintf(outfp,
-			        "\t#%c%02X\n",
+			        "\t#%c%X\n",
 			        chartype->letter, (*bp++) & 0xFF);
 		} while (bp < lim && !isprint(*bp));
 	}
