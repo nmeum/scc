@@ -487,8 +487,10 @@ Node *varnode(Symbol *sym);
 Node *constnode(Symbol *sym);
 Node *sizeofnode(Type *tp);
 Node *offsetnode(Symbol *,  Type *);
+Node *addrnode(unsigned long long);
 void freetree(Node *np);
 void icode(void);
+Node *zeronode(Type *);
 #define BTYPE(np) ((np)->type->op)
 
 /* fold.c */

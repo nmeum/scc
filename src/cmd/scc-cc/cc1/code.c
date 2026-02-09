@@ -347,7 +347,7 @@ emitstring(Symbol *sym, Type *tp)
 	}
 }
 
-static Node *
+Node *
 zeronode(Type *tp)
 {
 	return simplify(convert(constnode(zero), tp, 0));
@@ -590,6 +590,7 @@ sizeofnode(Type *tp)
 
 	sym = newsym(NS_IDEN, NULL);
 	sym->type = sizettype;
+	sym->flags |= SCONSTANT;
 	sym->u.u = tp->size;
 	DBG("EXPR sizeof %llu", sym->u.u);
 	return constnode(sym);
@@ -605,6 +606,19 @@ offsetnode(Symbol *field, Type *tp)
 	sym->type = tp;
 	sym->flags |= SCONSTANT;
 	sym->u.u = field->u.u;
+
+	return constnode(sym);
+}
+
+Node *
+addrnode(unsigned long long u)
+{
+	Symbol *sym;
+
+	sym = newsym(NS_IDEN, NULL);
+	sym->type = pvoidtype;
+	sym->flags |= SCONSTANT;
+	sym->u.u = u;
 
 	return constnode(sym);
 }

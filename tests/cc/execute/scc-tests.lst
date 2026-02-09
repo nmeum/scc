@@ -206,7 +206,7 @@
 0213-decay.c [TODO]
 0214-va_copy.c
 0215-ret_struct.c
-0216-initialize.c [TODO]
+0216-initialize.c
 0217-lchar.c
 0218-initialize.c
 0219-abbrev.c
@@ -231,3 +231,4 @@
 0238-align.c
 0239-fcasts.c
 0240-init.c
+0241-init.c

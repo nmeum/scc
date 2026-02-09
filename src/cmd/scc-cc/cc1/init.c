@@ -343,20 +343,110 @@ initlist(Type *tp)
 }
 
 static void
+autofield(Symbol *sym, Node *np, Type *tp, unsigned long long *addr)
+{
+	int align;
+	Node *aux;
+	unsigned long long na;
+
+	align = tp->align - 1;
+	na = *addr;
+	na = (na + align) & ~align;
+	*addr = na;
+
+	aux = node(OADDR, pvoidtype, varnode(sym), NULL);
+	aux = node(OADD, pvoidtype, aux, addrnode(na));
+	aux = node(OPTR, tp, aux, NULL);
+	aux = node(OASSIGN, tp, aux, np);
+
+	emit(OEXPR, aux);
+	*addr += tp->size;
+}
+
+static void
+autocomp(Symbol *sym, Node *np, Type *tp, unsigned long long *addr)
+{
+	Type *p;
+	Node *aux;
+	Symbol *init;
+	unsigned long long n;
+
+	if (!np) {
+		init = NULL;
+	} else {
+		if (!np->sym)
+			goto expression;
+		init = np->sym;
+		if ((init->flags & SINITLST) == 0)
+			goto expression;
+	}
+
+	switch (tp->op) {
+	case PTR:
+	case INT:
+	case ENUM:
+		aux = init ? *init->u.init : zeronode(tp);
+		autofield(sym, aux, aux->type, addr);
+		break;
+	case UNION:
+		aux = (init) ? sym->u.init[0] : NULL;
+		p = (aux) ? aux->type : tp->p.fields[0]->type;
+		autocomp(sym, aux, p, addr);
+		break;
+	case STRUCT:
+	case ARY:
+		if ((np->flags & NCONST) != 0) {
+			Symbol *hidden = newsym(NS_IDEN, NULL);
+			hidden->id = newid();
+			hidden->type = init->type;
+			hidden->flags |= SLOCAL | SHASINIT;
+			emit(ODECL, hidden);
+			emit(OINIT, np);
+			np = varnode(hidden);
+			goto expression;
+		}
+		for (n = 0; n < tp->n.elem; ++n) {
+			aux = (init) ? init->u.init[n] : NULL;
+			p = (tp->op == ARY) ? tp->type : tp->p.fields[n]->type;
+			autocomp(sym, aux, p, addr);
+		}
+		break;
+	default:
+		abort();
+	}
+
+	if (init) {
+		free(init->u.init);
+		init->u.init = NULL;
+        }
+        freetree(np);
+	return;
+
+expression:
+	autofield(sym, np, tp, addr);
+}
+
+static void
 emitstrings(Node *np)
 {
 	unsigned f;
 	Symbol *sym;
+	long long i, n;
 
 	if (!np)
 		return;
 
 	if (np->op == OSYM) {
 		sym = np->sym;
-		f = sym->flags & (SSTRING|SEMITTED);
+		f = sym->flags & (SSTRING|SEMITTED|SINITLST);
 		if (f == SSTRING) {
+			sym->flags |= SHASINIT;
 			emit(ODECL, sym);
 			emit(OINIT, constnode(sym));
+		} else if (f == SINITLST)  {
+			n = np->type->n.elem;
+			for (i = 0; i < n; ++i)
+				emitstrings(sym->u.init[i]);
 		}
 	}
 
@@ -367,6 +457,7 @@ emitstrings(Node *np)
 static void
 autoinit(Symbol *sym, Node *np)
 {
+	unsigned long long a;
 	Symbol *hidden;
 	Type *tp = sym->type;
 
@@ -383,8 +474,14 @@ repeat:
 		if (np->op != OSYM || (np->sym->flags & SINITLST) == 0)
 			goto expr;
 	hidden_data:
-		if (!(np->flags & NCONST))
-			abort(); /* TODO */
+		if (!(np->flags & NCONST)) {
+			a = 0;
+			emitstrings(np);
+			emit(ODECL, sym);
+			autocomp(sym, np, np->type, &a);
+			return;
+
+		}
 		hidden = newsym(NS_IDEN, NULL);
 		hidden->id = newid();
 		hidden->type = sym->type;
