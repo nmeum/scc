@@ -170,7 +170,6 @@ sethi(Node *np)
 		np = swtch(np);
 		break;
 	case OBRANCH:
-		keeplabel();
 		next = np->next;
 		if (!next->label)
 			labelstmt(next, NULL);
@@ -185,17 +184,14 @@ sethi(Node *np)
 		np->u.sym->refcnt--;
 		return NULL;
 	case OCOMMA:
-		keeplabel();
 		r = np->right;
 		comma(np->left);
 		return replace(np, r);
 	case OASK:
-		keeplabel();
 		return replace(np, ternary(np));
 	case ONEG:
 	case OAND:
 	case OOR:
-		keeplabel();
 		return replace(np, logicexpr(np));
 	default:
 		np = tsethi(np);
@@ -223,9 +219,17 @@ sethi(Node *np)
 	return np;
 }
 
+static Node *
+presethi(Node *np)
+{
+	/* just in case ... */
+	savelabel();
+	return sethi(np);
+}
+
 void
 genaddr(void)
 {
-	apply(sethi);
+	apply(presethi);
 	PRTREE("after sethi");
 }

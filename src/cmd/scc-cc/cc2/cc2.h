@@ -282,7 +282,7 @@ Symbol *newlabel(void);
 void pprint(char *s);
 void deftype(Type *);
 Node *labelstmt(Node *, Symbol *);
-Node *keeplabel(void);
+Node *savelabel(void);
 
 /* node.c */
 void newfun(Symbol *, Node *);

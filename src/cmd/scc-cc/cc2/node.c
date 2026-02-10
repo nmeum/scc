@@ -137,7 +137,7 @@ prestmt(Node *np)
 }
 
 Node *
-keeplabel(void)
+savelabel(void)
 {
 	Symbol *label = curstmt->label;
 
