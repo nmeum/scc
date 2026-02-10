@@ -193,6 +193,7 @@ sethi(Node *np)
 	case ONEG:
 	case OAND:
 	case OOR:
+		keeplabel();
 		return replace(np, logicexpr(np));
 	default:
 		np = tsethi(np);
