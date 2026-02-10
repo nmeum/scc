@@ -170,6 +170,7 @@ sethi(Node *np)
 		np = swtch(np);
 		break;
 	case OBRANCH:
+		keeplabel();
 		next = np->next;
 		if (!next->label)
 			labelstmt(next, NULL);
