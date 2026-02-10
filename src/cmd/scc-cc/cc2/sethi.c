@@ -184,6 +184,7 @@ sethi(Node *np)
 		np->u.sym->refcnt--;
 		return NULL;
 	case OCOMMA:
+		keeplabel();
 		r = np->right;
 		comma(np->left);
 		return replace(np, r);
