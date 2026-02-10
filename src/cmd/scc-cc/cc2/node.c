@@ -137,6 +137,18 @@ prestmt(Node *np)
 }
 
 Node *
+keeplabel(void)
+{
+	Symbol *label = curstmt->label;
+
+	if (label) {
+		prestmt(labelstmt(NULL, label));
+		curstmt->label = NULL;
+	}
+	return curstmt;
+}
+
+Node *
 addstmt(Node *np)
 {
 	insstmt(np, curstmt);

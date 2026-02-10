@@ -188,6 +188,7 @@ sethi(Node *np)
 		comma(np->left);
 		return replace(np, r);
 	case OASK:
+		keeplabel();
 		return replace(np, ternary(np));
 	case ONEG:
 	case OAND:
