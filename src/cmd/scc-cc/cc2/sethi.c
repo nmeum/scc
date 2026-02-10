@@ -140,11 +140,15 @@ static Node *
 replace(Node *what, Node *with)
 {
 	Node *prev, *next;
+	Symbol *label;
 
+	label = what->label;
 	next = what->next, prev = what->prev;
+
 	*what = *with;
 	delnode(with);
 	what->next = next, what->prev = prev;
+	what->label = label;
 
 	return sethi(what);
 }
