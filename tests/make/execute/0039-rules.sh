@@ -1,9 +1,10 @@
 #!/bin/sh
 
-trap 'rm -f $tmp1 file?' EXIT
+trap 'rm -f $tmp1 $tmp2 file?' EXIT
 trap 'exit $?' HUP INT TERM
 
 tmp1=tmp1.$$
+tmp2=tmp2.$$
 
 touch $tmp2
 
