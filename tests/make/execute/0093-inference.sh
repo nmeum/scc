@@ -18,5 +18,5 @@ touch f.c
 scc make -f $tmp1) > $tmp2
 
 diff $tmp2 - <<EOF
-c99 -O -c f.c
+c99 -O1 -c f.c
 EOF

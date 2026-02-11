@@ -15,5 +15,5 @@ all: f.o
 EOF
 
 diff $tmp1 - <<EOF
-c99 -O -c f.c
+c99 -O1 -c f.c
 EOF

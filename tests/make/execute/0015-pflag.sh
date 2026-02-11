@@ -18,13 +18,13 @@ YFLAGS =
 ARFLAGS = -rv
 LDFLAGS = 
 LEX = lex
-CFLAGS = -O
+CFLAGS = -O1
 YACC = yacc
 CC = c99
 LFLAGS = 
 AR = ar
 SHELL = /bin/sh
-FFLAGS = -O 1
+FFLAGS = -O1
 .f.a:
 	${FC} -c ${FFLAGS} $<
 	${AR} ${ARFLAGS} $@ $*.o
