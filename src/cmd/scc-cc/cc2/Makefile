@@ -56,9 +56,10 @@ all:
 	@cp $(TARGET) $(LIBEXEC)/scc
 
 main.o: error.h
-qbe_amd64-sysv qbe_arm64-sysv: qbe
+qbe_riscv64-sysv qbe_amd64-sysv qbe_arm64-sysv: qbe
 qbe_amd64-sysv: amd64-sysv
 qbe_arm64-sysv: arm64-sysv
+qbe_riscv64-sysv: riscv64-sysv
 
 error.h: cc2.h
 	trap 'rm -f $$$$.h' EXIT;\
