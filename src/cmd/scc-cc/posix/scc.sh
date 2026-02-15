@@ -16,9 +16,9 @@ case $1  in
 cc|cpp|as|ar|addr2line|ld|make|nm|objcopy|dump|size|strip)
 	tool=$1
 	shift
-	exec $SCCPREFIX/bin/scc-$tool $@
+	exec $SCCPREFIX/bin/scc-$tool "$@"
 	;;
 *)
-	exec $SCCPREFIX/bin/scc-cc $@
+	exec $SCCPREFIX/bin/scc-cc "$@"
 	;;
 esac
