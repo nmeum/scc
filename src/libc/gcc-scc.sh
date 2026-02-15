@@ -2,38 +2,34 @@
 
 set -e
 
-for i
+while getopts gr:a:s:o:c o
 do
-	case "$i" in
-	-g)
-		shift
+	case $o in
+	g)
+		# ignored silently
 		;;
-	-r)
-		root=$2
-		shift 2
+	r)
+		root=$OPTARG
 		;;
-	-a)
-		abi=$2
-		shift 2
+	a)
+		abi=$OPTARG
 		;;
-	-s)
-		sys=$2
-		shift 2
+	s)
+		sys=$OPTARG
 		;;
-	-o)
-		out=$2
-		shift 2
+	o)
+		out=$OPTARG
 		;;
-	-c)
-		onlycc=1;
-		shift
+	c)
+		onlycc=1
 		;;
-	-*)
-		echo usage: gcc-scc [-o outfile][-c][-r root][-a abi][-s sys] file
+	*)
+		echo >&2 "usage: gcc-scc [-o outfile] [-c] [-r root] [-a abi] [-s sys] file"
 		exit 1
 		;;
 	esac
 done
+shift $((OPTIND-1))
 
 sys=${sys:-`uname | tr 'A-Z' 'a-z'`}
 abi=${abi:-amd64}
