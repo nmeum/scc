@@ -1,3 +1,4 @@
+#include <ctype.h>
 #include <errno.h>
 #include <signal.h>
 #include <stdarg.h>
@@ -141,6 +142,44 @@ appendmakeflags(char *text)
 	free(t);
 }
 
+static void
+appendmacro(char *text)
+{
+	int n, idlen;
+	char *p, *t, *s;
+
+	n = strlen(text) + 2;
+	for (p = text; p = strchr(p, '\''); ++p)
+		n++;
+	s = emalloc(n + 1);
+
+	p = strchr(text, '=');
+	idlen = p - text;
+
+	memcpy(s, text, idlen);
+	s[idlen] = '\0';
+
+	if (strpbrk(s, " \t\v\n'\"")) {
+		fprintf(stderr, "make: invalid macro name '%s'\n", text);
+		exit(EXIT_FAILURE);
+	}
+
+	p = s + idlen;
+	*p++ = '=';
+
+	*p++ = '\'';
+	for (t = text + idlen + 1; *t; ++t) {
+		if (*t == '\'')
+			*p++ = '\\';
+		*p++ = *t;
+	}
+	*p++ = '\'';
+
+	*p = '\0';
+	appendmakeflags(s);
+	free(s);
+}
+
 static int
 hasargs(int c)
 {
@@ -183,7 +222,7 @@ parseflag(int flag, char **args, char ***argv)
 	case 'r':
 		addtarget(".SUFFIXES", 0);
 		appendmakeflags("-r");
-		break;	
+		break;
 	case 'S':
 		kflag = 0;
 		appendmakeflags("-S");
@@ -216,7 +255,7 @@ assign(char *s, int where, int export)
 
 	pos = t - s;
 
-	appendmakeflags(s);
+	appendmacro(s);
 	t = estrdup(s); 
 	t[pos] = '\0';
 
@@ -253,8 +292,8 @@ parseargv(char **argv, char ***targets, int where, int export)
 static void
 parsemakeflags(void)
 {
-	int c, n;
-	char *s, *flags, **arr;
+	int esc, c, n;
+	char *t, *s, *buf, *flags, **arr;
 
 	if ((flags = getenv("MAKEFLAGS")) == NULL)
 		return;
@@ -272,16 +311,53 @@ parsemakeflags(void)
 	} else {
 		n = 0;
 		arr = NULL;
-		for (s = strtok(flags, " \t"); s; s = strtok(NULL, " \t")) {
+		buf = emalloc(strlen(flags) + 1);
+
+		for (s = flags; *s; ) {
+			while (isspace(*s))
+				++s;
+
+			t = buf;
+			for (esc = 0; c = *s; ++s) {
+				if (!esc && isspace(c))
+					break;
+				if (!esc && (c == '\'' || c == '"')) {
+					esc = c;
+					continue;
+				}
+				if (c == esc) {
+					esc = 0;
+					continue;
+				}
+				if (c == '\\')
+					++s;
+				if ((*t++ = *s) == '\0') {
+					fputs("make: trailing \\ in MAKEFLAGS\n",
+					      stderr);
+					exit(EXIT_FAILURE);
+				}
+			}
+			if (esc) {
+				fputs("make: no closing quote\n", stderr);
+				exit(EXIT_FAILURE);
+			}
+			if (t == buf)
+				continue;
+			*t = '\0';
+
 			n++;
 			arr = erealloc(arr, sizeof(char *) * (n+1));
-			arr[n-1] = s;
+			arr[n-1] = estrdup(buf);
 			arr[n] = NULL;
 		}
+		free(buf);
 
-		if (arr)
+		if (arr) {
 			parseargv(arr, NULL, MAKEFLAGS, NOEXPORT);
-		free(arr);
+			while (n-- > 0)
+				free(arr[n]);
+			free(arr);
+		}
 	}
 }
 
