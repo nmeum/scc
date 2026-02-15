@@ -1,3 +1,3 @@
 #/bin/sh
 
-scc-cc -E $@
+scc-cc -E "$@"

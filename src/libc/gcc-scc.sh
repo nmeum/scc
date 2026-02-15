@@ -61,15 +61,30 @@ ldflags="-g -z nodefaultlib -static -L$lib"
 
 if test ${onlycc:-0} -eq 1
 then
-	$cc $cflags $includes -c $@
+	$cc $cflags $includes -c "$@"
 else
 	for i
 	do
 		case $i in
 		*.c)
-			$cc $cflags $includes -c $i
+			$cc $cflags $includes -c "$i"
 			;;
 		esac
 	done
-	$ld $ldflags $nopie `echo $@ | sed 's/\.c$/.o/g'` $crt -lc -lcrt -o $out
+
+	# convert *.c args to *.o while correctly maintaing IFS chars
+	for i
+	do
+		shift
+		case $i in
+		*.c)
+			set -- "$@" "${i%c}o"
+			;;
+		*)
+			set -- "$@" "$i"
+			;;
+		esac
+	done
+
+	$ld $ldflags $nopie "$@" $crt -lc -lcrt -o "$out"
 fi
