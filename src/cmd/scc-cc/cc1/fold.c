@@ -258,6 +258,7 @@ foldldouble(int op, Symbol *res, long double l, long double r)
 	case OSUB: f = l - r;  break;
 	case OMUL: f = l * r;  break;
 	case ODIV: f = l / r;  break;
+	case OSNEG: f = -l;    break;
 	case OLT:  i = l < r;  goto comparison;
 	case OGT:  i = l > r;  goto comparison;
 	case OGE:  i = l >= r; goto comparison;
@@ -301,6 +302,7 @@ folddouble(int op, Symbol *res, double l, double r)
 	case OSUB: f = l - r;  break;
 	case OMUL: f = l * r;  break;
 	case ODIV: f = l / r;  break;
+	case OSNEG: f = -l;    break;
 	case OLT:  i = l < r;  goto comparison;
 	case OGT:  i = l > r;  goto comparison;
 	case OGE:  i = l >= r; goto comparison;
@@ -344,6 +346,7 @@ foldfloat(int op, Symbol *res, float l, float r)
 	case OSUB: f = l - r;  break;
 	case OMUL: f = l * r;  break;
 	case ODIV: f = l / r;  break;
+	case OSNEG: f = -l;    break;
 	case OLT:  i = l < r;  goto comparison;
 	case OGT:  i = l > r;  goto comparison;
 	case OGE:  i = l >= r; goto comparison;
