@@ -31,12 +31,7 @@ config: scripts/scc-make FORCE
 	@$(SCCMAKE) -f main.mk config
 
 config-musl: scripts/scc-make FORCE
-	$(SCCMAKE) LIBPROFILE=musl config
-	gcc -v 2>&1 |\
-	sed -En '/COLLECT_LTO_WRAPPER=/ s/.*=(.*)\/lto-wrapper/\1/p' |\
-	(read -r path; \
-	 printf "g/define GCCLIBPATH/ s@.*@#define GCCLIBPATH \"$$path/\"@\nw\n") |\
-	ed -s include/scc/bits/scc/sys.h
+	scripts/muslcfg
 
 clean: FORCE
 	touch config.mk

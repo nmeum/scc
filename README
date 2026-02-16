@@ -256,7 +256,7 @@ programs. Scc includes a template that can be used to use a musl libc
 compiled by gcc, and to make easier to get the correct values it also
 provides a specific target to configure scc for a correct support for musl:
 
-	$ make LIBPREFIX=/usr/local/musl config-musl
+	$ make config-musl
 	$ make
 	$ make install
 

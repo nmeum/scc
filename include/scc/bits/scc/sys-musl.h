@@ -1,14 +1,15 @@
 #define LDBIN "ld"
 #define ASBIN "as"
 
+/* configure below your system linker command line */
+#define GCCLIBPATH "/usr/lib/gcc/x86_64-unknown-linux-gnu/10.2/"
+
 /* configure below your standard sys include paths */
 char *sysincludes[] = {
+	LIBPREFIX "/include",
 	"%p/include/",
 	NULL
 };
-
-/* configure below your system linker command line */
-#define GCCLIBPATH "/usr/lib/gcc/x86_64-unknown-linux-gnu/10.2/"
 
 char *ldcmd[] = {
 	"-static",
@@ -19,9 +20,9 @@ char *ldcmd[] = {
 	"-L",GCCLIBPATH,
 	"%p/lib/Scrt1.o",
 	"%p/lib/crti.o",
-	GCCLIBPATH "crtbeginS.o",
+	GCCLIBPATH "/crtbeginS.o",
 	"%c",
-	GCCLIBPATH "crtendS.o",
+	GCCLIBPATH "/crtendS.o",
 	"%p/lib/crtn.o",
 	"-lc",
 	"-lgcc",
