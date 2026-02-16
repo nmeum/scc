@@ -966,6 +966,7 @@ cppelse(void)
 		ifstate[cppctx-1].enabled = 1;
 		cppoff = 0;
 	}
+	ifstate[cppctx-1].iselse = 1;
 
 	next();
 }
