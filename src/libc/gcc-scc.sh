@@ -6,7 +6,7 @@ while getopts gr:a:s:o:c o
 do
 	case $o in
 	g)
-		# ignored silently
+		g=-g
 		;;
 	r)
 		root=$OPTARG
@@ -52,8 +52,8 @@ OpenBSD)
 esac
 
 includes="-nostdinc -I$inc -I$arch_inc -I$sys_inc -I$sys_arch_inc"
-cflags="-std=c99 -g -w -fno-pie -fno-stack-protector -ffreestanding -static"
-ldflags="-g -z nodefaultlib -static -L$lib"
+cflags="-std=c99 -w -fno-pie -fno-stack-protector -ffreestanding -static"
+ldflags="-z nodefaultlib -static -L$lib"
 
 if test ${onlycc:-0} -eq 1
 then
@@ -63,7 +63,7 @@ else
 	do
 		case $i in
 		*.c)
-			$cc $cflags $includes -c "$i"
+			$cc $g $cflags $includes -c "$i"
 			;;
 		esac
 	done
@@ -82,5 +82,5 @@ else
 		esac
 	done
 
-	$ld $ldflags $nopie "$@" $crt -lc -lcrt -o "$out"
+	$ld $g $ldflags $nopie $crt "$@" -lc -lcrt -o "$out"
 fi
