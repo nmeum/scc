@@ -645,13 +645,6 @@ define(void)
 		return;
 	}
 	sym = yylval.sym;
-	if (sym->flags & SDECLARED) {
-		warn("'%s' redefined", yytext);
-		free(sym->u.s);
-	} else {
-		sym = install(NS_CPP, sym);
-		sym->flags |= SDECLARED|SSTRING;
-	}
 
 	namespace = NS_IDEN;       /* Avoid polution in NS_CPP */
 	if ((n = getpars(args)) == NR_MACROARG)
@@ -662,6 +655,16 @@ define(void)
 	sprintf(buff, "%02d#", n);
 	if (!getdefs(args, n, buff+3, LINESIZ-3))
 		goto delete;
+
+	if (sym->flags & SDECLARED) {
+		if (strcmp(sym->u.s, buff) != 0)
+			warn("'%s' redefined", sym->name);
+		free(sym->u.s);
+	} else {
+		sym = install(NS_CPP, sym);
+		sym->flags |= SDECLARED|SSTRING;
+	}
+
 	sym->u.s = xstrdup(buff);
 	DBG("MACRO '%s' defined as '%s'", sym->name, buff);
 	return;
