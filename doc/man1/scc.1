@@ -3,7 +3,7 @@
 scc \- simple C compiler with magic
 .SH SYNOPSIS
 .B scc
-.RB [ \-cdgkqQsWw ]
+.RB [ \-cdgkqQsw ]
 .RB [ \-M | \-E | \-S ]
 .RB [ \-D
 .IR def[=val] ] ...
@@ -15,7 +15,7 @@ scc \- simple C compiler with magic
 .IR def ] ...
 .RB [ \-l
 .IR lib ]
-.RB [ \-m
+.RB [ \-a
 .IR arch ]
 .RB [ \-o
 .IR outfile ]
@@ -71,7 +71,7 @@ Define a library
 to resolve dependencies from. This directory is used before the standard
 paths.
 .TP
-.BI \-m " architecture"
+.BI \-a " architecture"
 Define the
 .I architecture
 to compile for (i.e. amd64, i386 ...).
@@ -115,11 +115,27 @@ Undefine a previously defined
 .I define
 by the -D parameter.
 .TP
-.B \-W
-Show warning messages.
-.TP
+.BI \-W " param"
+or
 .B \-w
-Do not show warning messages (default).
+Show warning messages.
+The parameter of
+.B \-W
+is ignored for compatibility reasons.
+.TP
+.BI \-f " param"
+and
+.BI \-m " param"
+are ignored for compatibility with other compiler command lines.
+In the same way,
+the options
+.BI \-static ,
+.BI \-dynamic ,
+.BI \-pedantic ,
+.B \-ansi
+and any option beginning with
+.B \-std=
+are ignored for the same reason.
 .SH ENVIRONMENT VARIABLES
 Certain environment variables control the behaviour of scc.
 .TP

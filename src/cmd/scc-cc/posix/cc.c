@@ -25,7 +25,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <scc/arg.h>
 #include <scc/config.h>
 #include <scc/scc.h>
 #include <scc/sys.h>
@@ -60,7 +59,6 @@ static struct tool {
 	[LD]     = {.bin = LDBIN},
 };
 
-char *argv0;
 static char *arch, *sys, *abi, *format;
 static char *objfile, *outfile;
 static char *prefix, *libprefix;
@@ -556,8 +554,26 @@ build(struct items *chain, int link)
 static void
 usage(void)
 {
-	fputs("usage: cc [options] file...\n", stderr);
+	fputs("usage: scc-cc [options] file...\n", stderr);
 	exit(1);
+}
+
+static char *
+param(char **argp, char ***argv)
+{
+	char *s;
+
+	if ((*argp)[1] != '\0') {
+		s = (*argp) + 1;
+		*argp += strlen(*argp) - 1;
+	} else if ((*argv)[1] != NULL) {
+		s = (*argv)[1];
+		(*argv)++;
+	} else {
+		usage();
+	}
+
+	return s;
 }
 
 int
@@ -584,88 +600,107 @@ main(int argc, char *argv[])
 	if (!(libprefix = getenv("SCCLIBPREFIX")))
 		libprefix = LIBPREFIX;
 
-	ARGBEGIN {
-	case 'D':
-		newitem(&cc1args, "-D");
-		newitem(&cc1args, EARGF(usage()));
-		break;
-	case 'M':
-		Mflag = 1;
-		break;
-	case 'E':
-		Eflag = 1;
-		break;
-	case 'I':
-		newitem(&cc1args, "-I");
-		newitem(&cc1args, EARGF(usage()));
-		break;
-	case 'L':
-		newitem(&linkargs, "-L");
-		newitem(&linkargs, EARGF(usage()));
-		break;
-	case 'O':
-		EARGF(usage());
-		break;
-	case 'S':
-		Sflag = 1;
-		break;
-	case 'U':
-		newitem(&cc1args, "-U");
-		newitem(&cc1args, EARGF(usage()));
-		break;
-	case 'c':
-		cflag = 1;
-		break;
-	case 'd':
-		dflag = 1;
-		break;
-	case 'g':
-		gflag = 1;
-		break;
-	case 'k':
-		kflag = 1;
-		break;
-	case 'l':
-		newitem(&linkchain, "-l");
-		newitem(&linkchain, EARGF(usage()));
-		break;
-	case 'm':
-		arch = EARGF(usage());
-		break;
-	case 'o':
-		outfile = EARGF(usage());
-		break;
-	case 's':
-		sflag = 1;
-		break;
-	case 't':
-		sys = EARGF(usage());
-		break;
-	case 'w':
-		Wflag = 0;
-		break;
-	case 'W':
-		Wflag = 1;
-		break;
-	case 'q':
-		Qflag = 0;
-		break;
-	case 'Q':
-		Qflag = 1;
-		break;
-	case '-':
-		fprintf(stderr,
-		        "scc-cc: ignored parameter --%s\n", EARGF(usage()));
-		break;
-	default:
-		usage();
-	} ARGOPERAND {
-operand:
-		newitem(&linkchain, ARGOP());
-	} ARGEND
+	for (++argv; *argv; ++argv) {
+		char *arg = *argv;
+		if (arg[0] == '-' && arg[1] == '-')
+			break;
+		if (arg[0] != '-') {
+			newitem(&linkchain, arg);
+			continue;
+		}
 
-	for (; *argv; --argc, ++argv)
-		goto operand;
+		if (!strcmp(arg, "-static") ||
+		    !strcmp(arg, "-dynamic") ||
+		    !strcmp(arg, "-pedantic") ||
+		    !strcmp(arg, "-ansi") ||
+		    !strncmp(arg, "-std=", 5)) {
+			continue;
+		}
+
+		for (++arg; *arg; ++arg) {
+			switch (*arg) {
+			case 'D':
+				newitem(&cc1args, "-D");
+				newitem(&cc1args, param(&arg, &argv));
+				break;
+			case 'M':
+				Mflag = 1;
+				break;
+			case 'E':
+				Eflag = 1;
+				break;
+			case 'I':
+				newitem(&cc1args, "-I");
+				newitem(&cc1args, param(&arg, &argv));
+				break;
+			case 'L':
+				newitem(&linkargs, "-L");
+				newitem(&linkargs, param(&arg, &argv));
+				break;
+			case 'O':
+				param(&arg, &argv);
+				break;
+			case 'S':
+				Sflag = 1;
+				break;
+			case 'U':
+				newitem(&cc1args, "-U");
+				newitem(&cc1args, param(&arg, &argv));
+				break;
+			case 'c':
+				cflag = 1;
+				break;
+			case 'd':
+				dflag = 1;
+				break;
+			case 'g':
+				gflag = 1;
+				break;
+			case 'k':
+				kflag = 1;
+				break;
+			case 'l':
+				newitem(&linkchain, "-l");
+				newitem(&linkchain, param(&arg, &argv));
+				break;
+			case 'a':
+				arch = param(&arg, &argv);
+				break;
+			case 't':
+				sys = param(&arg, &argv);
+				break;
+			case 'o':
+				outfile = param(&arg, &argv);
+				break;
+			case 's':
+				sflag = 1;
+				break;
+			case 'w':
+				Wflag = 1;
+				break;
+			case 'W':
+				param(&arg, &argv);
+				Wflag = 1;
+				break;
+			case 'q':
+				Qflag = 0;
+				break;
+			case 'Q':
+				Qflag = 1;
+				break;
+			case 'm':
+			case 'f':
+				/* ignore any -f or -m option */
+				param(&arg, &argv);
+				break;
+			default:
+				usage();
+			}
+		}
+	}
+
+	for (; *argv; ++argv)
+		newitem(&linkchain, *argv);
 
 	if (Eflag && linkchain.n == 0)
 		newitem(&linkchain, "-");
