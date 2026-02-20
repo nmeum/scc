@@ -74,10 +74,13 @@ builtin_va_start(Symbol *sym)
 	if (!valid_va_list(ap->type) || !(last->sym->flags&SDECLARED))
 		 goto error;
 
+	tp = curfun->type;
 	for (p = curfun->u.pars; p && *p != last->sym; ++p)
 		;
-	if (!p || *p == NULL || p[1] == NULL || p[1]->type != ellipsistype)
+	if (!p || *p == NULL || p[1] != NULL ||
+	    tp->p.pars[tp->n.elem-1] != ellipsistype) {
 		warn("second parameter of 'va_start' not last named argument");
+	}
 
 	tp = last->type;
 	if (tp == booltype ||
