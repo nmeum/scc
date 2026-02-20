@@ -26,6 +26,7 @@ builtin_va_arg(Symbol *sym)
 
 	np = node(OBUILTIN, tp, ap, NULL);
 	np->sym = sym;
+	np->flags |= NEFFECT;
 	return np;
 
 error:
@@ -52,6 +53,7 @@ builtin_va_copy(Symbol *sym)
 		src = node(OPTR, src->type->type, src, NULL);
 	np = node(OASSIGN, dst->type, dst, src);
 	np = node(OCAST, voidtype, np, NULL);
+	np->flags |= NEFFECT;
 
 	return np;
 }
@@ -86,6 +88,7 @@ builtin_va_start(Symbol *sym)
 
 	np = node(OBUILTIN, voidtype, ap, last);
 	np->sym = sym;
+	np->flags |= NEFFECT;
 	return np;
 
 error:
@@ -107,6 +110,7 @@ builtin_va_end(Symbol *sym)
 
 	np = node(OBUILTIN, voidtype, ap, NULL);
 	np->sym = sym;
+	np->flags |= NEFFECT;
 	return np;
 }
 
