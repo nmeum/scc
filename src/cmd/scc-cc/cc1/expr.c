@@ -47,6 +47,7 @@ cmpnode(Node *np, unsigned long long val)
 	tp = sym->type;
 
 	switch (tp->op) {
+	case ENUM:
 	case PTR:
 	case INT:
 		mask = (val > 1) ? ones(np->type->size) : -1;
