@@ -48,7 +48,7 @@ error(char *fmt, ...)
 	va_list va;
 
 	va_start(va, fmt);
-	fprintf(stderr, "objdump: %s: ", filename);
+	fprintf(stderr, "scc-objdump: %s: ", filename);
 	if (membname)
 		fprintf(stderr, "%s: ", membname);
 	vfprintf(stderr, fmt, va);
@@ -389,7 +389,7 @@ objdump(char *fname)
 static void
 usage(void)
 {
-	fputs("usage: objdump [-afhpts][-j section] file...\n", stderr);
+	fputs("usage: scc-objdump [-afhpts][-j section] file...\n", stderr);
 	exit(EXIT_FAILURE);
 }
 
@@ -428,7 +428,7 @@ main(int argc, char *argv[])
 
 	if (!aflag && !fflag && !hflag
 	&& !tflag && !sflag) {
-		fputs("objdump: At least one of [afhts] flags must be used\n",
+		fputs("scc-objdump: At least one of [afhts] flags must be used\n",
 		      stderr);
 		usage();
 	}

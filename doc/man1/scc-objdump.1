@@ -1,0 +1,223 @@
+.TH OBJDUMP 1 scc\-VERSION
+.SH NAME
+scc-objdump \- display information from object files
+.SH SYNOPSIS
+.B scc-objdump
+.RB [ \-afhps ]
+.RB [ \-t ]
+.RB [ \-j
+.IR section ]
+.RI [ file ...]
+.SH DESCRIPTION
+.B scc-objdump
+displays information about one or more object files.
+The options control what information is displayed.
+.PP
+If no
+.I file
+arguments are given,
+.B scc-objdump
+reads from
+.B a.out
+by default.
+.PP
+At least one of the
+.BR \-a ,
+.BR \-f ,
+.BR \-h ,
+.BR \-t ,
+or
+.B \-s
+options must be specified.
+.PP
+Archive libraries are also accepted, in which case
+.B scc-objdump
+processes each object file member within the archive.
+.SH OPTIONS
+.TP
+.B \-a
+If any of the
+.I files
+are archives, display the archive header information for each member
+(file permissions, owner, group, size, and date) in a format similar to
+.BR ls (1)
+.BR \-l .
+.TP
+.B \-f
+Display summary information from the file header of each
+.IR file .
+This includes the architecture name, the file flags in hexadecimal,
+and the start address.
+.PP
+.RS
+The file flags field is followed by a comma-separated list of the
+flag names that are set, which may include:
+.PP
+.RS
+.PD 0
+.TP
+.B HAS_RELOC
+The file contains relocation entries.
+.TP
+.B EXEC_P
+The file is an executable.
+.TP
+.B HAS_LINENO
+The file contains line number information.
+.TP
+.B HAS_DEBUG
+The file contains debugging information.
+.TP
+.B HAS_SYMS
+The file contains a symbol table.
+.TP
+.B HAS_LOCALS
+The file contains local symbols.
+.TP
+.B DYNAMIC
+The file is a dynamically linked object.
+.PD
+.RE
+.RE
+.TP
+.B \-h
+Display summary information from the section headers of each
+.IR file .
+For each section, the output includes the section index, name, size,
+virtual memory address (VMA), load memory address (LMA), file offset,
+alignment (as a power of two), and a set of flags.
+.PP
+.RS
+The section flags that may appear include:
+.PP
+.RS
+.PD 0
+.TP
+.B CONTENTS
+The section has contents stored in the file.
+.TP
+.B ALLOC
+The section is allocated in memory at runtime.
+.TP
+.B LOAD
+The section is loaded from the file into memory.
+.TP
+.B RELOC
+The section has relocation entries.
+.TP
+.B READONLY
+The section is not writable.
+.TP
+.B CODE
+The section contains executable code.
+.TP
+.B DATA
+The section contains initialised data.
+.TP
+.B DEBUGGING
+The section contains debugging information.
+.PD
+.RE
+.RE
+.TP
+.B \-p
+When combined with
+.BR \-h ,
+also display the full contents of each section using the
+format-specific representation.
+This option has no effect without
+.BR \-h .
+.TP
+.B \-s
+Display the full contents of all sections in hex and ASCII.
+For each section that is allocated and non-empty, the output includes
+the section name followed by rows of 16 bytes.
+Each row shows the VMA-relative offset, the bytes in hexadecimal,
+and a printable ASCII representation enclosed in
+.B |
+characters, with non-printable bytes shown as
+.BR . .
+.TP
+.B \-t
+Display the symbol table of each
+.IR file .
+The exact format depends on the object file format.
+.TP
+.BI \-j " section"
+Display information only for the named
+.IR section .
+This option may be specified multiple times to select more than one section.
+When no
+.B \-j
+option is given, all sections are processed.
+.SH OPERANDS
+.TP
+.I file
+A pathname of an object file or archive library to examine.
+If no operands are given,
+.B scc-objdump
+reads from
+.BR a.out .
+.SH EXIT STATUS
+.TP
+.B 0
+Successful completion.
+.TP
+.B >0
+An error occurred.
+.SH EXAMPLES
+Display file header information for an object file:
+.IP
+.EX
+scc-objdump \-f foo.o
+.EE
+.PP
+Display section headers for an object file:
+.IP
+.EX
+scc-objdump \-h foo.o
+.EE
+.PP
+Display symbol table for an object file:
+.IP
+.EX
+scc-objdump \-t foo.o
+.EE
+.PP
+Display hex contents of all sections:
+.IP
+.EX
+scc-objdump \-s foo.o
+.EE
+.PP
+Display file header and section headers together:
+.IP
+.EX
+scc-objdump \-fh foo.o
+.EE
+.PP
+Display section headers and hex contents of a specific section:
+.IP
+.EX
+scc-objdump \-hs \-j .text foo.o
+.EE
+.PP
+Display archive member headers and symbol tables for all members:
+.IP
+.EX
+scc-objdump \-at libfoo.a
+.EE
+.PP
+Display all available information:
+.IP
+.EX
+scc-objdump \-afhst foo.o
+.EE
+.SH LICENSE
+See the LICENSE file for the terms of redistribution.
+.SH SEE ALSO
+.BR scc-nm (1),
+.BR scc-size (1),
+.BR scc-strip (1),
+.BR scc-ar (1),
+.BR scc-ranlib (1)
