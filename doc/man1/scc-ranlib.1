@@ -1,0 +1,73 @@
+.TH RANLIB 1 scc\-VERSION
+.SH NAME
+scc-ranlib \- generate index to archive
+.SH SYNOPSIS
+.B scc-ranlib
+.RB [ \-t ]
+.I archive ...
+.SH DESCRIPTION
+.B scc-ranlib
+generates a symbol index for each
+.I archive
+and adds it as the first member of the archive.
+The index maps each exported symbol defined in an object file member
+to the offset of that member within the archive.
+This index allows the linker to quickly locate the object files needed
+to resolve external references without scanning the entire archive.
+.PP
+If an archive already contains a symbol index, it is replaced.
+The index member is named
+.B /
+for archives of ELF or COFF object files or
+.B __.SYMDEF
+for archives of other supported formats.
+.SH OPTIONS
+.TP
+.B \-t
+Accepted for compatibility with other implementations of
+.BR scc-ranlib (1)
+but has no effect.
+.SH OPERANDS
+.TP
+.I archive
+The pathname of an archive file to be indexed.
+One or more archive files must be specified.
+.SH EXIT STATUS
+.TP
+.B 0
+Successful completion.
+.TP
+.B >0
+An error occurred processing one or more archives.
+.SH EXAMPLES
+Generate a symbol index for a library archive:
+.IP
+.EX
+scc-ranlib libfoo.a
+.EE
+.PP
+Generate a symbol index for multiple archives at once:
+.IP
+.EX
+scc-ranlib libfoo.a libbar.a
+.EE
+.SH DIAGNOSTICS
+Error messages are written to standard error and have the format:
+.IP
+.EX
+scc-ranlib: archive: message
+.EE
+.PP
+If a member within the archive caused the error, the format is:
+.IP
+.EX
+scc-ranlib: archive: member: message
+.EE
+.SH AUTHORS
+See the LICENSE file for the authors.
+.SH LICENSE
+See the LICENSE file for the terms of redistribution.
+.SH SEE ALSO
+.BR scc-ar (1),
+.BR scc-ld (1),
+.BR scc-nm (1)

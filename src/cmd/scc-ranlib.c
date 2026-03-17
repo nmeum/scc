@@ -37,7 +37,7 @@ error(char *fmt, ...)
 	va_list va;
 
 	va_start(va, fmt);
-	fprintf(stderr, "ranlib: %s: ", filename);
+	fprintf(stderr, "scc-ranlib: %s: ", filename);
 	if (membname)
 		fprintf(stderr, "%s: ", membname);
 	vfprintf(stderr, fmt, va);
@@ -352,7 +352,7 @@ err1:
 static void
 usage(void)
 {
-	fputs("usage: ranlib [-t] file...\n", stderr);
+	fputs("usage: scc-ranlib [-t] file...\n", stderr);
 	exit(EXIT_FAILURE);
 }
 
