@@ -33,7 +33,7 @@ error(char *fmt, ...)
 	va_list va;
 
 	va_start(va, fmt);
-	fprintf(stderr, "nm: %s: ", filename);
+	fprintf(stderr, "scc-nm: %s: ", filename);
 	if (membname)
 		fprintf(stderr, "%s: ", membname);
 	vfprintf(stderr, fmt, va);
@@ -240,7 +240,7 @@ nm(char *fname)
 static void
 usage(void)
 {
-	fputs("nm [-APvfagu][-t format] [file...]\n", stderr);
+	fputs("scc-nm [-APvfagu][-t format] [file...]\n", stderr);
 	exit(1);
 }
 

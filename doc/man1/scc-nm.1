@@ -1,0 +1,220 @@
+.TH NM 1 scc\-VERSION
+.SH NAME
+scc-nm \- list symbol table of object files
+.SH SYNOPSIS
+.B scc-nm
+.RB [ \-APfgauv ]
+.RB [ \-t
+.IR format ]
+.RI [ file ...]
+.SH DESCRIPTION
+.B scc-nm
+lists the symbol table of each object
+.I file
+specified.
+If no
+.I file
+arguments are given,
+.B scc-nm
+reads from
+.B a.out
+by default.
+.PP
+For each symbol,
+.B scc-nm
+writes to standard output the symbol value, type, and name.
+The symbol type is represented as a single character.
+Uppercase letters denote global (external) symbols;
+lowercase letters denote local symbols.
+The following type characters are commonly used:
+.PP
+.RS
+.PD 0
+.TP
+.B U
+Undefined symbol.
+.TP
+.B T t
+Symbol in the text (code) section.
+.TP
+.B D d
+Symbol in the initialised data section.
+.TP
+.B B b
+Symbol in the BSS (uninitialised data) section.
+.TP
+.B R r
+Symbol in the read-only data section.
+.TP
+.B N
+Debugging symbol.
+.TP
+.B ?
+Symbol of unknown type.
+.PD
+.RE
+.PP
+By default, symbols of type
+.BR ? ,
+.BR N ,
+section symbols, and file symbols are excluded from the output.
+The
+.B \-f
+option includes them.
+.PP
+In the default output format, each symbol is printed on one line as:
+.PP
+.RS
+.I value type name
+.RE
+.PP
+where
+.I value
+is a 16-digit number in the specified radix.
+For undefined symbols,
+.I value
+is printed as 16 spaces.
+.PP
+When processing multiple files, or when listing members of an archive,
+a header line consisting of the file or member name followed by a colon
+is printed before each group of symbols, unless
+.B \-A
+is specified.
+.SH OPTIONS
+.TP
+.B \-A
+Precede each output line with the pathname of the object file.
+For archive members, the format is
+.IB filename [ membname ]:
+followed by a space.
+.TP
+.B \-a
+Identical to
+.BR \-f .
+Include all symbols in the output.
+.TP
+.B \-f
+Include all symbols in the output, including symbols of unknown type
+.RB ( ? ),
+debugging symbols
+.RB ( N ),
+section symbols, and file symbols.
+Without this option, these symbols are excluded.
+.TP
+.B \-g
+Display only global (external) symbols.
+A symbol is global if its type character is uppercase.
+.TP
+.B \-P
+Write information in a portable output format as specified by POSIX.
+Each output line has the form:
+.PP
+.RS
+.RS
+.I name type
+.RE
+.RE
+.PP
+.RS
+For symbols that are not undefined, the value and size follow,
+both in the specified radix:
+.RE
+.PP
+.RS
+.RS
+.I name type value size
+.RE
+.RE
+.TP
+.BI \-t " format"
+Display symbol values and sizes using the specified numeric base.
+.I format
+must be one of:
+.RS
+.TP
+.B d
+Decimal.
+.TP
+.B o
+Octal.
+.TP
+.B x
+Hexadecimal (default).
+.RE
+.TP
+.B \-u
+Display only undefined symbols (type
+.BR U ).
+.TP
+.B \-v
+Sort symbols by value instead of by name.
+Undefined symbols are sorted before defined symbols when sorting by value.
+.SH OPERANDS
+.TP
+.I file
+A pathname of an object file or archive library whose symbol table is
+to be listed.
+If no operands are given,
+.B scc-nm
+reads from
+.BR a.out .
+.SH EXIT STATUS
+.TP
+.B 0
+Successful completion.
+.TP
+.B >0
+An error occurred.
+.SH EXAMPLES
+List symbols from an object file:
+.IP
+.EX
+scc-nm foo.o
+.EE
+.PP
+List only global (external) symbols from an archive:
+.IP
+.EX
+scc-nm \-g libfoo.a
+.EE
+.PP
+List only undefined symbols:
+.IP
+.EX
+scc-nm \-u foo.o
+.EE
+.PP
+List symbols sorted by value:
+.IP
+.EX
+scc-nm \-v foo.o
+.EE
+.PP
+List all symbols including debugging and section symbols:
+.IP
+.EX
+scc-nm \-f foo.o
+.EE
+.PP
+List symbols in POSIX format with decimal values:
+.IP
+.EX
+scc-nm \-P \-t d foo.o
+.EE
+.PP
+Prefix each output line with the filename when processing multiple files:
+.IP
+.EX
+scc-nm \-A foo.o bar.o
+.EE
+.SH STANDARDS
+The
+.B scc-nm
+utility is designed to conform to IEEE Std 1003.1-2008 (POSIX.1).
+.SH LICENSE
+See the LICENSE file for the terms of redistribution.
+.SH SEE ALSO
+.BR scc-ar (1),
+.BR scc-ranlib (1),
+.BR scc-ld (1),
+.BR scc-strip (1)
