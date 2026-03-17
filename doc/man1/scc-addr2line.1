@@ -1,0 +1,82 @@
+.TH ADDR2LINE 1 scc\-VERSION
+.SH NAME
+scc-addr2line \- translate addresses into file names and line numbers
+.SH SYNOPSIS
+.B scc-addr2line
+.RB [ \-e
+.IR file ]
+.RI [ addr ...]
+.SH DESCRIPTION
+.B scc-addr2line
+translates program addresses into file names and line numbers.
+Given an address in an executable, it uses the debug information in
+the object file to determine which source file and line number
+correspond to that address.
+.PP
+Addresses are specified in hexadecimal. For each address,
+.B scc-addr2line
+prints the corresponding source file name and line number to standard
+output, in the form:
+.PP
+.in +4n
+.EX
+filename:linenumber
+.EE
+.in
+.PP
+If no addresses are given as arguments,
+.B scc-addr2line
+reads addresses from standard input, one per line, and translates each
+one. This mode continues until an error is encountered or end-of-file
+is reached.
+.SH OPTIONS
+.TP
+.BI \-e " file"
+Use
+.I file
+as the executable to translate addresses from.
+If this option is not specified,
+.B scc-addr2line
+uses
+.B a.out
+as the default executable.
+.SH OPERANDS
+.TP
+.I addr
+A hexadecimal address to translate. Multiple addresses may be specified
+as separate arguments and will be translated in order.
+.SH EXIT STATUS
+.TP
+.B 0
+Successful completion.
+.TP
+.B >0
+An error occurred, such as an unrecognized file format, an invalid
+address, or no matching debug information found.
+.SH EXAMPLES
+Translate a single address in the default executable:
+.IP
+.EX
+scc-addr2line 0x4005a0
+.EE
+.PP
+Translate multiple addresses in a specific executable:
+.IP
+.EX
+scc-addr2line \-e myprog 0x4005a0 0x400620
+.EE
+.PP
+Read addresses from standard input:
+.IP
+.EX
+echo 0x4005a0 | scc-addr2line \-e myprog
+.EE
+.SH AUTHORS
+See the LICENSE file for the authors.
+.SH LICENSE
+See the LICENSE file for the terms of redistribution.
+.SH SEE ALSO
+.BR scc-nm (1),
+.BR scc-objdump (1),
+.BR scc-strip (1),
+.BR scc-cc (1)

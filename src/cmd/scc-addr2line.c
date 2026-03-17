@@ -18,7 +18,7 @@ error(char *fmt, ...)
 	va_list va;
 
 	va_start(va, fmt);
-	fprintf(stderr, "strip: %s: ", filename);
+	fprintf(stderr, "scc-addr2line: %s: ", filename);
 	vfprintf(stderr, fmt, va);
 	putc('\n', stderr);
 	va_end(va);
@@ -104,7 +104,7 @@ loadexe(char *fname)
 static void
 usage(void)
 {
-	fputs("usage: addr2line [-e file] [addr ...]\n", stderr);
+	fputs("usage: scc-addr2line [-e file] [addr ...]\n", stderr);
 	exit(EXIT_FAILURE);
 }
 
