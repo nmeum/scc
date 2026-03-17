@@ -18,7 +18,7 @@ error(char *fmt, ...)
 	va_list va;
 
 	va_start(va, fmt);
-	fprintf(stderr, "strip: error: %s: ", filename);
+	fprintf(stderr, "scc-strip: error: %s: ", filename);
 	vfprintf(stderr, fmt, va);
 	putc('\n', stderr);
 	va_end(va);
@@ -27,7 +27,7 @@ error(char *fmt, ...)
 }
 
 static void
-doit(char *fname)
+strip(char *fname)
 {
 	int type;
 	size_t r;
@@ -104,7 +104,7 @@ err1:
 static void
 usage(void)
 {
-	fputs("usage: strip [file...]\n", stderr);
+	fputs("usage: scc-strip [file...]\n", stderr);
 	exit(EXIT_FAILURE);
 }
 
@@ -117,10 +117,10 @@ main(int argc, char *argv[])
 	} ARGEND
 
 	if (argc == 0) {
-		doit("a.out");
+		strip("a.out");
 	} else {
 		for (; *argv; ++argv)
-			doit(*argv);
+			strip(*argv);
 	}
 
 	return status;

@@ -1,0 +1,73 @@
+.TH STRIP 1 scc\-VERSION
+.SH NAME
+strip \- remove symbols and relocation information from object files
+.SH SYNOPSIS
+.B scc-strip
+.RI [ file ...]
+.SH DESCRIPTION
+.B scc-strip
+removes the symbol table and relocation information from each object
+.I file
+specified.
+If no
+.I file
+arguments are given,
+.B scc-strip
+operates on
+.B a.out
+by default.
+.PP
+Stripping an object file reduces its size by discarding information that
+is not required for execution, such as symbol names and relocation records.
+The resulting file is otherwise functionally equivalent to the original.
+.PP
+.B scc-strip
+processes each file in place.
+A temporary file is created alongside the original during processing
+and is renamed to replace it upon success.
+If an error occurs, the original file is left unchanged.
+.SH OPERANDS
+.TP
+.I file
+A pathname of an object file from which symbol and relocation information
+is to be removed.
+If no operands are given,
+.B strip
+operates on
+.BR a.out .
+.SH EXIT STATUS
+.TP
+.B 0
+Successful completion.
+.TP
+.B >0
+An error occurred processing one or more files.
+.SH EXAMPLES
+Strip the default output file:
+.IP
+.EX
+scc-strip
+.EE
+.PP
+Strip a specific object file:
+.IP
+.EX
+scc-strip foo.o
+.EE
+.PP
+Strip multiple files:
+.IP
+.EX
+scc-strip foo.o bar.o baz.o
+.EE
+.SH STANDARDS
+The
+.B scc-strip
+utility is designed to conform to IEEE Std 1003.1-2008 (POSIX.1).
+.SH LICENSE
+See the LICENSE file for the terms of redistribution.
+.SH SEE ALSO
+.BR scc-ar (1),
+.BR scc-nm (1),
+.BR scc-ranlib (1),
+.BR scc-objdump (1)
