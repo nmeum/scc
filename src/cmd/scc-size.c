@@ -27,7 +27,7 @@ error(char *fmt, ...)
 	va_list va;
 
 	va_start(va, fmt);
-	fprintf(stderr, "size: %s: ", filename);
+	fprintf(stderr, "scc-size: %s: ", filename);
 	if (membname)
 		fprintf(stderr, "%s: ", membname);
 	vfprintf(stderr, fmt, va);
@@ -152,7 +152,7 @@ size(char *fname)
 static void
 usage(void)
 {
-	fputs("usage: size [-t] [file...]\n", stderr);
+	fputs("usage: scc-size [-t] [file...]\n", stderr);
 	exit(EXIT_FAILURE);
 }
 

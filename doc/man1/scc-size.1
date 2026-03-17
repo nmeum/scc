@@ -1,0 +1,132 @@
+.TH SIZE 1 scc\-VERSION
+.SH NAME
+scc-size \- list section sizes of object files
+.SH SYNOPSIS
+.B scc-size
+.RB [ \-t ]
+.RI [ file ...]
+.SH DESCRIPTION
+.B scc-size
+lists the sizes of the text, data, and BSS sections of each object
+.I file
+specified, along with the total size in decimal and hexadecimal.
+If no
+.I file
+arguments are given,
+.B scc-size
+reads from
+.B a.out
+by default.
+.PP
+For each
+.IR file ,
+.B scc-size
+writes a line to standard output containing the following tab-separated fields:
+.PP
+.RS
+.I text data bss dec hex filename
+.RE
+.PP
+where
+.I text
+is the combined size of the text (code) and read-only data sections,
+.I data
+is the size of the initialised data sections,
+.I bss
+is the size of the uninitialised data sections,
+.I dec
+is the total size in decimal,
+.I hex
+is the total size in hexadecimal,
+and
+.I filename
+is the name of the file.
+.PP
+A header line is always printed before the first entry:
+.PP
+.RS
+.EX
+text	data	bss	dec	hex	filename
+.EE
+.RE
+.PP
+When processing an archive library,
+.B scc-size
+reports sizes for each object file member contained within the archive.
+Members that are not recognised object files are silently skipped.
+.PP
+Sections are classified as follows:
+.PP
+.RS
+.PD 0
+.TP
+.B T R
+Text and read-only data sections contribute to the
+.I text
+total.
+.TP
+.B D
+Initialised data sections contribute to the
+.I data
+total.
+.TP
+.B B
+Uninitialised (BSS) data sections contribute to the
+.I bss
+total.
+.PD
+.RE
+.PP
+Sections of any other type are not counted.
+.SH OPTIONS
+.TP
+.B \-t
+Print a totals row after all file entries.
+The totals row accumulates the text, data, and BSS sizes across all
+processed files (including archive members) and is labelled
+.BR (TOTALS) .
+.SH OPERANDS
+.TP
+.I file
+A pathname of an object file or archive library whose section sizes are
+to be listed.
+If no operands are given,
+.B scc-size
+reads from
+.BR a.out .
+.SH EXIT STATUS
+.TP
+.B 0
+Successful completion.
+.TP
+.B >0
+An error occurred.
+.SH EXAMPLES
+Display the section sizes of an object file:
+.IP
+.EX
+scc-size foo.o
+.EE
+.PP
+Display section sizes for all object files in an archive:
+.IP
+.EX
+scc-size libfoo.a
+.EE
+.PP
+Display section sizes for multiple files with a totals row:
+.IP
+.EX
+scc-size \-t foo.o bar.o baz.o
+.EE
+.SH STANDARDS
+The
+.B scc-size
+utility is designed to conform to IEEE Std 1003.1-2008 (POSIX.1).
+.SH LICENSE
+See the LICENSE file for the terms of redistribution.
+.SH SEE ALSO
+.BR scc-ar (1),
+.BR scc-nm (1),
+.BR scc-strip (1),
+.BR scc-objdump (1)
