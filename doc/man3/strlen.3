@@ -1,6 +1,6 @@
 .TH strlen 3
 .SH NAME
-strlen - get the length of a string
+strlen - determine the length of a string
 .SH SYNOPSIS
 #include <string.h>
 
@@ -8,11 +8,13 @@ size_t strlen(const char *s)
 .SH DESCRIPTION
 The
 .BR strlen ()
-function computes the length of the string
+function counts the number of bytes in the null-terminated string
 pointed to by
-.I s
+.IR s ,
+not including the terminating null byte.
 .SH RETURN VALUE
-The function shall return the length of the string
-.IR s .
+The number of bytes preceding the terminating null byte in
+.I s
+is returned.
 .SH STANDARDS
 ISO/IEC 9899:1999 Section 7.21.6.3

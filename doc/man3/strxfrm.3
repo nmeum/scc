@@ -1,6 +1,6 @@
 .TH strxfrm 3
 .SH NAME
-strxfrm - string transformation
+strxfrm - transform a string for locale-aware comparison
 .SH SYNOPSIS
 #include <string.h>
 
@@ -8,40 +8,37 @@ size_t strxfrm(char *restrict s1, const char *restrict s2, size_t n)
 .SH DESCRIPTION
 The
 .BR strxfrm ()
-function transforms
-the string pointed to by
+function transforms the string at
 .I s2
-and places the resulting string
-into the array pointed to by
+and writes the result into the array at
 .IR s1 .
-The transformation is such that
-if the strcmp function is applied to two transformed strings,
-it returns a value
-greater than, equal to or less than zero,
-corresponding to the result of the strcoll function
-applied to the same two original strings.
+The transformation is defined such that applying
+.B strcmp
+to two transformed strings yields the same ordering as applying
+.B strcoll
+to the corresponding original strings.
 .PP
-No more than n characters shall be placed into
-the resulting array pointed to by
-.IR s1 ,
-including the terminating null character.
-If n is zero,
+At most
+.I n
+characters, including the terminating null byte,
+are written to
+.IR s1 .
+When
+.I n
+is zero,
 .I s1
-is permitted to be a null pointer.
+may be a null pointer.
 .PP
-If copying takes place between objects that overlap,
-the behaviour is undefined.
+Overlapping source and destination regions produce undefined behavior.
 .SH RETURN VALUE
 The
 .BR strxfrm ()
-function shall return the length of
-the transformed string
-(not including the terminating null character).
-If the value returned is
+function returns the length of the transformed string,
+not counting the terminating null byte.
+If the returned value is
 .I n
-or more,
-the contents of the array pointed to
+or greater, the content of
 .I s1
-are indeterminate.
+is indeterminate.
 .SH STANDARDS
 ISO/IEC 9899:1999 Section 7.21.4.5

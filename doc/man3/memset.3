@@ -1,6 +1,6 @@
 .TH memset 3
 .SH NAME
-memset - set bytes in memory
+memset - fill memory with a constant byte
 .SH SYNOPSIS
 #include <string.h>
 
@@ -8,22 +8,21 @@ void *memset(void *s, int c, size_t n)
 .SH DESCRIPTION
 The
 .BR memset ()
-function copies the value of
-.I c
-(converted to an unsigned char)
-into each of the first
+function fills the first
 .I n
-characters of the object
-pointed to by
-.IR s .
-.PP
-The function does not modify
+bytes of the memory block pointed to by
 .I s
-if
+with the constant byte obtained by converting
+.I c
+to unsigned char.
+.PP
+When
 .I n
-is equal to 0.
+is zero, the memory block is left unmodified.
 .SH RETURN VALUE
-The function shall return the value of
+The
+.BR memset ()
+function returns its first argument,
 .IR s .
 .SH STANDARDS
 ISO/IEC 9899:1999 Section 7.21.6.1

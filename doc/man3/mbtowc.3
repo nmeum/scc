@@ -1,67 +1,60 @@
 .TH MBTOWC 3
 .SH NAME
-mbtowc - converts from multibyte encoding to wchar_t
+mbtowc - convert a multibyte sequence to a wide character
 .SH SYNOPSIS
 #include <stdlib.h>
 
 int mbtowc(wchar_t * restrict pwc, const char * restrict s, size_t n)
 .SH DESCRIPTION
-if
+When
 .I s
 is not a null pointer,
 the
 .BR mbtowc ()
-function inspects at most
+function examines up to
 .I n
-bytes beginning with the byte pointed to by
+bytes starting at
 .I s
-to determine the number of bytes needed
-to complete the next multibyte character
-(including any shift sequences).
-If the function determines
-that the next multibyte character is complete and valid,
-it determines the value of the corresponding wide character
-and then,
+to determine how many bytes form the next complete multibyte character,
+including any required shift sequences.
+If a complete, valid multibyte character is found,
+the corresponding wide character value is computed and,
 if
 .I pwc
 is not a null pointer,
-stores that value in the object pointed to by
+stored in the object at
 .IR pwc .
-If the corresponding wide character is the null wide character,
-the function is left in the initial conversion state.
+When the converted character is the null wide character,
+the conversion state is reset to its initial value.
 .SH RETURN VALUE
-If
+When
 .I s
 is a null pointer,
-the
-.BR  mbtowc ()
-function returns a nonzero or zero value,
-if multibyte character encodings,
-respectively,
-do or do not have state-dependent encodings.
-If
-.I s
-is not a null pointer,
-the
 .BR mbtowc ()
-function either returns 0
-(if
+returns non-zero if the current encoding has state-dependent sequences,
+or zero otherwise.
+When
 .I s
-points to the null character),
-or returns the number of bytes
-that are contained in the converted multibyte character
-(if the next
+is not a null pointer, the function returns:
+.TP
+0
+if
+.I s
+points to the null character;
+.TP
+positive
+the number of bytes consumed to produce the wide character,
+when the next
 .I n
-or fewer bytes form a valid multibyte character),
-or returns -1
-(if they do not form a valid multibyte character).
+or fewer bytes form a valid multibyte character;
+.TP
+\-1
+if the bytes do not form a valid multibyte character.
 .PP
-In no case will the value returned be
-greater than
+The return value never exceeds
 .I n
-or the value of the
-.I MB_CUR_MAX
-macro.
+or the value of
+.IR MB_CUR_MAX .
 .SH STANDARDS
 ISO/IEC 9899:1999 Section 7.20.7.2 Paragraph 1,2,3,4,5
 .SH SEE ALSO

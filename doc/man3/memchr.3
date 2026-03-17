@@ -1,6 +1,6 @@
 .TH memchr 3
 .SH NAME
-memchr - find byte in memory
+memchr - search for a byte in a memory block
 .SH SYNOPSIS
 #include <string.h>
 
@@ -8,25 +8,23 @@ void *memchr(const void *s, int c, size_t n)
 .SH DESCRIPTION
 The
 .BR memchr ()
-function locates the first occurence of
-.I c
-(converted to an unsigned char)
-in the initial
+function scans the first
 .I n
-characters
-(each interpreted as unsigned char)
-of the object pointed to by
-.IR s .
+bytes of the memory block pointed to by
+.I s
+for the first occurrence of the byte value
+obtained by converting
+.I c
+to unsigned char.
+Each byte in the block is treated as unsigned char.
 .PP
-The function shall not try to locate
-.I c
-if
+When
 .I n
-is equal to 0.
+is zero, the search is not performed.
 .SH RETURN VALUE
 The
 .BR memchr ()
-function shall return a pointer to the located character
-or a null pointer if the character does not occur in the object.
+function returns a pointer to the first matching byte,
+or a null pointer if the byte is not found within the block.
 .SH STANDARDS
 ISO/IEC 9899:1999 Section 7.21.5.1

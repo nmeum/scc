@@ -1,6 +1,6 @@
 .TH localeconv 3
 .SH NAME
-localeconv - get numeric formatting information
+localeconv - retrieve numeric formatting conventions for the current locale
 .SH SYNOPSIS
 #include <locale.h>
 
@@ -8,23 +8,19 @@ struct lconv *localeconv(void);
 .SH DESCRIPTION
 The
 .BR localeconv ()
-function is used to set
-the components of an object with type struct lconv
-with values appropriate for the formatting of numeric quantities
-according to the rules of the current locale and return a pointer to it.
+function fills the fields of an internal object of type struct lconv
+with the numeric and monetary formatting rules of the active locale
+and returns a pointer to that object.
 .SH RETURN VALUE
-The
-.B localeconv
-function returns a pointer to the filled-in object.
-The structure pointed to by the return value
-shall not be modified by the program,
-but may be overwritten by a subsequent call to the
-.B localeconv
-function.
-In addition, calls to
+A pointer to the internal
+.I lconv
+structure is returned.
+The program must not modify the returned structure;
+its contents may be replaced by a subsequent call to
+.BR localeconv ()
+or by calls to
 .B setlocale
-function with categories LC_ALL, LC_MONETARY, or LC_NUMERIC
-may overwrite the contents of the structure.
+with a category of LC_ALL, LC_MONETARY, or LC_NUMERIC.
 .SH STANDARDS
 ISO/IEC 9899:1999 Section 7.11.2.1 Paragraph 1,2,8
 .SH SEE ALSO

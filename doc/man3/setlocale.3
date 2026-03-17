@@ -1,6 +1,6 @@
 .TH setlocale 3
 .SH NAME
-setlocale - set the current locale
+setlocale - query or modify the program's current locale
 .SH SYNOPSIS
 #include <locale.h>
 
@@ -8,16 +8,15 @@ char *setlocale(int category, const char *locale);
 .SH DESCRIPTION
 The
 .BR setlocale ()
-function is used to set or query the program's current locale.
-It can be used to set or query the locale entirely or partially.
-If
+function allows querying and changing the active locale of the program,
+either in full or in part.
+When
 .I locale
 is not NULL,
-the program's current locale is modified according to the arguments.
-The argument
+the program locale is updated according to the given arguments.
+The
 .I category
-determines which parts of the program's current locale
-should be modified.
+argument selects which aspect of the locale to modify:
 
 .nf
 Category   	Governs
@@ -29,34 +28,32 @@ LC_NUMERIC 	Formatting of nonmonetary numeric values
 LC_TIME    	Formatting of date and time values
 .fi
 
-A value of
+A
+.I locale
+value of
 .B C
-for
-.I locale
-specifies the minimum environment for C translation;
-a value of " " for
-.I locale
-specifies the locale-specific native environment.
+selects the minimal environment for C programs;
+a value of
+.B ""
+selects the native environment of the host system.
 
-At program startup,
-.BR setlocale (LC_ALL,"C");
-is executed.
+At program startup, the locale behaves as if
+.BR setlocale (LC_ALL,"C")
+had been called.
 .SH RETURN VALUE
-A pointer to the string associated with the specified
+On success, a pointer to a string identifying the locale
+associated with the specified
 .I category
-for the new
+is returned.
+If
 .I locale
-is returned if it can be honored.
-A pointer to the string associated with the specified
-.I category
-for the current locale is returned if
-.I locale
-is NULL.
-The string returned is such that a subsequent call
-with that string value and its associated category
-will restore that part of the program's locale.
-The string pointed to shall not be modified by the program,
-but may be overwritten by a subsequent call to the setlocale function.
+is NULL, the string describes the current locale for that category.
+A subsequent call to
+.B setlocale
+with this string and category will restore that locale.
+The returned string must not be modified by the program;
+it may be overwritten by the next call to
+.BR setlocale .
 .SH STANDARDS
 ISO/IEC 9899:1999 Section 7.11.1.1 Paragraph 1,2,3,4,6,7,8
 .SH SEE ALSO

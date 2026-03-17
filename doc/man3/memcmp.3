@@ -1,6 +1,6 @@
 .TH MEMCMP 3
 .SH NAME
-memcmp - compare bytes in memory
+memcmp - compare two memory blocks byte by byte
 .SH SYNOPSIS
 #include <string.h>
 
@@ -10,25 +10,20 @@ The
 .BR memcmp ()
 function compares the first
 .I n
-bytes of the object pointed to by
+bytes of the memory blocks pointed to by
 .I s1
-to the first
-.I n
-bytes of the object pointed to by
+and
 .IR s2 .
-The value returned shall be used to determine
-if an object is lexicographically greater than,
-lesser than or equal to another object.
+The comparison is performed as if each byte were unsigned char.
 .SH RETURN VALUE
-The
-.BR memcmp ()
-function shall return an integer greater than,
-equal to, or lesser than 0,
-if the object pointed to by
+A positive integer is returned if
 .I s1
-is greater than,
-equal to, or lesser than the object pointed to by
+is lexicographically greater than
 .IR s2 ,
-respectively.
+zero if the two blocks are equal,
+and a negative integer if
+.I s1
+is lexicographically less than
+.IR s2 .
 .SH STANDARDS
 ISO/IEC 9899:1999 Section 7.21.4.1

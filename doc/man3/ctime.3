@@ -1,7 +1,6 @@
 .TH CTIME 3
 .SH NAME
-asctime, ctime, gmtime, localtime, mktime - transform date and time to
-broken-down time
+asctime, ctime, gmtime, localtime, mktime - convert between calendar time and broken-down time
 .SH SYNOPSIS
 #include <time.h>
 
@@ -18,108 +17,110 @@ The
 .B gmtime
 and
 .B localtime
-functions all take an argument of data type
-.BR time_t ,
-which represents calendar time.
+functions each accept a
+.B time_t
+argument representing calendar time.
 
 The
 .B asctime
 and
 .B mktime
-functions both takes an argument representing broken-down time,
-which is a representation separated into year, month, day and so on.
+functions each accept a pointer to a broken-down time structure,
+which separates calendar time into components such as
+year, month, and day.
 
-Broken-down time is stored in the struct tm.
+Broken-down time is stored in a
+.B struct tm
+object.
 
-The call
+Calling
 .B ctime(t)
-is equivalent to
+is equivalent to calling
 .BR asctime(localtime(t)) .
 It converts the calendar time
 .I t
-into a null-terminated string of the form:
+to a null-terminated string with the form:
 
-	"Wed Jun 30 21:49:08 1993\\n\\0"
+	"Wed Jun 30 21:49:08 1993\n\0"
 
-In C locale, the abbreviations for the days of the week are
+In the C locale, the day-of-week abbreviations are
 "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", and "Sat";
-the abbreviations for the months are "Jan", "Feb", "Mar", "Apr",
+the month abbreviations are "Jan", "Feb", "Mar", "Apr",
 "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", and "Dec".
 
 The
 .B gmtime
 function converts the calendar time
 .I timep
-into broken-down time representation, expressed as
+to a broken-down time expressed as
 Coordinated Universal Time (UTC).
-It may return NULL if the specified time cannot be converted to UTC.
+It may return NULL when the conversion is not possible.
 
 The
 .B localtime
 function converts the calendar time
 .I timep
-to broken-down time representation,
-expressed relative to the user's specified timezone.
+to a broken-down time expressed in the user's local timezone.
 
 The
 .B asctime
-function converts the broken-down time value
+function converts the broken-down time
 .I tm
-into a null-terminated string with the same format as
-.B ctime
-function.
+to a null-terminated string using the same format as
+.BR ctime .
 
 The
 .B mktime
-function converts a broken-down time structure,
-expressed as local time, to calendar time representation.
-The function ignores
-the values supplied by the caller in the
+function converts a broken-down local time to a calendar time value.
+The
 .B tm_wday
 and
 .B tm_yday
-fields and the original values of other fields
-are not restricted to the ranges indicated above.
-On successful completion, the values of
+fields of the input structure are ignored.
+The remaining fields are not required to lie within their normal ranges.
+Upon success, the structure is updated so that all fields reflect
+the calendar time within their standard ranges,
+with
 .B tm_wday
 and
 .B tm_yday
-are set appropriately and the other components are set to represent
-the specified calendar time within their respective ranges.
+computed accordingly.
 The final value of
 .B tm_mday
-is not set until
+is resolved only after
 .B tm_mon
 and
 .B tm_year
-are determined.
+have been determined.
 
 .SH RETURN VALUE
 On success,
 .B gmtime
 and
 .B localtime
-functions return a pointer to a struct tm.
+return a pointer to a
+.B struct tm .
 
 On success,
 .B asctime
 and
 .B ctime
-functions return a pointer to a string.
+return a pointer to the formatted string.
 
 On success,
 .B mktime
-function returns the calendar time, expressed as a value of type
-.BR time_t .
+returns the calendar time as a
+.B time_t
+value.
 
-On error,
+On failure,
 .B mktime
-function returns the value
+returns
 .BR (time_t)-1 .
-The remaining functions return NULL on error.
+All other functions return NULL on failure.
 On error,
 .B errno
-is set to indicate the cause of the error.
+is set to indicate the cause.
 .SH STANDARDS
 .nf
 ISO/IEC 9899:1999 7.23.2.3 Paragraph 1,2,3

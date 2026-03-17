@@ -1,6 +1,6 @@
 .TH strncpy 3
 .SH NAME
-strncpy - copy bounded-length string
+strncpy - copy a string with a length limit
 .SH SYNOPSIS
 #include <string.h>
 
@@ -8,35 +8,35 @@ char *strncpy(char *restrict s1, const char *restrict s2, size_t n)
 .SH DESCRIPTION
 The
 .BR strncpy ()
-function copies not more than
+function copies at most
 .I n
-characters
-(characters that follow a null character are not copied)
-from the array pointed to by
+characters from the array at
 .I s2
-into the array pointed to by
+into the array at
 .IR s1 .
-.PP
-If copying takes place between objects that overlap,
-the behaviour is undefined.
-.PP
-If the array pointed to by
+Characters that follow a null byte in
 .I s2
-is a string that is shorter than
-.I n
-characters,
-null characters are appended
-to the copy in the array pointed to by
-.IR s1 ,
-until n characters in all have been written.
+are not copied.
 .PP
-The function shall not copy anything if
+Overlapping source and destination regions produce undefined behavior.
+.PP
+When the string at
+.I s2
+is shorter than
 .I n
-is equal to 0.
+characters, the remaining positions in
+.I s1
+are filled with null bytes until exactly
+.I n
+bytes have been written.
+.PP
+When
+.I n
+is zero, nothing is copied.
 .SH RETURN VALUE
 The
-.BR strcpy ()
-function shall return the pointer
+.BR strncpy ()
+function returns its first argument,
 .IR s1 .
 .SH STANDARDS
 ISO/IEC 9899:1999 Section 7.21.2.4

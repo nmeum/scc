@@ -1,6 +1,6 @@
 .TH SETJMP 3
 .SH NAME
-setjmp - non-local jumps
+setjmp - save and restore the calling environment for non-local jumps
 .SH SYNOPSIS
 #include <setjmp.h>
 
@@ -11,57 +11,55 @@ void longjmp(jmp_buf env, int val)
 .SH DESCRIPTION
 The
 .BR setjmp ()
-function saves it calling environment in its argument
-.I env
-for later use by the
-.BR longjmp .
+function saves the current execution environment into
+.IR env ,
+which may later be passed to
+.BR longjmp ()
+to transfer control back to the point of the
+.B setjmp
+call.
 
 The
 .BR longjmp ()
-function restores the environment saved
-by the most recent invocation of
+function restores the execution environment previously captured by
 .B setjmp
-in the same invocation of the program
-with the corresponding
+in the same program invocation, using the matching
 .I env
-as argument.
+buffer.
 
-If there has been no such invocation,
-or if the function containing the invocation of
+Calling
+.BR longjmp ()
+is only valid if the corresponding
 .B setjmp
-has terminated execution,
-or if the invocation of
+was made in the same program invocation,
+the function that called
 .B setjmp
-was within the scope of an identifier with variably modified type
-and execution has left that scope in interim,
-the behavior is undefined.
+has not yet returned,
+and execution has not left the scope of any variably modified type
+that was in scope at the time of the
+.B setjmp
+call.
+Violating these conditions produces undefined behavior.
 .SH RETURN VALUE
-If the return is from a direct invocation,
+When called directly,
 .B setjmp
-shall return the value zero.
-If the return is from a call to
+returns zero.
+When control is transferred via
 .BR longjmp ,
 .B setjmp
-shall return a nonzero value.
+returns a non-zero value.
 
-After the function
+After
 .B longjmp
-is called,
-program execution continues as
-if the corresponding invocation of
+is called, execution resumes as though
 .B setjmp
-has just returned the value specified by
+had just returned
 .IR val .
-The function
-.B longjmp
-shall not cause the function
-.B setjmp
-to return the value 0.
 If
 .I val
-is set to 0,
+is zero,
 .B setjmp
-shall return the value 1.
+returns 1 instead.
 .SH STANDARDS
 .nf
 ISO/IEC 9899:1999 Section 7.13.1.1 Paragraph 1,2,3
