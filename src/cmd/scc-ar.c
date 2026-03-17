@@ -579,7 +579,7 @@ checkfnames(int argc, char *argv[])
 static void
 usage(void)
 {
-	fputs("ar [-drqtpmx][posname] [-vuaibcl] [posname] arfile name ...\n",
+	fputs("scc-ar [-cluv] [-d|-m|-p|-q|-r|-t|-x] [-a|-b|-i posname] archive [file...]\n",
 	      stderr);
 	exit(1);
 }

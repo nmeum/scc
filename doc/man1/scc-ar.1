@@ -1,0 +1,360 @@
+.TH SCC-AR 1 scc\-VERSION
+.SH NAME
+scc-ar \- create and maintain library archives
+.SH SYNOPSIS
+.B scc-ar
+.RB [ \-cluv ]
+.RB [ \-d | \-m | \-p | \-q | \-r | \-t | \-x ]
+.RB [ \-a | \-b | \-i
+.IR posname ]
+.I archive
+.RI [ file ...]
+.SH DESCRIPTION
+.B scc-ar
+creates and maintains groups of files combined into an archive.
+Once an archive has been created, new files can be added and existing
+files can be updated, replaced, or deleted.
+.PP
+The archive is created with a special header that identifies it as an
+archive file, followed by the archived files. Each archived member includes
+a header containing the file name, modification time, owner, group, file mode,
+and size.
+.PP
+Archives are commonly used to create libraries of object files for use
+with the linker. The
+.B scc-ar
+utility, in combination with a symbol table created by
+.BR scc-ranlib (1),
+allows the linker to selectively extract only those object files needed
+to resolve external references.
+.SH OPTIONS
+Exactly one of the following key options must be specified:
+.TP
+.B \-d
+Delete the specified
+.I files
+from the
+.IR archive .
+If the verbose modifier
+.B \-v
+is specified,
+.B scc-ar
+writes a line to standard output for each file deleted, consisting of
+the single character 'd' followed by a space and the name of the file.
+If one or more
+.I files
+are specified but not found in the archive, an error is reported.
+.TP
+.B \-m
+Move the specified
+.I files
+within the
+.IR archive .
+By default, members are moved to the end of the archive. The
+.BR \-a ,
+.BR \-b ,
+or
+.B \-i
+modifiers can be used to specify a position relative to another member.
+If the verbose modifier
+.B \-v
+is specified,
+.B scc-ar
+writes a line to standard output for each file moved, consisting of
+the single character 'm' followed by a space and the name of the file.
+.TP
+.B \-p
+Print the contents of the specified
+.I files
+from the
+.I archive
+to standard output. If no
+.I files
+are specified, the contents of all files in the archive are printed.
+If the verbose modifier
+.B \-v
+is specified, a header is printed before each file consisting of
+a newline, '<', the file name, '>', and two newlines.
+.TP
+.B \-q
+Quickly append the specified
+.I files
+to the end of the
+.IR archive .
+This is faster than
+.B \-r
+because it does not check whether the files already exist in the archive.
+The
+.B \-a
+and
+.B \-b
+modifiers are not supported with this operation.
+.TP
+.B \-r
+Replace or add the specified
+.I files
+to the
+.IR archive .
+If the archive does not exist, it is created. If a specified file is
+already a member of the archive, it is replaced. New files are added
+at the end of the archive by default, or at a position specified by
+the
+.BR \-a ,
+.BR \-b ,
+or
+.B \-i
+modifiers. If the verbose modifier
+.B \-v
+is specified,
+.B scc-ar
+writes a line to standard output for each file added or replaced,
+consisting of the single character 'a' or 'r' followed by a space
+and the name of the file.
+.TP
+.B \-t
+List the table of contents of the
+.IR archive .
+If
+.I files
+are specified, only those files are listed. If the verbose modifier
+.B \-v
+is specified, the listing includes file permissions, owner/group IDs,
+modification time, and file name in a format similar to
+.BR ls (1).
+Otherwise, only file names are printed, one per line.
+.TP
+.B \-x
+Extract the specified
+.I files
+from the
+.IR archive .
+If no
+.I files
+are specified, all files in the archive are extracted. The extracted
+files are created with the same permissions, modification time, owner,
+and group as they had when archived. If the verbose modifier
+.B \-v
+is specified,
+.B scc-ar
+writes a line to standard output for each file extracted, consisting of
+the single character 'x' followed by a space and the name of the file.
+.PP
+The following modifiers are available:
+.TP
+.BI \-a " posname"
+Position new or moved files after the existing member
+.IR posname .
+This modifier is only valid with the
+.B \-m
+and
+.B \-r
+operations.
+.TP
+.BI \-b " posname"
+Position new or moved files before the existing member
+.IR posname .
+This modifier is only valid with the
+.B \-m
+and
+.B \-r
+operations. The
+.B \-i
+modifier is a synonym for
+.BR \-b .
+.TP
+.BI \-i " posname"
+Identical to
+.BR \-b .
+Position new or moved files before the existing member
+.IR posname .
+This modifier is only valid with the
+.B \-m
+and
+.B \-r
+operations.
+.TP
+.B \-c
+Suppress the diagnostic message that is written to standard error when
+the
+.I archive
+is created. Without this modifier,
+.B scc-ar
+writes a message to standard error when creating a new archive.
+.TP
+.B \-l
+Use local temporary files instead of
+.BR tmpfile (3).
+When specified, temporary files are created in the current directory
+with the names
+.IR ar.tmp1 ,
+.IR ar.tmp2 ,
+and
+.IR ar.tmp3 .
+This can be useful when the system temporary directory is on a different
+filesystem or has insufficient space.
+.TP
+.B \-u
+Update members conditionally. When used with the
+.B \-r
+option, a file is only replaced in the archive if the file on disk
+has been modified more recently than the version in the archive.
+This modifier is only valid with the
+.B \-r
+operation.
+.TP
+.B \-v
+Verbose mode. Provide detailed output showing which files are being
+processed. The format of the output depends on the operation being
+performed (see individual operation descriptions above).
+.SH OPERANDS
+.TP
+.I archive
+The pathname of the archive file to be created, modified, or examined.
+.TP
+.I file
+A pathname of a file to be added to, extracted from, or listed in the archive.
+When adding files to an archive, the canonical name (basename) of the file
+is stored in the archive, stripped of any directory components.
+.SH EXIT STATUS
+.TP
+.B 0
+Successful completion.
+.TP
+.B >0
+An error occurred.
+.SH IMPLEMENTATION NOTES
+The
+.B scc-ar
+utility in the SCC toolchain is designed to be POSIX-compliant and
+portable across different systems. It has the following characteristics:
+.TP
+\(bu
+Archive member names are limited to 16 characters and cannot contain spaces.
+.TP
+\(bu
+Member names are stored in a fixed 16-character field, space-padded.
+.TP
+\(bu
+Archive members are aligned on even byte boundaries; if a member has an
+odd size, a newline character is appended as padding.
+.TP
+\(bu
+The archive format uses the standard UNIX archive magic number.
+.TP
+\(bu
+File attributes (permissions, owner, group, modification time) are preserved
+when extracting files.
+.TP
+\(bu
+When adding files, the utility stores the canonical (base) name only,
+stripping any directory path components.
+.TP
+\(bu
+If any specified
+.I file
+is not found in the archive during an operation that requires it
+(such as
+.BR \-d ,
+.BR \-m ,
+or
+.BR \-r ),
+an error is reported after all other operations complete.
+.TP
+\(bu
+Signal handling: The utility registers handlers for SIGINT, SIGQUIT
+(on systems that support it), and SIGTERM to ensure temporary files
+are cleaned up on abnormal termination.
+.SH EXAMPLES
+.PP
+Create (or update) an archive containing object files:
+.IP
+.EX
+scc-ar \-r libfoo.a foo.o bar.o baz.o
+.EE
+.PP
+List the contents of an archive:
+.IP
+.EX
+scc-ar \-t libfoo.a
+.EN
+.PP
+List the contents verbosely, showing file details:
+.IP
+.EX
+scc-ar \-tv libfoo.a
+.EE
+.PP
+Extract all files from an archive:
+.IP
+.EX
+scc-ar \-x libfoo.a
+.EE
+.PP
+Extract a specific file:
+.IP
+.EX
+scc-ar \-x libfoo.a foo.o
+.EE
+.PP
+Delete a file from an archive:
+.IP
+.EX
+scc-ar \-d libfoo.a foo.o
+.EE
+.PP
+Replace a file only if it has been modified:
+.IP
+.EX
+scc-ar \-ru libfoo.a foo.o
+.EE
+.PP
+Insert a file before another member:
+.IP
+.EX
+scc-ar \-r \-b bar.o libfoo.a newfile.o
+.EE
+.PP
+Move a member to the end of the archive:
+.IP
+.EX
+scc-ar \-m libfoo.a foo.o
+.EE
+.SH DIAGNOSTICS
+If the
+.B \-c
+modifier is not specified and a new archive is created,
+.B scc-ar
+writes the following message to standard error:
+.PP
+.in +4n
+.EX
+ar: creating archive
+.EE
+.in
+.PP
+Error messages are written to standard error and have the format:
+.PP
+.in +4n
+.EX
+ar: archive: message
+.EE
+.in
+.SH STANDARDS
+The
+.B scc-ar
+utility is designed to conform to IEEE Std 1003.1-2008 (POSIX.1).
+.SH AUTHORS
+See the LICENSE file for the authors.
+.SH LICENSE
+See the LICENSE file for the terms of redistribution.
+.SH SEE ALSO
+.BR scc-ranlib (1),
+.BR scc-ld (1),
+.BR scc-nm (1),
+.BR scc-strip (1)
+.SH BUGS
+The
+.B scc-ar
+utility does not create a symbol table by default. Use
+.BR scc-ranlib (1)
+to add a symbol table to an archive.
