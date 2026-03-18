@@ -32,13 +32,6 @@ but has no effect.
 .I archive
 The pathname of an archive file to be indexed.
 One or more archive files must be specified.
-.SH EXIT STATUS
-.TP
-.B 0
-Successful completion.
-.TP
-.B >0
-An error occurred processing one or more archives.
 .SH EXAMPLES
 Generate a symbol index for a library archive:
 .IP
@@ -63,10 +56,6 @@ If a member within the archive caused the error, the format is:
 .EX
 scc-ranlib: archive: member: message
 .EE
-.SH AUTHORS
-See the LICENSE file for the authors.
-.SH LICENSE
-See the LICENSE file for the terms of redistribution.
 .SH SEE ALSO
 .BR scc-ar (1),
 .BR scc-ld (1),

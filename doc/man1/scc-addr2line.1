@@ -17,12 +17,10 @@ Addresses are specified in hexadecimal. For each address,
 .B scc-addr2line
 prints the corresponding source file name and line number to standard
 output, in the form:
-.PP
-.in +4n
+.IP
 .EX
 filename:linenumber
 .EE
-.in
 .PP
 If no addresses are given as arguments,
 .B scc-addr2line
@@ -45,14 +43,6 @@ as the default executable.
 .I addr
 A hexadecimal address to translate. Multiple addresses may be specified
 as separate arguments and will be translated in order.
-.SH EXIT STATUS
-.TP
-.B 0
-Successful completion.
-.TP
-.B >0
-An error occurred, such as an unrecognized file format, an invalid
-address, or no matching debug information found.
 .SH EXAMPLES
 Translate a single address in the default executable:
 .IP
@@ -71,10 +61,6 @@ Read addresses from standard input:
 .EX
 echo 0x4005a0 | scc-addr2line \-e myprog
 .EE
-.SH AUTHORS
-See the LICENSE file for the authors.
-.SH LICENSE
-See the LICENSE file for the terms of redistribution.
 .SH SEE ALSO
 .BR scc-nm (1),
 .BR scc-objdump (1),

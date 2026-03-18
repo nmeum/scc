@@ -215,13 +215,6 @@ The pathname of the archive file to be created, modified, or examined.
 A pathname of a file to be added to, extracted from, or listed in the archive.
 When adding files to an archive, the canonical name (basename) of the file
 is stored in the archive, stripped of any directory components.
-.SH EXIT STATUS
-.TP
-.B 0
-Successful completion.
-.TP
-.B >0
-An error occurred.
 .SH IMPLEMENTATION NOTES
 The
 .B scc-ar
@@ -325,28 +318,20 @@ If the
 modifier is not specified and a new archive is created,
 .B scc-ar
 writes the following message to standard error:
-.PP
-.in +4n
+.IP
 .EX
 ar: creating archive
 .EE
-.in
 .PP
 Error messages are written to standard error and have the format:
-.PP
-.in +4n
+.IP
 .EX
 ar: archive: message
 .EE
-.in
 .SH STANDARDS
 The
 .B scc-ar
 utility is designed to conform to IEEE Std 1003.1-2008 (POSIX.1).
-.SH AUTHORS
-See the LICENSE file for the authors.
-.SH LICENSE
-See the LICENSE file for the terms of redistribution.
 .SH SEE ALSO
 .BR scc-ranlib (1),
 .BR scc-ld (1),
@@ -358,3 +343,4 @@ The
 utility does not create a symbol table by default. Use
 .BR scc-ranlib (1)
 to add a symbol table to an archive.
+The option \-s is not implemented.
