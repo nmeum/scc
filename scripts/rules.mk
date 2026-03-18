@@ -8,6 +8,7 @@ CONF = amd64-linux
 TOOL = unix
 HOST = posix
 ROFF = gnu
+VERSION = 0.1
 include $(PROJECTDIR)/config.mk
 
 # Define helper macros for project directories
@@ -24,6 +25,7 @@ LIBCDIR   = $(CRTDIR)/$(ARCH)-$(SYS)
 MKDEP     = $(SCRIPTDIR)/mkdep
 SRCDIR    = $(PROJECTDIR)/src
 CMDDIR    = $(SRCDIR)/cmd
+MANDIR    = $(PROJECTDIR)/share/man
 
 # library dependences helpers
 LIBMACH = $(LIBDIR)/scc/libmach.a

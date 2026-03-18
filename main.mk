@@ -1,6 +1,7 @@
 .POSIX:
 
 DIRS  =\
+	doc\
 	src\
 	src/libc\
 	src/libcrt\
@@ -14,6 +15,7 @@ ROOT = $(DESTDIR)$(PREFIX)
 NODEP = 1
 
 all:
+	+@$(MAKE) -f main.mk doc
 	+@$(MAKE) -f main.mk toolchain
 	+@$(MAKE) -f main.mk $(ARCH)
 
@@ -32,14 +34,14 @@ toolchain: src
 libc: src/libc
 libcrt: src/libcrt
 
-src src/libc src/libcrt: dirs
+$(DIRS): dirs
 
-dirs: $(SCRIPTDIR)/libc-dirs
-	xargs mkdir -p < $(SCRIPTDIR)/libc-dirs
+dirs: $(SCRIPTDIR)/dirs
+	xargs mkdir -p < $(SCRIPTDIR)/dirs
 	touch dirs
 
 clean:
-	xargs rm -rf < $(SCRIPTDIR)/libc-dirs
+	xargs rm -rf < $(SCRIPTDIR)/dirs
 	find . -name '*.gcno' -o -name '*.gcda' | xargs rm -f
 	rm -rf dirs coverage
 

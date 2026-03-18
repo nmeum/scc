@@ -14,3 +14,5 @@ lib/scc/amd64-linux
 lib/scc/amd64-openbsd
 lib/scc/amd64-dragonfly
 lib/scc/amd64-darwin
+share/man/man1
+share/man/man3

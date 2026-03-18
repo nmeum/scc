@@ -2,6 +2,7 @@
 
 {
 	scripts/mkproto bin
+	scripts/mkproto share
 	scripts/mkproto libexec
 	scripts/mkproto include | grep -F -v bits/scc
 } | sort -k 3 > scripts/proto.all
