@@ -27,7 +27,7 @@ error(char *fmt, ...)
 }
 
 static void
-strip(char *fname)
+doit(char *fname)
 {
 	int type;
 	size_t r;
@@ -117,10 +117,10 @@ main(int argc, char *argv[])
 	} ARGEND
 
 	if (argc == 0) {
-		strip("a.out");
+		doit("a.out");
 	} else {
 		for (; *argv; ++argv)
-			strip(*argv);
+			doit(*argv);
 	}
 
 	return status;
