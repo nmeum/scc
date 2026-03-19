@@ -26,19 +26,15 @@ sed -n '/^\#/ ! {
 }' $file |
 nl -b a > $tmp1
 
-
-$EXEC scc dump |
-sed -n '/^data:/,$ {
-	/^data:/ ! {
-		s%.*:%%
-		s%^[ 	]*%%
-		s%[ 	]*$%%
-		/^$/d
-		s%[ 	][ 	]*%\
+od -An -t x1 a.out |
+tr 'a-z' 'A-Z' |
+sed -n 's%.*:%%
+	s%^[ 	]*%%
+	s%[ 	]*$%%
+	/^$/d
+	s%[ 	][ 	]*%\
 %g
-		p
-	}
-}' |
+	p' |
 nl -b a > $tmp2
 
 diff -u $tmp1 $tmp2

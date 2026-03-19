@@ -68,11 +68,6 @@ Invoke
 .BR scc\-objcopy (1),
 the object file copy and translate utility.
 .TP
-.B dump
-Invoke
-.BR scc\-dump (1),
-the object file dump utility.
-.TP
 .B objdump
 Invoke
 .BR scc\-objdump (1),

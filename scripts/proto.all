@@ -6,7 +6,6 @@ f 755 bin/scc-ar
 f 755 bin/scc-as
 f 755 bin/scc-cc
 f 755 bin/scc-cpp
-f 755 bin/scc-dump
 f 755 bin/scc-ld
 f 755 bin/scc-make
 f 755 bin/scc-nm
