@@ -8,6 +8,7 @@ PAGES =\
 	scc-addr2line.1\
 	scc-ar.1\
 	scc-cc.1\
+	scc-cpp.1\
 	scc-nm.1\
 	scc-objdump.1\
 	scc-ranlib.1\

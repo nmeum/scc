@@ -1,0 +1,139 @@
+.TH SCC-CPP 1 scc\-VERSION
+.SH NAME
+scc-cpp \- C preprocessor wrapper
+.SH SYNOPSIS
+.B scc-cpp
+.RB [ \-dw ]
+.RB [ \-M ]
+.RB [ \-D
+.IR def[=val] ] ...
+.RB [ \-I
+.IR dir ] ...
+.RB [ \-U
+.IR def ] ...
+.RB [ \-o
+.IR outfile ]
+.RI [ sourcefile ...]
+.SH DESCRIPTION
+.B scc-cpp
+is a wrapper that invokes the C preprocessor stage of the scc compiler.
+It is equivalent to running
+.B scc-cc \-E
+with the same arguments.
+The preprocessor expands macros, processes
+.B #include
+directives, handles conditional compilation, and strips comments,
+producing preprocessed C source on standard output or in the specified
+output file.
+.SH OPTIONS
+The following options are meaningful to the preprocessor.
+All other options accepted by
+.BR scc-cc (1)
+are silently passed through but have no effect during preprocessing.
+.TP
+.B \-d
+Output internal tool messages.
+.TP
+.BI \-D " define[=value]"
+Predefine
+.I define
+as a macro, optionally with a replacement text
+.IR value .
+This option may be specified multiple times.
+.TP
+.BI \-I " directory"
+Add
+.I directory
+to the list of directories searched for
+.B #include
+files.
+User-specified directories are searched before the standard system
+include directories.
+This option may be specified multiple times.
+.TP
+.B \-M
+Instead of producing preprocessed output, output a rule suitable for
+.BR make (1)
+describing the dependencies of the main source file.
+.TP
+.BI \-o " outfile"
+Write output to
+.I outfile
+instead of standard output.
+.TP
+.BI \-U " define"
+Undefine
+.IR define ,
+cancelling any previous definition made with
+.B \-D
+or by the compiler's built-in predefined macros.
+This option may be specified multiple times.
+.TP
+.B \-w
+or
+.BI \-W " param"
+Enable warning messages.
+The parameter of
+.B \-W
+is ignored for compatibility reasons.
+.SH ENVIRONMENT VARIABLES
+The following environment variables influence the behaviour of
+.BR scc-cpp ,
+which are inherited from
+.BR scc-cc (1).
+.TP
+.B ARCH
+Defines the target architecture (e.g.
+.IR amd64 ,
+.IR i386 ).
+This affects predefined macros exposed to the preprocessor.
+.TP
+.B SYS
+Defines the target operating system (e.g.
+.IR linux ,
+.IR openbsd ).
+This affects predefined macros exposed to the preprocessor.
+.TP
+.B ABI
+Defines the target application binary interface (e.g.
+.IR sysv ).
+.TP
+.B FORMAT
+Defines the format of the output object file.
+.TP
+.B SCCPREFIX
+Defines the path prefix under which the scc suite is installed.
+.B scc-cpp
+uses this to locate
+.BR scc-cc (1).
+If not set, the scc tools fall back to their compile-time
+.BR PREFIX .
+.SH EXAMPLES
+Preprocess a source file and print the result to standard output:
+.IP
+.EX
+scc-cpp hello.c
+.EE
+.PP
+Preprocess with macro definitions and an extra include path:
+.IP
+.EX
+scc-cpp \-DDEBUG \-DVERSION=2 \-I./include \-o hello.i hello.c
+.EE
+.PP
+Generate
+.BR make (1)
+dependency rules:
+.IP
+.EX
+scc-cpp \-M hello.c
+.EE
+.PP
+Undefine a macro before preprocessing:
+.IP
+.EX
+scc-cpp \-UFOO hello.c
+.EE
+.SH SEE ALSO
+.BR scc-cc (1),
+.BR scc (1)
