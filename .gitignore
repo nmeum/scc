@@ -1,5 +1,7 @@
 *.o
 *.a
+*.tar.gz
+*.tar.gz.asc
 /bin/
 /lib/
 /libexec/

@@ -37,9 +37,10 @@ clean: FORCE
 	touch config.mk
 	$(MAKE) -f main.mk clean
 
-distclean: clean FORCE
+dist: distclean
+dist distclean: FORCE
 	touch config.mk
-	$(MAKE) -f main.mk distclean
-	rm -f config.mk deps scripts/scc-make
+	rm -f scripts/scc-make deps
+	$(MAKE) -f main.mk $@
 
 FORCE:
