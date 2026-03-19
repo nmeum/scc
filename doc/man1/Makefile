@@ -4,6 +4,7 @@ PROJECTDIR = ../..
 include $(PROJECTDIR)/scripts/rules.mk
 
 PAGES =\
+	scc.1\
 	scc-addr2line.1\
 	scc-ar.1\
 	scc-cc.1\

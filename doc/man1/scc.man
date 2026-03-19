@@ -1,0 +1,155 @@
+.TH SCC 1 scc\-VERSION
+.SH NAME
+scc \- wrapper to dispatch scc suite tools
+.SH SYNOPSIS
+.B scc
+.RI [ tool ]
+.RI [ arguments ...]
+.SH DESCRIPTION
+.B scc
+is a shell wrapper that dispatches to the appropriate tool in the scc suite.
+The first argument selects which tool to invoke. The remaining arguments are
+passed unchanged to the selected tool.
+If no
+.I tool
+argument is given, or if the first argument does not match any known tool name,
+.B scc
+defaults to invoking
+.BR scc\-cc (1)
+with all provided arguments.
+.PP
+The tool is resolved under the directory pointed to by
+.BR SCCPREFIX .
+.SH TOOLS
+The following tool names are recognized as the first argument:
+.TP
+.B cc
+Invoke
+.BR scc\-cc (1),
+the C compiler driver.
+.TP
+.B cpp
+Invoke
+.BR scc\-cpp (1),
+the C preprocessor wrapper.
+.TP
+.B as
+Invoke
+.BR scc\-as (1),
+the assembler.
+.TP
+.B ar
+Invoke
+.BR scc\-ar (1),
+the archive utility.
+.TP
+.B addr2line
+Invoke
+.BR scc\-addr2line (1),
+the address to source line mapper.
+.TP
+.B ld
+Invoke
+.BR scc\-ld (1),
+the linker.
+.TP
+.B make
+Invoke
+.BR scc\-make (1),
+the POSIX make implementation.
+.TP
+.B nm
+Invoke
+.BR scc\-nm (1),
+the symbol table lister.
+.TP
+.B objcopy
+Invoke
+.BR scc\-objcopy (1),
+the object file copy and translate utility.
+.TP
+.B dump
+Invoke
+.BR scc\-dump (1),
+the object file dump utility.
+.TP
+.B objdump
+Invoke
+.BR scc\-objdump (1),
+the object file dump utility.
+.TP
+.B size
+Invoke
+.BR scc\-size (1),
+the section size lister.
+.TP
+.B strip
+Invoke
+.BR scc\-strip (1),
+the symbol stripper.
+.PP
+If the first argument is not one of the above tool names, it is treated as an
+argument to
+.B scc\-cc
+and all arguments (including the first) are forwarded to it.
+.SH ENVIRONMENT VARIABLES
+.TP
+.B SCCPREFIX
+Defines the path prefix under which the scc suite is installed.
+All tools are looked up as
+.IB $SCCPREFIX /bin/scc\- tool\fR.
+If not set,
+.B scc
+sets it to the parent directory of its own location,
+which is supposed to be $SCCPREFIX/bin.
+.TP
+.B SCCLIBPREFIX
+Defines the path prefix for scc libraries.
+If not set,
+.B scc
+sets it to the parent directory of its own location,
+which is supposed to be $SCCPREFIX/lib.
+.SH EXAMPLES
+Compile a C source file (default, invokes
+.BR scc\-cc ):
+.IP
+.EX
+scc hello.c
+.EE
+.PP
+Explicitly invoke the compiler driver:
+.IP
+.EX
+scc cc \-o hello hello.c
+.EE
+.PP
+Invoke the assembler:
+.IP
+.EX
+scc as \-o hello.o hello.s
+.EE
+.PP
+Invoke the archiver:
+.IP
+.EX
+scc ar \-r libfoo.a foo.o bar.o
+.EE
+.PP
+Use a custom installation prefix:
+.IP
+.EX
+SCCPREFIX=/opt/scc scc cc \-o hello hello.c
+.EE
+.SH SEE ALSO
+.BR scc\-cc (1),
+.BR scc\-cpp (1),
+.BR scc\-as (1),
+.BR scc\-ar (1),
+.BR scc\-ld (1),
+.BR scc\-make (1),
+.BR scc\-nm (1),
+.BR scc\-size (1),
+.BR scc\-strip (1),
+.BR scc\-objcopy (1),
+.BR scc\-objdump (1),
+.BR scc\-addr2line (1)
