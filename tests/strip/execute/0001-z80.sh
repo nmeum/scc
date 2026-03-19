@@ -13,5 +13,5 @@ $EXEC scc strip $tmp1 > $tmp2
 $EXEC scc nm $tmp1 >> $tmp2 2>&1 || true
 
 diff $tmp2 - <<EOF
-nm: $tmp1: no symbols
+scc-nm: $tmp1: no symbols
 EOF
