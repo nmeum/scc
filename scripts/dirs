@@ -16,3 +16,4 @@ lib/scc/amd64-dragonfly
 lib/scc/amd64-darwin
 share/man/man1
 share/man/man3
+share/man/man7

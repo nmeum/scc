@@ -1,0 +1,676 @@
+.TH SCC-IR 7 scc\-VERSION
+.SH NAME
+scc-ir \- scc intermediate representation
+.SH DESCRIPTION
+The scc intermediate representation (IR) is a text-based format
+used to communicate between the compiler frontend
+.RB ( cc1 )
+and the compiler backend
+.RB ( cc2 ).
+It is designed to be simple and easily parseable:
+all types and operators are represented by one or two characters,
+so parsing tables can be used to process it.
+.PP
+The language is composed of lines representing statements.
+Each line is composed of tab-separated fields.
+Declarations begin in column 0;
+expressions and control flow statements begin with a tab character.
+When the frontend detects an error,
+it closes the output stream.
+.SH TYPES
+Types are represented with single characters:
+.PP
+.TS
+l l.
+B	bool
+C	signed 8-bit integer
+K	unsigned 8-bit integer
+I	signed 16-bit integer
+N	unsigned 16-bit integer
+W	signed 32-bit integer
+Z	unsigned 32-bit integer
+Q	signed 64-bit integer
+O	unsigned 64-bit integer
+J	float
+D	double
+H	long double
+0	void
+P	pointer
+F	function
+E	function with ellipsis
+V	array (vector)
+U	union
+S	struct
+1	\fI__builtin_va_arg\fR
+.TE
+.PP
+Aggregate and composed types
+.RB ( S ,
+.BR U ,
+.BR V )
+are followed by a numeric identifier
+to distinguish between multiple types of the same kind:
+.BR S3 ,
+.BR V5 ,
+.BR U2 .
+.PP
+The sizes in the table above are nominal.
+Actual sizes depend on the target architecture.
+For example, on amd64-sysv,
+.B int
+is 32-bit and uses
+.BR W ,
+while on z80-scc it is 16-bit and uses
+.BR I .
+.SH STORAGE CLASSES
+Storage classes are represented with uppercase letters:
+.PP
+.TS
+l l.
+A	automatic (local variable)
+R	register
+G	global (public, defined in this module)
+X	extern (declared in another module)
+Y	private (file-scope static)
+T	local (function-scope static)
+M	struct/union member
+L	label
+.TE
+.PP
+A variable name in the IR is composed of a storage class letter
+followed by a numeric identifier, for example:
+.BR A1 ,
+.BR G2 ,
+.BR T3 ,
+.BR L4 .
+.SH DECLARATIONS
+.SS Variable declarations
+A variable declaration consists of a variable name,
+its type, and a quoted source name:
+.PP
+.RS
+.I var
+.B \et
+.I type
+.B \et "
+.I name
+.RE
+.PP
+For example:
+.PP
+.RS
+.nf
+A4	W	"i
+G2	W	"g
+X3	P	"ptr
+.fi
+.RE
+.SS Function declarations
+Function declarations include the return type
+and use
+.B F
+for the function type
+.RB ( E
+if the function has an ellipsis parameter):
+.PP
+.RS
+.I var
+.B \et
+.I return-type
+.B \et F \et "
+.I name
+.RE
+.PP
+For example:
+.PP
+.RS
+.nf
+.ta 8n 16n 24n
+G2	W	F	"main
+X3	W	E	"printf
+T4	0	F	"helper
+.fi
+.RE
+.PP
+.B G
+marks a public function,
+.B T
+a file-scope static function, and
+.B X
+an extern declaration.
+.SS Function definitions
+A function definition starts with the function declaration,
+followed by
+.B {
+on its own line.
+Function parameters are declared inside the body.
+A
+.B \e
+(backslash) on its own line separates
+parameters from local variable declarations.
+The body ends with
+.BR } .
+.PP
+For example, the C source:
+.PP
+.RS
+.nf
+int func(int a, int b) {
+	int c;
+	return a + b;
+}
+.fi
+.RE
+.PP
+generates:
+.PP
+.RS
+.nf
+.ta 8n 16n 24n
+G2	W	F	"func
+{
+A3	W	"a
+A4	W	"b
+\e
+A6	W	"c
+	h	A3	A4	+W
+}
+.fi
+.RE
+.SS Struct and union declarations
+A struct or union type declaration starts with a header line
+containing the type letter and identifier,
+a quoted tag name,
+a hex-encoded size and a hex-encoded alignment:
+.PP
+.RS
+.I type-id
+.B \et "
+.I tag
+.B \et #
+.IR size-letter size
+.B \et #
+.IR size-letter align
+.RE
+.PP
+Member declarations follow, each including an offset field:
+.PP
+.RS
+.I member-var
+.B \et
+.I type
+.B \et "
+.I name
+.B \et #
+.IR size-letter offset
+.RE
+.PP
+For example, the C source:
+.PP
+.RS
+.nf
+struct point {
+	int x;
+	int y;
+};
+struct point p;
+.fi
+.RE
+.PP
+generates (on amd64-sysv):
+.PP
+.RS
+.nf
+.ta 8n 16n 24n
+S3	"point	#O8	#O4
+M4	W	"x	#O0
+M5	W	"y	#O4
+G6	S3	"p
+.fi
+.RE
+.PP
+Unions use
+.B U
+instead of
+.BR S .
+Members of a union typically share offset 0.
+.SS Array type declarations
+Array types are declared with
+.BR V ,
+the element type,
+and the number of elements in hexadecimal:
+.PP
+.RS
+.nf
+.ta 8n 16n 24n
+V5	W	#OA
+.fi
+.RE
+.PP
+This declares array type V5 with element type
+.B W
+(signed 32-bit integer) and 0xA (10) elements.
+Array variable declarations reference the array type:
+.PP
+.RS
+.nf
+.ta 8n 16n 24n
+A4	V5	"a
+.fi
+.RE
+.SS Enum declarations
+Enumerations are not emitted as types.
+Enum variables are emitted with their underlying integer type
+(typically
+.BR W ):
+.PP
+.RS
+.nf
+G7	W	"c
+.fi
+.RE
+.SH INITIALIZERS
+When a variable has an initializer,
+the declaration line ends without a newline and is followed by
+.B (
+on the same line.
+The initializer expressions follow,
+one per line,
+and the initializer is closed with
+.B )
+on its own line.
+.PP
+For example:
+.PP
+.RS
+.nf
+int g = 42;
+.fi
+.RE
+.PP
+generates:
+.PP
+.RS
+.nf
+.ta 8n 16n 24n
+G2	W	"g	(
+	#W2A
+)
+.fi
+.RE
+.PP
+Array and struct initializers list each element:
+.PP
+.RS
+.nf
+int a[3] = {1, 2, 3};
+.fi
+.RE
+.PP
+generates:
+.PP
+.RS
+.nf
+.ta 8n 16n 24n
+V3	W	#O3
+G2	V3	"a	(
+	#W1
+	#W2
+	#W3
+)
+.fi
+.RE
+.PP
+String initializers use a quoted form for printable runs
+and individual byte constants for non-printable characters:
+.PP
+.RS
+.nf
+.ta 8n 16n 24n
+	#"hello
+	#C0
+.fi
+.RE
+.SH EXPRESSIONS
+Expressions are emitted in reverse Polish notation (RPN),
+with tab-separated tokens on a single line.
+Every operator is followed by a type letter.
+.SS Constants
+Constants are introduced with
+.BR # ,
+followed by a type letter and a hexadecimal value:
+.PP
+.RS
+.nf
+#W2A
+.fi
+.RE
+.PP
+This represents the integer constant 42 (0x2A) of type
+.BR W .
+.PP
+Floating-point constants are emitted as the hexadecimal encoding
+of their IEEE 754 representation:
+.PP
+.RS
+.nf
+#J3FC00000
+#D4004000000000000
+.fi
+.RE
+.PP
+These represent float 1.5 and double 2.5, respectively.
+.PP
+String constants are emitted using
+.B #"
+for printable character runs:
+.PP
+.RS
+.nf
+#"hello
+.fi
+.RE
+.SS Arithmetic operators
+.TS
+l l.
++	addition
+\-	subtraction
+*	multiplication
+/	division
+%	modulo
+l	left shift
+r	right shift
+.TE
+.SS Comparison operators
+.TS
+l l.
+<	less than
+>	greater than
+[	less or equal
+]	greater or equal
+\&=	equal
+!	not equal
+.TE
+.SS Bitwise operators
+.TS
+l l.
+&	bitwise and
+|	bitwise or
+^	bitwise xor
+~	bitwise complement (unary)
+.TE
+.SS Logical operators
+.TS
+l l.
+a	logical and (short-circuit)
+o	logical or (short-circuit)
+n	logical negation
+.TE
+.SS Unary operators
+.TS
+l l.
+\&_	arithmetic negation
+~	bitwise complement
+n	logical negation
+\&'	address-of
+@	pointer dereference
+.TE
+.SS Assignment
+.TS
+l l.
+:	assignment
+:*	multiply and assign
+:/	divide and assign
+:%	modulo and assign
+:+	add and assign
+:\-	subtract and assign
+:l	left shift and assign
+:r	right shift and assign
+:&	bitwise and and assign
+:^	bitwise xor and assign
+:|	bitwise or and assign
+:i	post-increment
+:d	post-decrement
+.TE
+.SS Other operators
+.TS
+l l.
+,	comma
+?	ternary (conditional)
+\&.	struct/union field access
+g	type cast (followed by target type letter)
+.TE
+.SS Function calls
+Function calls use
+.B p
+to push each argument,
+.B c
+for the call itself,
+and
+.B z
+for calls to variadic functions.
+Each is followed by the type of the result:
+.PP
+.RS
+.nf
+.ta 8n 16n 24n 32n 40n 48n
+	X2	Y9	'P	pP	#W2A	pW	zW
+.fi
+.RE
+.PP
+This pushes a pointer argument
+.RB ( pP ),
+pushes an integer argument
+.RB ( pW ),
+and calls a variadic function returning
+.BR W
+.RB ( zW ).
+.SS Builtin functions
+Builtin function calls use
+.B m
+as the operator,
+preceded by a quoted builtin name:
+.PP
+.RS
+.nf
+"__builtin_va_arg	m
+.fi
+.RE
+.SS Expression example
+The C expression:
+.PP
+.RS
+.nf
+i = j + 2 * 3;
+.fi
+.RE
+.PP
+generates (on amd64-sysv):
+.PP
+.RS
+.nf
+.ta 8n 16n 24n 32n 40n
+	A4	A5	#W6	+W	:W
+.fi
+.RE
+.PP
+Note that constant folding has reduced
+.I 2*3
+to
+.IR 6 .
+The expression is in RPN:
+push A4, push A5, push #W6, add (yielding W), assign (yielding W).
+.SS Type casts
+Casts are emitted as the operator
+.B g
+followed by the target type letter.
+A cast to
+.B void
+is not emitted.
+For example:
+.PP
+.RS
+.nf
+j = (long)i;
+.fi
+.RE
+.PP
+generates (on amd64-sysv):
+.PP
+.RS
+.nf
+.ta 8n 16n 24n 32n
+	A5	A4	gQ	:Q
+.fi
+.RE
+.SH STATEMENTS
+.SS Labels
+Labels begin in column 0 and consist of
+.B L
+followed by a numeric identifier:
+.PP
+.RS
+.nf
+L3
+.fi
+.RE
+.SS Unconditional jumps
+An unconditional jump uses
+.B j
+followed by a label:
+.PP
+.RS
+.nf
+.ta 8n 16n
+	j	L3
+.fi
+.RE
+.SS Conditional branches
+A conditional branch uses
+.BR y ,
+followed by a label.
+The expression to evaluate follows on the next line.
+If the expression evaluates to true (non-zero), the branch is taken:
+.PP
+.RS
+.nf
+.ta 8n 16n 24n 32n
+	y	L5	A4	#W5	<W
+.fi
+.RE
+.PP
+Note that the frontend negates the condition:
+the C code
+.I "if (i > 5)"
+is emitted as a branch on
+.IR "i <= 5" ,
+jumping past the then-block when the original condition is false.
+.SS Return
+The return statement uses
+.BR h .
+If the function returns a value,
+the expression follows on the same line:
+.PP
+.RS
+.nf
+.ta 8n 16n 24n 32n
+	h	A3	A4	+W
+.fi
+.RE
+.PP
+A void return is emitted as
+.B h
+alone, followed by a blank expression line.
+.SS Loops
+Two markers indicate loop boundaries to the backend:
+.PP
+.TS
+l l.
+b	beginning of loop body
+e	end of loop body
+.TE
+.PP
+For example, a
+.B while
+loop:
+.PP
+.RS
+.nf
+while (i < 10) { ++i; }
+.fi
+.RE
+.PP
+generates:
+.PP
+.RS
+.nf
+.ta 8n 16n 24n 32n
+	j	L5
+L4
+	b
+	A4	#W1	:+W
+L5
+	e
+	y	L4	A4	#WA	<W
+L6
+.fi
+.RE
+.SS Switch statements
+A switch statement is bracketed by
+.B s
+(begin) and
+.B t
+(end).
+The
+.B s
+marker is followed by the switch expression.
+Case entries are emitted with
+.BR v ,
+and the default entry with
+.BR f .
+The
+.B t
+marker takes the label where execution continues after the switch.
+.PP
+For example:
+.PP
+.RS
+.nf
+switch (n+1) {
+case 1:
+case 2:
+case 3:
+default:
+	++n;
+}
+.fi
+.RE
+.PP
+generates:
+.PP
+.RS
+.nf
+.ta 8n 16n 24n 32n
+	s	A3	#W1	+W
+	v	L6	#W1
+L6
+	v	L7	#W2
+L7
+	v	L8	#W3
+L8
+	f	L9
+L9
+	A3	#W1	:+W
+	t	L5
+L5
+.fi
+.RE
+.PP
+Each
+.B v
+entry is followed by a label and a constant value.
+The
+.B f
+(default) entry is followed by a label only.
+.SH SEE ALSO
+.BR scc-cc (1)

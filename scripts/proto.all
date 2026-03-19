@@ -211,11 +211,13 @@ d 755 share/man/man1
 f 644 share/man/man1/scc-addr2line.1
 f 644 share/man/man1/scc-ar.1
 f 644 share/man/man1/scc-cc.1
+f 644 share/man/man1/scc-cpp.1
 f 644 share/man/man1/scc-nm.1
 f 644 share/man/man1/scc-objdump.1
 f 644 share/man/man1/scc-ranlib.1
 f 644 share/man/man1/scc-size.1
 f 644 share/man/man1/scc-strip.1
+f 644 share/man/man1/scc.1
 d 755 share/man/man3
 f 644 share/man/man3/asctime.3
 f 644 share/man/man3/clock.3
@@ -258,3 +260,5 @@ f 644 share/man/man3/strxfrm.3
 f 644 share/man/man3/time.3
 f 644 share/man/man3/time.h.3
 f 644 share/man/man3/wchar.h.3
+d 755 share/man/man7
+f 644 share/man/man7/scc-ir.7
