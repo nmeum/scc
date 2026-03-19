@@ -1,0 +1,130 @@
+.TH SCC-CC1 1 scc\-VERSION
+.SH NAME
+scc-cc1 \- C compiler frontend
+.SH SYNOPSIS
+.B cc1
+.RB [ \-Ewd ]
+.RB [ \-M ]
+.RB [ \-a
+.IR architecture ]
+.RB [ \-D
+.IR def[=val] ] ...
+.RB [ \-U
+.IR def ] ...
+.RB [ \-I
+.IR dir ] ...
+.RI [ input ]
+.SH DESCRIPTION
+.B cc1
+is the C compiler frontend of the scc toolchain.
+It reads a C source file (or standard input if no
+.I input
+file is given), performs preprocessing, parsing, type checking,
+and semantic analysis, and emits the scc intermediate representation (IR)
+to standard output.
+.PP
+.B cc1
+is not normally invoked directly.
+It is called by the compiler driver
+.BR scc\-cc (1),
+which pipes its output to
+.BR cc2 ,
+the code generation backend that produces assembly output.
+.B cc1
+is installed as
+.IR $prefix /libexec/scc/cc1.
+.SH OPTIONS
+.TP
+.BI \-a " architecture"
+Select the target architecture.
+The following architectures are supported:
+.RS
+.TP
+.B amd64-sysv
+64-bit x86 with the System V ABI (default).
+.TP
+.B arm64-sysv
+64-bit ARM with the System V ABI.
+.TP
+.B riscv64-sysv
+64-bit RISC-V with the System V ABI.
+.TP
+.B i386-sysv
+32-bit x86 with the System V ABI.
+.TP
+.B z80-scc
+Zilog Z80 with the scc ABI.
+.RE
+.TP
+.BI \-D " def[=val]"
+Define the preprocessor macro
+.I def
+with an optional value
+.IR val .
+If
+.I val
+is omitted, the macro is defined with the value
+.BR 1 .
+This option may be repeated to define multiple macros.
+.TP
+.B \-E
+Stop after preprocessing.
+Emit the preprocessed C source to standard output instead of IR.
+No compilation is performed.
+.TP
+.BI \-I " dir"
+Prepend
+.I dir
+to the list of directories searched for header files.
+This option may be repeated to add multiple directories.
+User-specified directories are searched before any system include directories
+added by
+.BR scc\-cc (1).
+.TP
+.B \-M
+Emit a
+.BR make (1)
+dependency rule describing the
+.B #include
+dependencies of the input file, then exit.
+No compilation is performed.
+.TP
+.BI \-U " def"
+Undefine the preprocessor macro
+.IR def .
+This option may be repeated.
+.TP
+.B \-d
+Enable internal debug output.
+.TP
+.B \-w
+Enable warning messages for dubious constructs.
+.SH OUTPUT
+.B cc1
+writes the scc IR to standard output.
+The IR is a line-oriented, tab-separated format.
+Declarations begin in column 0; expressions are indented with a tab
+and written in reverse Polish notation.
+For a full description of the IR format, types, storage classes,
+and statement encoding, see
+.BR scc\-ir (7).
+.PP
+When only preprocessing is requested
+.RB ( \-E
+or
+.BR \-M ),
+the preprocessed source or dependency rule is written to standard output
+instead.
+.PP
+If any compilation error occurs, the output stream is closed immediately
+so that the backend
+.B cc2
+receives no output and can detect the failure.
+.B cc1
+exits with a non-zero status on error.
+.SH SEE ALSO
+.BR scc\-cc (1),
+.BR scc\-cpp (1),
+.BR scc (1),
+.BR scc\-cc2 (1),
+.BR scc\-ir (7)

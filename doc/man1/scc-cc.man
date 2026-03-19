@@ -1,164 +1,536 @@
 .TH SCC-CC 1 scc\-VERSION
 .SH NAME
-scc-cc \- simple C compiler with magic
+scc-cc \- C compiler driver
 .SH SYNOPSIS
 .B scc-cc
-.RB [ \-cdgkqQsw ]
-.RB [ \-M | \-E | \-S ]
-.RB [ \-D
-.IR def[=val] ] ...
-.RB [ \-I
-.IR dir ] ...
-.RB [ \-L
-.IR dir ] ...
-.RB [ \-U
-.IR def ] ...
-.RB [ \-l
-.IR lib ]
-.RB [ \-a
-.IR arch ]
-.RB [ \-o
+.RB [ \-c | \-S | \-E ]
+.RB [ \-std= standard ]
+.br
+.RB "    " [ \-g ]
+.RB [ \-Olevel ]
+.br
+.RB "    " [ \-Wwarn ...]
+.br
+.RB "    " [ \-Idir ...]
+.RB [ \-Ldir ...]
+.br
+.RB "    " [ \-Dmacro [ =defn ]...]
+.RB [ \-Umacro ]
+.br
+.RB "    " [ \-foption ...]
+.RB [ \-mmachine-option ...]
+.br
+.RB "    " [ \-o
 .IR outfile ]
-.RB [ \-O
-.IR level ]
+.RB [ \-l lib ]...
+.br
+.RB "    " [ \-Msdk ]
+.RB [ \-q | \-Q ]
+.br
+.RB "    " [ \-a
+.IR arch ]
 .RB [ \-t
 .IR sys ]
-.RB sourcefile ...
+.br
+.RB "    "
+.IR infile ...
 .SH DESCRIPTION
-.B scc
-is a simple C compiler which takes several
-.I sourcefiles
-and compiles them to an executable. The default output file is
-.B a.out,
-which can be changed by defining some
-.I outfile.
+.B scc-cc
+is the compiler driver of the scc toolchain.
+It accepts C source files, intermediate representation files,
+assembler source files, object files, and archive libraries,
+and orchestrates the tools required to turn them into an
+executable or object file.
+.PP
+For each C source file
+.RB ( .c ),
+.B scc-cc
+runs a pipeline of sub-processes connected by pipes:
+the frontend
+.B cc1
+compiles the source to scc IR, the backend
+.B cc2
+lowers the IR to assembly (or to QBE IR when QBE mode is active),
+the optional
+.B qbe
+stage compiles QBE IR to native assembly,
+and finally the assembler
+.B as
+produces an object file.
+When linking is not suppressed, the resulting object files are
+passed to the linker
+.B ld
+to produce the final executable.
+.PP
+Files with other extensions are handled as follows:
+.TP
+.B .ir
+Passed directly to
+.BR cc2 ,
+skipping the
+.B cc1
+stage.
+.TP
+.B .qbe
+Passed directly to
+.BR qbe ,
+skipping
+.B cc1
+and
+.BR cc2 .
+.TP
+.B .s
+Passed directly to the assembler, skipping all compiler stages.
+.TP
+.B .o ", " .a
+Passed directly to the linker.
 .SH OPTIONS
+.SS Compilation Control
 .TP
 .B \-c
-Do not run the linker.
-.TP
-.B \-d
-Do output internal tool messages.
-.TP
-.BI \-D " define[=value]"
-Specify a
-.I define
-for the preprocessor.
+Compile and assemble, but do not link.
+One object file is produced for each input source file.
+If
+.B \-o
+is also specified, only a single input file is permitted.
 .TP
 .B \-E
-Stop after the preprocessing stage, do not run the compiler and output the then
-resulting source.
-.TP
-.B \-g
-Do generate debug information.
-.TP
-.BI \-I " directory"
-Define a include
-.I directory
-to get header files from. This directory is searched for before standard
-include directories.
-.TP
-.B \-k
-Do keep temporary objects.
-.TP
-.BI \-l " library"
-Link against this 
-.I library.
-.TP
-.BI \-L " directory"
-Define a library
-.I directory
-to resolve dependencies from. This directory is used before the standard
-paths.
-.TP
-.BI \-a " architecture"
-Define the
-.I architecture
-to compile for (i.e. amd64, i386 ...).
+Stop after preprocessing.
+The preprocessed source is written to standard output,
+or to
+.I outfile
+if
+.B \-o
+is given.
+Cannot be combined with
+.B \-M
+or the stop flags
+.BR \-S ,
+.BR \-k .
 .TP
 .B \-M
-Output a rule for 
-.B make
-describing the dependencies of the main source file.
-.TP
-.BI \-o " outfile"
-Define the name of the
-.I outfile.
-.TP
-.BI \-O " level"
-Define the optimisation
-.I level
-to compile with. (This is a stub for compatibility reasons.)
-.TP
-.B \-q
-Do not use
-.I QBE.
-.TP
-.B \-Q
-Do use the
-.I QBE.
-.TP
-.B \-s
-Strip all symbol tables and relocation information from the resulting executable.
+Emit a
+.BR make (1)
+dependency rule describing the
+.B #include
+dependencies of each source file, then exit.
+No compilation is performed.
+Cannot be combined with
+.BR \-E .
 .TP
 .B \-S
-Stop after the compilation stage, do not assemble and output the assembler
-source.
+Stop after compilation; do not assemble.
+Assembly source is written to a file with the same base name as
+the input and the suffix
+.BR .s .
+.SS Preprocessor
 .TP
-.BI \-t " system"
-Define the
-.I system
-to compile for (i.e. linux, openbsd ...).
+.BI \-D macro [ =value ]
+Define the preprocessor macro
+.I macro
+with an optional replacement text
+.IR value .
+If
+.I value
+is omitted, the macro is defined with the value
+.BR 1 .
+This option may be repeated to define multiple macros.
 .TP
-.BI \-U " define"
-Undefine a previously defined
-.I define
-by the -D parameter.
+.BI \-U macro
+Undefine the preprocessor macro
+.IR macro .
+This option may be repeated.
 .TP
-.BI \-W " param"
-or
+.BI \-I dir
+Prepend
+.I dir
+to the list of directories searched for header files.
+User-specified directories are searched before system include
+directories.
+This option may be repeated.
+.SS Optimisation
+.TP
+.BI \-O level
+Specify the optimisation level.
+This option is accepted for compatibility with other compiler
+driver interfaces but is otherwise ignored;
+.B scc-cc
+does not perform its own optimisation passes.
+.SS Linker
+.TP
+.BI \-L dir
+Add
+.I dir
+to the list of directories searched for libraries.
+.TP
+.BI \-l lib
+Link against the library
+.IR lib .
+.SS Output
+.TP
+.BI \-o " outfile"
+Place the output into
+.IR outfile .
+When compiling and linking, the default output name is
+.BR a.out .
+When compiling to an object file
+.RB ( \-c ),
+the default output name is derived from the input file name.
+.SS Debugging and Symbols
+.TP
+.B \-g
+Generate debugging information.
+This flag is forwarded to the assembler and linker.
+.TP
+.B \-s
+Strip all symbol table and relocation information from the output
+executable.
+This flag is forwarded to the linker.
+.SS Warnings
+.TP
 .B \-w
-Show warning messages.
-The parameter of
-.B \-W
-is ignored for compatibility reasons.
+Enable warning messages for dubious constructs.
+The flag is forwarded to
+.BR cc1 .
 .TP
-.BI \-f " param"
+.BI \-W param
+Enable warnings.
+The parameter
+.I param
+is ignored; the effect is the same as
+.BR \-w .
+Accepted for compatibility with other compiler driver interfaces.
+.SS Target
+.TP
+.BI \-a " arch"
+Select the target architecture.
+Overrides the
+.B ARCH
+environment variable.
+.TP
+.BI \-t " sys"
+Select the target operating system.
+Overrides the
+.B SYS
+environment variable.
+.SS Driver Behaviour
+.TP
+.B \-d
+Enable verbose driver output.
+The exact command line executed for each sub-process is printed
+to standard error before that process is started.
+.TP
+.B \-k
+Keep intermediate files.
+When this flag is set,
+.B scc-cc
+saves the IR, QBE IR, and assembler output produced during
+compilation alongside the object file,
+using the base name of the input file with the suffixes
+.BR .ir ,
+.BR .qbe ,
 and
-.BI \-m " param"
-are ignored for compatibility with other compiler command lines.
-In the same way,
-the options
-.BI \-static ,
-.BI \-dynamic ,
-.BI \-pedantic ,
-.B \-ansi
-and any option beginning with
-.B \-std=
-are ignored for the same reason.
+.BR .s ,
+respectively.
+The final object file is also kept even when linking.
+.TP
+.B \-q
+Disable QBE mode.
+.B cc2
+produces native assembly directly, without invoking
+.BR qbe (1).
+.TP
+.B \-Q
+Enable QBE mode (default).
+.B cc2
+produces QBE IR, which is then compiled to native assembly by
+.BR qbe (1).
+.SS Compatibility Options
+The following options are accepted and silently ignored for
+compatibility with other compiler driver interfaces:
+.BR \-static ,
+.BR \-dynamic ,
+.BR \-pedantic ,
+.BR \-ansi ,
+any option beginning with
+.BR \-std= ,
+any
+.BI \-f option
+and any
+.BI \-m option.
+.SH COMPILATION PIPELINE
+For each C source file,
+.B scc-cc
+constructs and runs the following pipeline:
+.PP
+.EX
+cc1 | cc2[\-qbe_arch\-abi] | [qbe] | as
+.EE
+.PP
+Each stage is a separate process.
+The stages are connected by anonymous pipes so that no large
+intermediate files are created on disk unless
+.B \-k
+is used.
+.TP
+.B cc1
+The C compiler frontend.
+It reads the C source file, preprocesses it, parses it,
+performs type checking and semantic analysis,
+and emits the scc intermediate representation (IR) to standard
+output.
+It is installed as
+.IR $SCCPREFIX/libexec/scc/cc1 .
+.TP
+.B cc2
+The C compiler backend.
+It reads the scc IR and emits either native assembly or QBE IR.
+The exact binary invoked depends on the target architecture, ABI,
+and whether QBE mode is active.
+In QBE mode (the default), the binary name has the form
+.BI cc2\-qbe_ arch \- abi ;
+in native mode
+.RB ( \-q )
+the form is
+.BI cc2\- arch \- abi .
+These binaries are installed under
+.IR $SCCPREFIX/libexec/scc/ .
+.TP
+.B qbe
+The QBE compiler backend.
+Only invoked in QBE mode.
+It reads QBE IR and emits native assembly.
+.B qbe
+is looked up in the standard
+.BR PATH .
+.TP
+.B as
+The target assembler.
+It assembles the native assembly into an object file.
+The assembler command and its arguments are determined at
+build time via the
+.B ascmd
+configuration variable in
+.I sys.h
+and may include
+.B %a
+(architecture),
+.B %s
+(system),
+.B %b
+(ABI),
+.B %p
+(library prefix),
+and
+.B %o
+(output file) wildcards.
+.PP
+After all source files are compiled, the linker is invoked unless
+.BR \-c ,
+.BR \-S ,
+.BR \-E ,
+or
+.B \-M
+suppresses linking:
+.TP
+.B ld
+The target linker.
+The linker command and its arguments are determined at build time
+via the
+.B ldcmd
+configuration variable in
+.IR sys.h .
+The same wildcards as for
+.B as
+are supported, and
+.B %c
+expands to the full list of input object files.
 .SH ENVIRONMENT VARIABLES
-Certain environment variables control the behaviour of scc.
 .TP
 .B ARCH
-defines the
-.I architecture
-to compile for (i.e. amd64, i386 ...).
+Target architecture name (e.g.
+.BR amd64 ,
+.BR arm64 ,
+.BR i386 ).
+Overridden by
+.BR \-a .
 .TP
 .B SYS
-defines the
-.I system
-to compile for (i.e. linux, openbsd ...).
+Target operating system name (e.g.
+.BR linux ,
+.BR openbsd ).
+Overridden by
+.BR \-t .
 .TP
 .B ABI
-defines the
-.I application binary interface
-to compile for (i.e. sysv ...).
+Target ABI name (e.g.
+.BR sysv ).
 .TP
 .B FORMAT
-defines the format of the output executable.
+Target object file format (e.g.
+.BR elf ,
+.BR coff ).
 .TP
 .B SCCPREFIX
-defines the path prefix scc will search the scc suite in.
+Path prefix under which the scc suite is installed.
+Used to locate
+.B cc1
+and
+.B cc2
+under
+.IR $SCCPREFIX/libexec/scc/ .
+If not set, the compile-time
+.B PREFIX
+value is used.
+.TP
+.B SCCLIBPREFIX
+Path prefix for scc libraries.
+Expanded from the
+.B %p
+wildcard in linker and assembler command templates.
+If not set, the compile-time
+.B LIBPREFIX
+value is used.
+.TP
+.B TMPDIR
+Directory used for temporary files created during compilation.
+If not set or empty, the current directory is used.
+.SH EXAMPLES
+.PP
+Compile a C source file and link into an executable:
+.IP
+.EX
+scc-cc \-o hello hello.c
+.EE
+.PP
+Compile to an object file only:
+.IP
+.EX
+scc-cc \-c hello.c
+.EE
+.PP
+Compile multiple source files and link:
+.IP
+.EX
+scc-cc \-o prog main.c util.c \-lm
+.EE
+.PP
+Preprocess only and view the output:
+.IP
+.EX
+scc-cc \-E hello.c
+.EE
+.PP
+Generate make dependency rules:
+.IP
+.EX
+scc-cc \-M hello.c
+.EE
+.PP
+Stop after compilation, keeping intermediate files:
+.IP
+.EX
+scc-cc \-k \-c hello.c
+.EE
+.PP
+Compile for a specific target:
+.IP
+.EX
+ARCH=arm64 ABI=sysv SYS=linux scc-cc \-o hello hello.c
+.EE
+.PP
+Compile in native mode (no QBE):
+.IP
+.EX
+scc-cc \-q \-o hello hello.c
+.EE
+.PP
+Show all sub-process command lines:
+.IP
+.EX
+scc-cc \-d \-c hello.c
+.EE
+.PP
+The
+.B \-d
+flag prints the exact command line of each sub-process to standard error.
+For example, compiling
+.I hello.c
+on an amd64 Linux system in QBE mode produces:
+.IP
+.EX
+/usr/local/libexec/scc/cc1 \-I /usr/local/include/scc/bits/amd64/ \e
+    \-I /usr/local/include/scc/bits/linux/ \e
+    \-I /usr/local/include/scc/bits/linux/amd64/ \e
+    \-I /usr/local/include/scc/ hello.c
+/usr/local/libexec/scc/cc2\-qbe_amd64\-sysv
+qbe \-t amd64_sysv
+as \-o hello.o
+.EE
+.SH DIAGNOSTICS
+When a sub-process in the compilation pipeline fails,
+.B scc-cc
+reports an error to standard error and exits with a non-zero status.
+.PP
+If
+.B cc1
+exits with a non-zero status, the error message comes from
+.B cc1
+itself (a compilation error such as a syntax or type error) and
+.B scc-cc
+exits silently.
+Likewise, if the linker
+.B ld
+fails, its own error output is displayed and
+.B scc-cc
+exits without an additional message.
+.PP
+If any stage terminates by a signal
+or any other stage in the pipeline
+.RB ( cc2 ,
+.BR qbe ,
+or
+.BR as )
+terminates with non-zero exit then
+these conditions are considered an internal error.
+In this case
+.B scc-cc
+prints the following message to standard error:
+.IP
+.EX
+scc-cc:tool: internal error
+.EE
+.PP
+where
+.I tool
+is the name of the failing sub-process.
+This message indicates a bug in the toolchain rather than an error in
+the user's source code.
+The same message is printed if
+.B scc-cc
+cannot
+.BR execvp (2)
+the sub-process binary (for example because
+.B SCCPREFIX
+is set incorrectly and
+.B cc1
+or
+.B cc2
+cannot be found).
+In this case,
+Using the option
+.B \-d
+combined with
+.B \-k
+is very useful because 
+it provides all the information to run the tool in isolation
+and debug the issue.
 .SH SEE ALSO
-.BR scc-cpp (1),
-.BR scc-make (1)
+.BR scc (1),
+.BR scc\-cc1 (1),
+.BR scc\-cc2 (1),
+.BR scc\-cpp (1),
+.BR scc\-ld (1),
+.BR scc\-as (1),
+.BR scc\-ir (7),
+.BR qbe (1)

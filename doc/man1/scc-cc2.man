@@ -1,0 +1,93 @@
+.TH SCC-CC2 1 scc\-VERSION
+.SH NAME
+scc-cc2 \- C compiler backend
+.SH SYNOPSIS
+.B cc2
+.RB [ \-d ]
+.RI [ irfile ]
+.SH DESCRIPTION
+.B cc2
+is the C compiler backend of the scc toolchain.
+It reads the scc intermediate representation (IR) from standard input
+(or from
+.I irfile
+if given), and emits assembly code to standard output.
+.PP
+.B cc2
+is not normally invoked directly.
+It is called by the compiler driver
+.BR scc\-cc (1),
+which pipes the IR produced by
+.B cc1
+into
+.BR cc2 .
+.B cc2
+is installed as
+.IR $prefix /libexec/scc/cc2-*.
+.SH OPTIONS
+.TP
+.B \-d
+Enable internal debug output.
+When set, debugging information about the IR tree and the control flow
+graph is printed to standard error during compilation.
+.SH INPUT
+.B cc2
+reads the scc IR produced by
+.BR cc1 .
+The IR is a line-oriented, tab-separated text format.
+If
+.I irfile
+is specified, standard input is replaced by that file.
+Otherwise the IR is read from standard input, which is the normal mode
+when
+.B cc2
+is used inside the pipeline constructed by
+.BR scc\-cc (1).
+.PP
+For a full description of the IR format see
+.BR scc\-ir (7).
+.SH OUTPUT
+.B cc2
+writes to standard output.
+Depending on the variant of
+.B cc2
+that is invoked, the output is either:
+.TP
+.B Native assembly
+The target architecture assembly language, ready to be assembled by the
+system assembler.
+This is the output of the
+.BI cc2\- arch \- abi
+variants.
+.TP
+.B QBE IR
+The intermediate language accepted by the QBE compiler backend.
+This is the output of the
+.BI cc2\-qbe_ arch \- abi
+variants.
+QBE subsequently compiles this IR to native assembly.
+.SH BACKENDS
+.B cc2
+is a family of architecture-specific binaries.
+Each binary is compiled for a specific target and installed as a separate
+executable under
+.IR $SCCPREFIX/libexec/scc/ .
+The following target backends are available:
+.TP
+.B cc2\-z80\-scc
+Native code generator for the Zilog Z80 with the scc ABI.
+.TP
+.B cc2\-qbe_amd64\-sysv
+QBE IR emitter for 64-bit x86 with the System V ABI.
+.TP
+.B cc2\-qbe_arm64\-sysv
+QBE IR emitter for 64-bit ARM with the System V ABI.
+.TP
+.B cc2\-qbe_riscv64\-sysv
+QBE IR emitter for 64-bit RISC-V with the System V ABI.
+.SH SEE ALSO
+.BR scc\-cc (1),
+.BR scc\-cc1 (1),
+.BR scc\-cpp (1),
+.BR scc (1),
+.BR scc\-ir (7)
