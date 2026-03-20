@@ -50,7 +50,7 @@ distclean: clean
 	rm -f include/scc/bits/scc/cstd.h
 	rm -f include/scc/bits/scc/sys.h
 	rm -f include/scc/bits/scc/config.h
-	rm -rf scc-$(VERSION)
+	rm -rf scc-* .scc-*
 	rm -f *.gz *.sig
 
 dist:
