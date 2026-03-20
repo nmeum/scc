@@ -14,17 +14,6 @@ include scripts/rules.mk
 ROOT = $(DESTDIR)$(PREFIX)
 NODEP = 1
 
-DIST_FILES =\
-	doc\
-	include\
-	LICENSE\
-	main.mk\
-	Makefile\
-	README\
-	scripts\
-	src\
-	tests\
-
 all:
 	+@$(MAKE) -f main.mk doc
 	+@$(MAKE) -f main.mk toolchain
@@ -62,14 +51,15 @@ distclean: clean
 	rm -f include/scc/bits/scc/sys.h
 	rm -f include/scc/bits/scc/config.h
 	rm -rf scc-$(VERSION)
-	rm -f *.gz *.asc
+	rm -f *.gz *.sig
 
-dist: distclean
-	mkdir scc-$(VERSION)
-	cp -R $(DIST_FILES) scc-$(VERSION)/
+dist:
+	mkdir .scc-$(VERSION)
+	cp -R * .scc-$(VERSION)/
+	mv .scc-$(VERSION) scc-$(VERSION)
+	find scc-$(VERSION) -name '.gitignore' | xargs rm
 	tar -cf - scc-$(VERSION) | gzip > scc-$(VERSION).tar.gz
 	rm -rf scc-$(VERSION)
-	gpg -b -a scc-$(VERSION).tar.gz
 
 include scripts/amd64.mk
 include scripts/arm.mk
