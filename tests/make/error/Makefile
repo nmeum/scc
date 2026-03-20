@@ -3,7 +3,7 @@
 BINDIR = ../../../bin/
 
 all:
-	PATH=$(BINDIR):$$PATH ./chktest.sh
+	PATH=$(BINDIR):$$PATH ./runtests.sh
 
 tests:
 	@$(MAKE) |\

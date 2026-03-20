@@ -9,7 +9,7 @@ CFLAGS=
 	$(CC) $(CFLAGS) -o $@ $<
 
 all:
-	CC=$(CC) ./chktest.sh libc-tests.lst
+	CC=$(CC) ./runtests.sh libc-tests.lst
 
 tests:
 	@$(MAKE) |\

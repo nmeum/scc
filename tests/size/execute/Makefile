@@ -6,7 +6,7 @@ AS = z80-unknown-coff-as
 OUT = z80.out
 
 all: $(OUT)
-	PATH=$(BINDIR):$$PATH ./chktest.sh
+	PATH=$(BINDIR):$$PATH ./runtests.sh
 
 tests:
 	@if command -v $(AS) >/dev/null;\

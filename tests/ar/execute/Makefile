@@ -3,7 +3,7 @@
 BINDIR = ../../../bin/
 
 all: master.a
-	PATH=$(BINDIR):$$PATH ./chktest.sh
+	PATH=$(BINDIR):$$PATH ./runtests.sh
 
 master.a: mkmaster.sh
 	@./mkmaster.sh

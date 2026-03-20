@@ -4,7 +4,7 @@ ROOT=../../..
 CC=$(SHELL) $(ROOT)/bin/scc cc
 
 all:
-	@CC='$(CC)' ./chktest.sh scc-tests.lst
+	@CC='$(CC)' ./runtests.sh scc-tests.lst
 
 tests:
 	@$(MAKE) |\
