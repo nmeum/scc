@@ -803,6 +803,11 @@ reduce(Node *np)
 		return;
 
 	switch (op) {
+	case ODIV:
+		/* i / 2^n => i >> n */
+		np->op = OSHR;
+		rp->sym->u.u = log;
+		break;
 	case OMOD:
 		/* i % 2^n => i & n-1 */
 		np->op = OBAND;
