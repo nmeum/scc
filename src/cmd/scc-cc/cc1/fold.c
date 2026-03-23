@@ -797,6 +797,9 @@ reduce(Node *np)
 	Node *aux, *aux2;
 	int op = np->op;
 
+	if (np->type->prop & TSIGNED)
+		return;
+
 	switch (op) {
 	case OMOD:
 		/* i % 2^n => i & n-1 */
@@ -886,9 +889,10 @@ repeat:
 			associative(np);
 		}
 		np = fold(np);
-		if (!isfloat)
+		if (!isfloat) {
 			np = identity(np);
-		reduce(np);
+			reduce(np);
+		}
 		break;
 	}
 
