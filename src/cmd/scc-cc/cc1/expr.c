@@ -19,19 +19,16 @@ power2node(Node *np, int *log)
 		return 0;
 
 	sym = np->sym;
-	if (sym->type->op != INT)
+	if (sym->type->op != INT || (u = sym->u.u) == 0)
 		return 0;
 
-	n = 0;
-	for (u = sym->u.u; u; u >>= 1) {
-		if (u & 1)
-			n++;
-	}
+	for (n = 0; (u & 1) == 0; n++)
+		u >>= 1;
 
 	if (log)
 		*log = n;
 
-	return n == 1;
+	return u == 1;
 }
 
 int
