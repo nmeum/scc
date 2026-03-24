@@ -795,20 +795,19 @@ reduce(Node *np)
 {
 	Node *lp = np->left, *rp = np->right;
 	Node *aux, *aux2;
-	int op = np->op;
+	int log, op = np->op;
 
 	if (np->type->prop & TSIGNED)
+		return;
+	if (!power2node(rp, &log))
 		return;
 
 	switch (op) {
 	case OMOD:
 		/* i % 2^n => i & n-1 */
-		if (power2node(rp, NULL)) {
-			np->op = OBAND;
-			rp->sym->u.u--;
-			break;
-		}
-		return;
+		np->op = OBAND;
+		rp->sym->u.u--;
+		break;
 	default:
 		return;
 	}
