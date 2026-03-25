@@ -301,7 +301,7 @@ readline(void)
  * is processed the line is discarded because it must not
  * be passed to the lexer
  */
-static int
+int
 moreinput(void)
 {
 	int wasexpand = 0;

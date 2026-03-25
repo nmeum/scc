@@ -473,6 +473,7 @@ int ahead(void);
 int next(void);
 void expect(int tok);
 void discard(void);
+int moreinput(void);
 int addinput(int, void *, int);
 void delinput(void);
 void setsafe(int type);

@@ -93,53 +93,54 @@ icpp(void)
 	ncmdlines = 0;
 }
 
-static void
-nextcpp(Macro *mp)
+static char *
+appendpar(Macro *mp, char *s, int len)
 {
-	int len, siz;
 	char *arg;
+	int siz = mp->argsiz;
 
-	next();
-	if (yytoken == EOFTOK) {
-		error("unterminated argument list invoking macro \"%s\"",
-		      mp->sym->name);
-	}
-
-	if (yytoken == IDEN)
-		yylval.sym->flags |= SUSED;
-
-	len = strlen(yytext);
-	siz = mp->argsiz;
 	if (len+1 > INT_MAX - siz) {
 		error("too long argument invoking macro \"%s\"",
 		      mp->sym->name);
 	}
 
-	arg = xrealloc(mp->arg, siz + len + 1);
-	if (siz > 0) {
-		arg[siz-1] = ' ';
-		memcpy(arg + siz, yytext, len+1);
-	} else {
-		memcpy(arg, yytext, len+1);
-	}
-
-	mp->arg = arg;
-	mp->argsiz = siz + len + 1;
+	mp->arg = xrealloc(mp->arg, siz + len + 1);
+	memcpy(mp->arg + siz, s, len);
+	mp->argsiz = siz += len;
+	mp->arg[siz] = '\0';
 }
 
 static void
 paren(Macro *mp)
 {
 	for (;;) {
-		nextcpp(mp);
-		switch (yytoken) {
+		switch (*input->p) {
 		case ')':
+			appendpar(mp, input->p++, 1);
 			return;
 		case '(':
+			appendpar(mp, input->p++, 1);
 			paren(mp);
+			break;
+		case '"':
+		case '\'':
+			next();
+			assert(yytoken == STRING || yytoken == CONSTANT);
+			appendpar(mp, yytext, yylen);
+			break;
+		case '\0':
+			if (!moreinput())
+				goto unterminated;
+			continue;
+		default:
+			appendpar(mp, input->p++, 1);
 			break;
 		}
 	}
+
+unterminated:
+	error("unterminated argument list invoking macro \"%s\"",
+	      mp->sym->name);
 }
 
 static char *
@@ -147,73 +148,90 @@ parameter(Macro *mp)
 {
 	int siz;
 	char *s, *begin, *end;
-	Input *ip = input;
 
 	mp->arg = NULL;
 	mp->argsiz = 0;
+
 	for (;;) {
-		nextcpp(mp);
-		switch (yytoken) {
+		switch (*input->p) {
+		case '"':
+		case '\'':
+			next();
+			assert(yytoken == STRING || yytoken == CONSTANT);
+			appendpar(mp, yytext, yylen);
+			break;
+		case '(':
+			appendpar(mp, input->p++, 1);
+			paren(mp);
+			break;
 		case ')':
 		case ',':
-			/* remove ","  or ")"*/
 			begin = mp->arg;
-			end = mp->arg + mp->argsiz - 2;
+			end = begin + mp->argsiz;
 
-			while (end > begin && isspace(end[-1]))
-				--end;
-			while (begin < end && isspace(begin[0]))
-				++begin;
+			while (begin < end && isspace(*begin))
+				begin++;
+			while (end > begin && isspace(*end))
+				end--;
 
 			siz = end - begin;
-			s = memcpy(xmalloc(siz+1), begin, siz);
+			s = memcpy(xmalloc(siz + 1), begin, siz);
 			s[siz] = '\0';
-			free(mp->arg);
 
 			return s;
-		case '(':
-			paren(mp);
+		case '\0':
+			if (!moreinput())
+				goto unterminated;
+			continue;
+		default:
+			appendpar(mp, input->p++, 1);
 			break;
 		}
 	}
+
+unterminated:
+	error("unterminated argument list invoking macro \"%s\"",
+	      mp->sym->name);
 }
 
 static int
 parsepars(Macro *mp)
 {
-	int n;
+	int c, n;
+	char *name;
 
 	if (mp->npars == -1)
 		return 1;
 	if (ahead() != '(')
 		return 0;
 
-	disexpand = 1;
-	next();
-	n = 0;
+	input->p++;
+	name = mp->sym->name;
 
 	if (mp->npars == 0 && ahead() == ')') {
-		next();
-	} else {
-		do {
-			mp->arglist = xrealloc(mp->arglist, (n+1)*sizeof(char *));
-			mp->arglist[n] = parameter(mp);
-			DBG("MACRO fetched arg '%s'", mp->arglist[n]);
-		} while (++n < NR_MACROARG && yytoken == ',');
+		input->p++;
+		return 1;
 	}
 
-	if (yytoken != ')')
-		error("incorrect macro function-alike invocation");
+	disexpand = 1;
+	for (n = 0; n < NR_MACROARG; ++n) {
+		mp->arglist = xrealloc(mp->arglist, (n+1)*sizeof(char *));
+		mp->arglist[n] = parameter(mp);
+		DBG("MACRO fetched arg '%s'", mp->arglist[n]);
+
+		c = *input->p++;
+		if (c == ')')
+			break;
+		if (c != ',')
+			error("incorrect macro function-alike invocation of \"%s\"", name);
+	}
 	disexpand = 0;
 
-	if (n == NR_MACROARG)
-		error("too many parameters in macro \"%s\"", mp->sym->name);
-	if (n != mp->npars) {
-		error("macro \"%s\" received %d arguments, but it takes %d",
-		      mp->sym->name, n, mp->npars);
-	}
-
-	return 1;
+checknpars:
+	if (n+1 == mp->npars)
+		return 1;
+	error("macro \"%s\" received %d arguments, but it takes %d",
+	      mp->sym->name, n, mp->npars);
 }
 
 static int
@@ -567,10 +585,10 @@ getdefs(Symbol *args[NR_MACROARG], int nargs, char *buffer, size_t bufsiz)
 			yylen = len;
 			input->p = p - 1;
 			sym = lookup(NS_IDEN, yytext, NOALLOC);
-		} else if (c == '"') {
+		} else if (c == '"' || c == '\'') {
 			next();
-			assert(yytoken == STRING);
-			token = STRING;
+			assert(yytoken == STRING || yytoken == CONSTANT);
+			token = yytoken;
 			len = yylen;
 		}
 
@@ -601,7 +619,7 @@ getdefs(Symbol *args[NR_MACROARG], int nargs, char *buffer, size_t bufsiz)
 			return 0;
 		}
 
-		if (token == IDEN || token == STRING)
+		if (token == IDEN || token == STRING || token == CONSTANT)
 			memcpy(bp, yytext, yylen);
 		else
 			*bp = token;
