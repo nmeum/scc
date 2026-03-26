@@ -1,9 +1,19 @@
-int boo(int *p)
+int
+cmp(int *v)
 {
-	return (p[1] == 2) ? 0 : 1;
+	if (v[0] != 1)
+		return 1;
+	if (v[1] != 2)
+		return 2;
+	if (v[2] != 3)
+		return 3;
+	if (v[3] != 4)
+		return 4;
+	return 0;
 }
 
-int main()
+int
+main(void)
 {
-	return boo((int[]) {0, 2});
+	return cmp((int []) {1, 2, 3, 4});
 }

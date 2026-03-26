@@ -454,12 +454,18 @@ emitstrings(Node *np)
 	emitstrings(np->right);
 }
 
-static void
-autoinit(Symbol *sym, Node *np)
+Symbol *
+autoinit(Symbol *sym, Type *tp, Node *np)
 {
 	unsigned long long a;
 	Symbol *hidden;
-	Type *tp = sym->type;
+
+	if (!sym) {
+		sym = newsym(NS_IDEN, NULL);
+		sym->id = newid();
+		sym->type = tp;
+		sym->flags |= SAUTO;
+	}
 
 repeat:
 	switch (tp->op) {
@@ -479,8 +485,7 @@ repeat:
 			emitstrings(np);
 			emit(ODECL, sym);
 			autocomp(sym, np, np->type, &a);
-			return;
-
+			break;
 		}
 		hidden = newsym(NS_IDEN, NULL);
 		hidden->id = newid();
@@ -497,6 +502,8 @@ repeat:
 		emit(OEXPR, np);
 		break;
 	}
+
+	return sym;
 }
 
 void
@@ -528,6 +535,6 @@ initializer(Symbol *sym, Type *tp)
 		errorp("'%s' has both '%s' and initializer",
 		       sym->name, (flags&SEXTERN) ? "extern" : "typedef");
 	} else {
-		autoinit(sym, np);
+		autoinit(sym, np->type, np);
 	}
 }

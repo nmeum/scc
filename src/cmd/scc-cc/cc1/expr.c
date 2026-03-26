@@ -971,8 +971,11 @@ cast(void)
 		tp = typename();
 		expect(')');
 
-		if (yytoken == '{')
-			return decay(initlist(tp));
+		if (yytoken == '{') {
+			np = initlist(tp);
+			np = varnode(autoinit(NULL, tp, np));
+			return decay(np);
+		}
 
 		switch (tp->op) {
 		case ARY:

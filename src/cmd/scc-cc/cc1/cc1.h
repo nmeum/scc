@@ -510,6 +510,7 @@ int power2node(Node *, int *);
 /* init.c */
 void initializer(Symbol *sym, Type *tp);
 Node *initlist(Type *tp);
+Symbol *autoinit(Symbol *, Type *, Node *);
 
 /* cpp.c */
 void icpp(void);
