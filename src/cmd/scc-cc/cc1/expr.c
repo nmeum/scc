@@ -359,7 +359,7 @@ parithmetic(int op, Node *lp, Node *rp)
 		if ((rp = convert(rp, lp->type, 0)) == NULL)
 			goto incorrect;
 		lp = node(OSUB, pdifftype, lp, rp);
-		return node(ODIV, inttype, lp, size);
+		return node(ODIV, pdifftype, lp, size);
 	}
 	if (!(rp->type->prop & TINTEGER))
 		goto incorrect;
