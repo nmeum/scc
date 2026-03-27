@@ -637,21 +637,26 @@ static int
 character(void)
 {
 	int i, multi = 0;
-	Rune r, d;
-	Type *tp = inttype;
+	Rune r;
+	Type *tp;
 	Symbol *sym;
+	long long d;
+	struct limits *lim;
 
+	tp = chartype;
 	if (*input->p == 'L') {
 		multi = 1;
-		tp = wchartype;
 		input->p++;
+		tp = wchartype;
 	}
+
+	lim = getlimits(tp);
 
 	d = 0;
 	input->p++;
 	for (i = 0; *input->p != '\''; i++) {
 		r = decode(multi);
-		if (r > getlimits(tp)->max.i)
+		if (r > lim->max.i)
 			warn("character too large for enclosing character literal type");
 		d |= r;
 		input->p++;
@@ -663,11 +668,18 @@ character(void)
 	if (i > 1)
 		warn("multi-character character constant");
 
+	if (tp == chartype) {
+		if (tp->prop & TSIGNED && d > lim->max.i)
+			d -= getlimits(uchartype)->max.i + 1;
+		tp = inttype;
+	}
+
 	sym = newsym(NS_IDEN, NULL);
 	sym->u.i = d;
 	sym->type = tp;
 	yylval.sym = sym;
 	tok2str();
+
 	return CONSTANT;
 }
 

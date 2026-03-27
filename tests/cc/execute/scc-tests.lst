@@ -244,3 +244,4 @@
 0251-mul.c
 0252-literal.c
 0253-maxconst.c
+0254-litchar.c
