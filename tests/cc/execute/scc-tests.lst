@@ -243,3 +243,4 @@
 0250-div.c
 0251-mul.c
 0252-literal.c
+0253-maxconst.c

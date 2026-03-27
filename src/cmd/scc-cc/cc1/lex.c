@@ -374,6 +374,8 @@ readint(int base, int sign, Symbol *sym)
 				tp = (base==10) ? longtype : uinttype;
 			else if (tp == longtype)
 				tp = (base==10) ? llongtype : ulongtype;
+			else if (tp == llongtype)
+				tp = ullongtype;
 			else
 				goto overflow;
 		} else {
