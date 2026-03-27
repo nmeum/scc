@@ -95,19 +95,19 @@ test2()
 			c |= 1;
 		}
 		if (c != CHAR_MAX)
-			printf("wrong char max %d-%d", c, CHAR_MAX);
+			printf("wrong char max %d-%d\n", c, CHAR_MAX);
 		if (CHAR_MIN != 0)
-			printf("wrong char min %d-%d", c, CHAR_MIN);
+			printf("wrong char min %d-%d\n", c, CHAR_MIN);
 	} else {
 		for (c = i = 0; i < CHAR_BIT -1; i++) {
 			c <<= 1;
 			c |= 1;
 		}
 		if (c != CHAR_MAX)
-			printf("wrong char max %d-%d", c, CHAR_MAX);
+			printf("wrong char max %d-%d\n", c, CHAR_MAX);
 		c = -c - 1;
 		if (c != CHAR_MIN)
-			printf("wrong char min %d-%d", c, CHAR_MIN);
+			printf("wrong char min %d-%d\n", c, CHAR_MIN);
 	}
 }
 
@@ -136,7 +136,7 @@ test3()
 
 	UMAX(uc);
 	if (uc != UCHAR_MAX)
-		printf("wrong unsigned char max %u %u", uc, UCHAR_MAX);
+		printf("wrong unsigned char max %u %u\n", uc, UCHAR_MAX);
 
 	SMAX(i);
 	if (i != INT_MAX)
