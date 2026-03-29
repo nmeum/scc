@@ -12,5 +12,15 @@ struct S {
 int
 main(void)
 {
-	return 0 == s.d[2];
+	if (s.a != 1)
+		return 1;
+	if (s.b != 2)
+		return 2;
+	if (s.d[0] != 4)
+		return 3;
+	if (s.d[1] != 6)
+		return 4;
+	if (s.d[2] != 0)
+		return 5;
+	return 0;
 }
