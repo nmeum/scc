@@ -12,4 +12,6 @@ main(void)
         char *p = "Hello, world!";
         char *hello[] = {p};
         printhello(hello);
+
+	return 0;
 }

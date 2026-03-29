@@ -10,10 +10,9 @@
 
 #define NOSCLASS  0
 
-#define NOREP 0
-#define REP 1
-#define QUIET   1
-#define NOQUIET 0
+#define NOREP     0
+#define REP       1
+#define FUNDCL    2
 
 #define NR_DCL_TYP (NR_DECLARATORS+NR_FUNPARAM)
 #define NR_DCL_SYM (NR_DECLARATORS+NR_FUNPARAM+1)
@@ -21,6 +20,7 @@
 struct declarators {
 	unsigned nr;
 	unsigned ns;
+	unsigned flags;
 	struct decl *dcl;
 	unsigned nr_types;
 	Type **tpars;
@@ -132,11 +132,31 @@ arydcl(struct declarators *dp)
 {
 	Node *np = NULL;
 	long long n = 0;
-	int ns;
+	int isfun, ns;
+
+	isfun = dp->flags & FUNDCL;
 
 	ns = namespace;
 	namespace = NS_IDEN;
 	expect('[');
+
+	for (;;) {
+		if (yytoken == SCLASS && yylval.token == STATIC) {
+			next();
+			if (!isfun)
+				errorp("static in non-parameter array declarator");
+			continue;
+		}
+
+		if (accept(TQUALIFIER)) {
+			if (!isfun)
+				errorp("type qualifiers in non-parameter array declarator");
+			continue;
+		}
+
+		break;
+	}
+
 	if (yytoken != ']') {
 		if ((np = constexpr()) == NULL) {
 			errorp("invalid storage size");
@@ -449,12 +469,15 @@ ansifun(struct declarators *dp)
 				errorp("... must be the last parameter");
 			sym = NULL;
 			tp = ellipsistype;
-		} else if ((sym = dodcl(NOREP, parameter, NS_IDEN, &type)) == NULL) {
-			voidpar = 1;
-			sym = NULL;
-			tp = NULL;
 		} else {
-			tp = sym->type;
+			sym = dodcl(NOREP|FUNDCL, parameter, NS_IDEN, &type);
+			if (sym) {
+				tp = sym->type;
+			} else {
+				voidpar = 1;
+				sym = NULL;
+				tp = NULL;
+			}
 		}
 
 		if (sym) {
@@ -965,8 +988,9 @@ field(struct decl *dcl)
 }
 
 static Symbol *
-dodcl(int rep, Symbol *(*fun)(struct decl *), unsigned ns, Type *parent)
+dodcl(int flags, Symbol *(*fun)(struct decl *), unsigned ns, Type *parent)
 {
+	int rep = flags & REP;
 	Symbol *sym;
 	Type *base;
 	struct decl dcl;
@@ -984,6 +1008,7 @@ dodcl(int rep, Symbol *(*fun)(struct decl *), unsigned ns, Type *parent)
 		stack.pars = dcl.bufpars;
 		stack.dcl = &dcl;
 		stack.ns = ns;
+		stack.flags = flags;
 
 		declarator(&stack);
 
