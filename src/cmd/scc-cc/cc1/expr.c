@@ -975,7 +975,7 @@ cast(void)
 			Symbol *sym = newsym(NS_IDEN, NULL);
 			sym->id = newid();
 			sym->type = tp;
-			sym->flags |= SAUTO;
+			sym->flags |= (curctx == GLOBALCTX) ? SPRIVATE : SAUTO;
 			initializer(sym);
 
 			return decay(varnode(sym));
