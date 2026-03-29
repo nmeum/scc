@@ -123,6 +123,8 @@ str2ary(Type *tp)
 	return np;
 }
 
+static Node *initlist(Type *);
+
 static Node *
 initialize(Type *tp, int inlist)
 {
@@ -226,16 +228,26 @@ initlist_helper(Type *tp)
 {
 	Init in;
 	Node *np;
-	Type *curtp;
+	Type *curtp, *btp;
 	int braces, scalar, toomany, outbound;
 	long long nelem = tp->n.elem;
 
-	init(&in);
 	braces = scalar = toomany = 0;
 
 	if (accept('{'))
 		braces = 1;
 
+        if (yytoken == STRING && tp->op == ARY) {
+		btp = tp->type;
+		if (btp == chartype || btp == uchartype || btp == schartype) {
+			np = str2ary(tp);
+			if (braces)
+				expect('}');
+			return np;
+		}
+	}
+
+	init(&in);
 	for (;;) {
 		curtp = inttype;
 		switch (yytoken) {
@@ -326,7 +338,7 @@ new_desig:
 	return mkcompound(&in, tp);
 }
 
-Node *
+static Node *
 initlist(Type *tp)
 {
 	Node *np;
@@ -454,18 +466,12 @@ emitstrings(Node *np)
 	emitstrings(np->right);
 }
 
-Symbol *
-autoinit(Symbol *sym, Type *tp, Node *np)
+static void
+autoinit(Symbol *sym, Node *np)
 {
 	unsigned long long a;
 	Symbol *hidden;
-
-	if (!sym) {
-		sym = newsym(NS_IDEN, NULL);
-		sym->id = newid();
-		sym->type = tp;
-		sym->flags |= SAUTO;
-	}
+	Type *tp = np->type;
 
 repeat:
 	switch (tp->op) {
@@ -502,14 +508,13 @@ repeat:
 		emit(OEXPR, np);
 		break;
 	}
-
-	return sym;
 }
 
 void
-initializer(Symbol *sym, Type *tp)
+initializer(Symbol *sym)
 {
 	Node *np;
+	Type *tp = sym->type;
 	int flags = sym->flags;
 
 	if (tp->op == FTN) {
@@ -535,6 +540,6 @@ initializer(Symbol *sym, Type *tp)
 		errorp("'%s' has both '%s' and initializer",
 		       sym->name, (flags&SEXTERN) ? "extern" : "typedef");
 	} else {
-		autoinit(sym, np->type, np);
+		autoinit(sym, np);
 	}
 }

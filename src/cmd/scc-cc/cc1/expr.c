@@ -972,9 +972,13 @@ cast(void)
 		expect(')');
 
 		if (yytoken == '{') {
-			np = initlist(tp);
-			np = varnode(autoinit(NULL, tp, np));
-			return decay(np);
+			Symbol *sym = newsym(NS_IDEN, NULL);
+			sym->id = newid();
+			sym->type = tp;
+			sym->flags |= SAUTO;
+			initializer(sym);
+
+			return decay(varnode(sym));
 		}
 
 		switch (tp->op) {

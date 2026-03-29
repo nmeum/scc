@@ -245,3 +245,4 @@
 0252-literal.c
 0253-maxconst.c
 0254-litchar.c
+0255-init.c

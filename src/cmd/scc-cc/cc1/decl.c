@@ -312,7 +312,7 @@ identifier(struct decl *dcl)
 	}
 
 	if (accept('='))
-		initializer(sym, sym->type);
+		initializer(sym);
 	if (!(sym->flags & (SGLOBAL|SEXTERN)) && tp->op != FTN)
 		sym->flags |= SDEFINED;
 	if (sym->token == IDEN && tp->op != FTN)

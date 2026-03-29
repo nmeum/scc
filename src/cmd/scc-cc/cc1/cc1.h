@@ -508,9 +508,7 @@ int cmpnode(Node *np, unsigned long long val);
 int power2node(Node *, int *);
 
 /* init.c */
-void initializer(Symbol *sym, Type *tp);
-Node *initlist(Type *tp);
-Symbol *autoinit(Symbol *, Type *, Node *);
+void initializer(Symbol *);
 
 /* cpp.c */
 void icpp(void);
