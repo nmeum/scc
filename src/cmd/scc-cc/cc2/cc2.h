@@ -4,8 +4,8 @@
 #define PRCFG(msg)
 #define PRTREE(msg)
 #else
-#define PRCFG(msg) (enadebug ? prcfg(msg) : NULL)
-#define PRTREE(msg) (enadebug ? prforest(msg) : NULL)
+#define PRCFG(msg) (enadebug ? prcfg(msg) : (void)0)
+#define PRTREE(msg) (enadebug ? prforest(msg) : (void)0)
 #endif
 
 enum iflags {
