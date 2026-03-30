@@ -377,7 +377,7 @@ ibinfmt(void)
 		exit(EXIT_FAILURE);
 	}
 
-	if ((obj = newobj(t)) < 0) {
+	if ((obj = newobj(t)) == NULL) {
 		fputs("as: error allocating output\n", stderr);
 		exit(EXIT_FAILURE);
 	}
