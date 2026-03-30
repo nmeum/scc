@@ -407,7 +407,7 @@ autocomp(Symbol *sym, Node *np, Type *tp, unsigned long long *addr)
 		break;
 	case STRUCT:
 	case ARY:
-		if ((np->flags & NCONST) != 0) {
+		if (np && (np->flags & NCONST) != 0) {
 			Symbol *hidden = newsym(NS_IDEN, NULL);
 			hidden->id = newid();
 			hidden->type = init->type;
