@@ -4,7 +4,7 @@ struct a {
 
 int main()
 {
-    struct a a;
+    struct a a = {2};
     struct a aa = a;
 
     return 0;
