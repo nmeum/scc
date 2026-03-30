@@ -578,6 +578,12 @@ funbody(Symbol *sym, Symbol *pars[])
 	sym->u.pars = pars;
 	emit(OFUN, sym);
 	compound(NULL, NULL, NULL);
+
+	if (strcmp(sym->name, "main") == 0) {
+		emit(ORET, NULL);
+		emit(OEXPR, constnode(zero));
+	}
+
 	emit(OEFUN, NULL);
 	popctx();
 	flushtypes();
