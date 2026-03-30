@@ -302,7 +302,7 @@ void
 reg8_reg8(Op *op, Node **args)
 {
 	int src, dst;
-	char buf[op->size];
+	unsigned char buf[op->size];
 
 	src = reg8toint(args[0]);
 	dst = reg8toint(args[1]);
@@ -315,7 +315,7 @@ void
 imm8_reg8(Op *op, Node **args)
 {
 	int src, dst;
-	char buf[op->size];
+	unsigned char buf[op->size];
 
 	src = (*args)->sym->value;
 	dst = reg8toint(args[1]);
@@ -330,7 +330,7 @@ void
 reg16_reg16(Op *op, Node **args)
 {
 	int src, dst;
-	char buf[op->size];
+	unsigned char buf[op->size];
 
 	src = reg16toint(args[0]);
 	dst = reg16toint(args[1]);
@@ -344,7 +344,7 @@ void
 reg32_reg32(Op *op, Node **args)
 {
 	int src, dst;
-	char buf[op->size];
+	unsigned char buf[op->size];
 
 	src = reg32toint(args[0]);
 	dst = reg32toint(args[1]);

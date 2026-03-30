@@ -417,7 +417,7 @@ cleansecs(void)
 }
 
 void
-emit(char *bytes, int n)
+emit(unsigned char *bytes, int n)
 {
 	struct lsection *lsec = (struct lsection *) cursec;
 

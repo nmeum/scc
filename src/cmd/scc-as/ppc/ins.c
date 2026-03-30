@@ -123,7 +123,7 @@ moperand(void)
 static void
 emit_packed(unsigned long ins)
 {
-	char buff[4];
+	unsigned char buff[4];
 
 	if (endian == BIG_ENDIAN) {
 		buff[0] = ins >> 24;

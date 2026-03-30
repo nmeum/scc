@@ -25,10 +25,10 @@ reloc(Symbol *sym,
 {
 }
 
-char *
+unsigned char *
 tobytes(unsigned long long v, int nbytes, int inc)
 {
-	static char buf[sizeof(unsigned long long)];
+	static unsigned char buf[sizeof(unsigned long long)];
 	int idx;
 
 	idx = (inc < 0) ? nbytes-1 : 0;
@@ -60,7 +60,7 @@ xstring(int which, Node **args)
 		s = np->sym->name;
 		len = strlen(s);
 		len += which == XSTRING;
-		emit(s, len);
+		emit((unsigned char *)s, len);
 	}
 }
 
@@ -242,7 +242,7 @@ align(Op *op, Node **args)
 	pcal = pc+al & ~al;
 
 	for (al = pcal - pc; al > 0; --al)
-		emit((char []) {0}, 1);
+		emit((unsigned char []) {0}, 1);
 }
 
 void

@@ -100,7 +100,7 @@ union yylval {
 /* symbol.c */
 void cleansecs(void);
 void ibinfmt(void);
-void emit(char *, int);
+void emit(unsigned char *, int);
 Section *defsec(char *, char *);
 Symbol *tmpsym(unsigned long long);
 void killtmp(void);
@@ -139,7 +139,7 @@ int match(Op *, Node **);
 Node *moperand(void);
 
 /* ins.c */
-char *tobytes(unsigned long long, int, int);
+unsigned char *tobytes(unsigned long long, int, int);
 
 /* binfmt.c */
 void writeout(char *);
