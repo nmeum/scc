@@ -998,6 +998,8 @@ discard(void)
 	extern jmp_buf recover;
 	int c;
 
+	if (!input)
+		exit(EXIT_FAILURE);
 	for (c = yytoken; ; c = *input->p++) {
 		switch (safe) {
 		case END_COMP:
