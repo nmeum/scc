@@ -3,5 +3,10 @@ main(void)
 {
 	unsigned long long u = 18446744073709551615ull;
 
-	return !(u == 18446744073709551615u);
+	if (u != 18446744073709551615u)
+		return 1;
+	if (u != 0xFFFFFFFFFFFFFFFF)
+		return 2;
+
+	return 0;
 }
