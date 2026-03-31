@@ -112,7 +112,8 @@ enum {
 	SSTRING   = 1 << 12,
 	STYPEDEF  = 1 << 13,
 	SINITLST  = 1 << 14,
-	SHASINIT  = 1 << 15
+	SHASINIT  = 1 << 15,
+	SVARIADIC = 1 << 15,
 };
 
 /* node flags */

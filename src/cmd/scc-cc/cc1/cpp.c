@@ -144,7 +144,7 @@ unterminated:
 }
 
 static char *
-parameter(Macro *mp)
+parameter(Macro *mp, int n)
 {
 	int siz;
 	char *s, *begin, *end;
@@ -164,8 +164,10 @@ parameter(Macro *mp)
 			appendpar(mp, input->p++, 1);
 			paren(mp);
 			break;
-		case ')':
 		case ',':
+			if (n+1 == mp->npars)
+				goto append;
+		case ')':
 			begin = mp->arg;
 			end = begin + mp->argsiz;
 
@@ -184,6 +186,7 @@ parameter(Macro *mp)
 				goto unterminated;
 			continue;
 		default:
+		append:
 			appendpar(mp, input->p++, 1);
 			break;
 		}
@@ -214,10 +217,11 @@ parsepars(Macro *mp)
 	}
 
 	disexpand = 1;
-	for (n = 0; n < NR_MACROARG; ++n) {
+	for (n = 0; n < NR_MACROARG; ) {
 		mp->arglist = xrealloc(mp->arglist, (n+1)*sizeof(char *));
-		mp->arglist[n] = parameter(mp);
+		mp->arglist[n] = parameter(mp, n);
 		DBG("MACRO fetched arg '%s'", mp->arglist[n]);
+		n++;
 
 		c = *input->p++;
 		if (c == ')')
@@ -227,9 +231,16 @@ parsepars(Macro *mp)
 	}
 	disexpand = 0;
 
-checknpars:
-	if (n+1 == mp->npars)
+	if (n == mp->npars)
 		return 1;
+
+	if (n == mp->npars-1 && mp->sym->flags & SVARIADIC) {
+		DBG("MACRO defaulted __VA_ARGS__ to \"\"");
+		mp->arglist = xrealloc(mp->arglist, (n+1)*sizeof(char *));
+		mp->arglist[n] = xstrdup("");
+		return 1;
+	}
+
 	error("macro \"%s\" received %d arguments, but it takes %d",
 	      mp->sym->name, n, mp->npars);
 }
@@ -521,21 +532,27 @@ getpars(Symbol *args[NR_MACROARG])
 			cpperror("too many parameters in macro");
 			return NR_MACROARG;
 		}
-		if (accept(ELLIPSIS)) {
-			args[n++] = NULL;
-			break;
-		}
-		if (yytoken != IDEN) {
+
+		if (yytoken == ELLIPSIS) {
+			sym = newsym(NS_IDEN, "__VA_ARGS__");
+		} else if (yytoken == IDEN) {
+			sym = yylval.sym;
+			next();
+		} else {
 			cpperror("macro arguments must be identifiers");
 			return NR_MACROARG;
 		}
-		if ((sym = install(NS_IDEN, yylval.sym)) == NULL) {
+
+		if ((sym = install(NS_IDEN, sym)) == NULL) {
 			errorp("duplicated macro parameter '%s'", yytext);
 		} else {
 			sym->flags |= SUSED;
 			args[n++] = sym;
 		}
-		next();
+
+		if (accept(ELLIPSIS))
+			break;
+
 	} while (accept(','));
 
 	if (yytoken != ')') {
@@ -647,9 +664,10 @@ wrong_concat:
 static void
 define(void)
 {
+	int n;
 	Symbol *sym,*args[NR_MACROARG];
 	char buff[LINESIZ+1];
-	int n;
+	unsigned flags = SDECLARED|SSTRING;
 
 	if (cppoff)
 		return;
@@ -667,8 +685,8 @@ define(void)
 	namespace = NS_IDEN;       /* Avoid polution in NS_CPP */
 	if ((n = getpars(args)) == NR_MACROARG)
 		goto delete;
-	if (n > 0 && !args[n-1])  /* it is a variadic function */
-		--n;
+	if (n > 0 && strcmp(args[n-1]->name, "__VA_ARGS__") == 0)
+		flags |= SVARIADIC;
 
 	sprintf(buff, "%02d#", n);
 	if (!getdefs(args, n, buff+3, LINESIZ-3))
@@ -680,7 +698,7 @@ define(void)
 		free(sym->u.s);
 	} else {
 		sym = install(NS_CPP, sym);
-		sym->flags |= SDECLARED|SSTRING;
+		sym->flags |= flags;
 	}
 
 	sym->u.s = xstrdup(buff);

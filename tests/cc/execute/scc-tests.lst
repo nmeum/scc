@@ -192,7 +192,7 @@
 0199-voidpcast.c
 0200-cpp.c [TODO]
 0201-cpp.c
-0202-variadic.c [TODO]
+0202-variadic.c
 0203-comment.c
 0204-cast.c
 0205-cpparg.c
@@ -248,3 +248,4 @@
 0255-init.c
 0256-ary.c
 0257-main.c
+0258-variadic.c
