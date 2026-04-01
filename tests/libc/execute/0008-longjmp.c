@@ -23,7 +23,12 @@ int
 main()
 {
 	static int i;
+#ifdef __QBE__
+	// We cannot implement proper volatile with qbe
+	static volatile int v;
+#else
 	auto volatile int v;
+#endif
 
 	i = 0;
 	v = 1;

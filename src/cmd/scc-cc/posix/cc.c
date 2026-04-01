@@ -68,7 +68,7 @@ static struct items objtmp, objout;
 static struct items linkargs, cc1args;
 
 static int Mflag, Eflag, Sflag, Wflag,
-           cflag, dflag, kflag, sflag, Qflag = 1, /* TODO: Remove Qflag */
+           cflag, dflag, kflag, sflag, Qflag = 1,
            gflag;
 
 static int devnullfd = -1;
@@ -222,6 +222,9 @@ settool(int tool, char *infile, int nexttool)
 			addarg(tool, "-M");
 		if (Wflag)
 			addarg(tool, "-w");
+		if (Qflag)
+			addarg(tool, "-D__QBE__");
+
 		for (n = 0; n < cc1args.n; ++n)
 			addarg(tool, cc1args.s[n]);
 		for (n = 0; sysincludes[n]; ++n) {
