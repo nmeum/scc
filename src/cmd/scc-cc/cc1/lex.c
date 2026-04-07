@@ -11,6 +11,8 @@
 #include <scc/scc.h>
 #include "cc1.h"
 
+#define REPLACECHAR 0xFFFD
+
 int yytoken;
 struct yystype yylval;
 char yytext[STRINGSIZ+3];
@@ -516,10 +518,11 @@ number(void)
 	return CONSTANT;
 }
 
-static int
-escape(void)
+static Rune
+escape(int multi)
 {
-	int c, d, i, cnt, base;
+	Rune c;
+	int uni, d, i, cnt, base;
 
 	switch (*++input->p) {
 	case 'a':
@@ -544,17 +547,21 @@ escape(void)
 		return '\\';
 	case '\?':
 		return '\?';
+	case 'U':
+		cnt = 8;
+		goto check_universal;
 	case 'u':
-		/*
-		 * FIXME: universal constants are not correctly handled
-		 */
-		if (!isdigit(*++input->p))
-			warn("incorrect digit for numerical character constant");
-		base = 10;
+		cnt = 4;
+	check_universal:
+		if (!multi)
+			warn("multi-character character constant");
+		++input->p;
+		uni = 1;
+		base = 16;
 		break;
 	case 'x':
-		if (!isxdigit(*++input->p))
-			warn("\\x used with no following hex digits");
+		++input->p;
+		uni = 0;
 		cnt = 2;
 		base = 16;
 		break;
@@ -566,6 +573,7 @@ escape(void)
 	case '5':
 	case '6':
 	case '7':
+		uni = 0;
 		cnt = 3;
 		base = 8;
 		break;
@@ -574,7 +582,7 @@ escape(void)
 		return ' ';
 	}
 
-	for (c = i = 0; i < cnt; ++i) {
+	for (c = i = 0; i < cnt && isxdigit(*input->p); ++i) {
 		static char digits[] = "0123456789ABCDEF";
 		char *p = strchr(digits, toupper(*input->p));
 
@@ -585,6 +593,26 @@ escape(void)
 		++input->p;
 	}
 	--input->p;
+
+	if (base == 16 && i != cnt) {
+		if (uni) {
+			warn("incorrect digit for universal character constant");
+			c = REPLACECHAR;
+		} else {
+			warn("\\x used with no following hex digits");
+			c = ' ';
+		}
+	}
+
+	if (!uni)
+		return c;
+
+	if (c < 0xa0 && (c == 0x24 || c == 0x40 || c == 0x60)
+	|| c >= 0xD800 && c <= 0xDFFF
+	|| c >= 0x110000) {
+		warn("invalid universal character constant");
+		c = REPLACECHAR;
+	}
 
 	return c;
 }
@@ -626,7 +654,7 @@ decode(int multi)
 	Rune r;
 
 	if (*input->p == '\\') {
-		r = escape();
+		r = escape(multi);
 		return r;
 	}
 
@@ -713,7 +741,7 @@ string(void)
 		esc = (c == '\\' && !esc && disescape);
 
 		if (c == '\\' && !esc)
-			c = escape();
+			c = escape(0);
 
 		if (bp == &yytext[STRINGSIZ+1]) {
 			/* too long, ignore everything until next quote */
