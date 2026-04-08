@@ -24,7 +24,6 @@ static struct items dirinclude;
 
 unsigned cppctx;
 int disexpand;
-int disescape;
 
 void
 defdefine(char *name, char *val, char *source)
@@ -672,7 +671,6 @@ define(void)
 	if (cppoff)
 		return;
 
-	disescape = 1;
 	namespace = NS_CPP;
 	next();
 
@@ -1145,7 +1143,6 @@ cpp(void)
 		cpperror("trailing characters after preprocessor directive");
 
 ret:
-	disescape = 0;
 	disexpand = 0;
 	lexmode = CCMODE;
 	namespace = ns;
@@ -1191,59 +1188,7 @@ outcpp(void)
 	for (next(); yytoken != EOFTOK; next()) {
 		if (onlyheader)
 			continue;
-		if (yytoken != STRING) {
-			printf("%s ", yytext);
-			continue;
-		}
-		for (s = yytext; (c = *s) != '\0'; ++s) {
-			switch (c) {
-			case '\n':
-				t = "\\n";
-				goto print_str;
-			case '\v':
-				t = "\\v";
-				goto print_str;
-			case '\b':
-				t = "\\b";
-				goto print_str;
-			case '\t':
-				t = "\\t";
-				goto print_str;
-			case '\a':
-				t = "\\a";
-				goto print_str;
-			case '\f':
-				t = "\\f";
-				goto print_str;
-			case '\r':
-				t = "\\r";
-				goto print_str;
-			case '"':
-				if (s == yytext || s[1] == '\0')
-					goto print_chr;
-				t = "\\\"";
-				goto print_str;
-			case '\'':
-				t = "\\'";
-				goto print_str;
-			case '\?':
-				t = "\\\?";
-				goto print_str;
-			case '\\':
-				putchar('\\');
-			default:
-			print_chr:
-				if (!isprint(c))
-					printf("\\x%x", c);
-				else
-					putchar(c);
-				break;
-			print_str:
-				fputs(t, stdout);
-				break;
-			}
-		}
-		putchar(' ');
+		printf("%s ", yytext);
 	}
 	putchar('\n');
 }

@@ -342,7 +342,7 @@ repeat:
 static void
 tok2str(void)
 {
-	if ((yylen = input->p - input->begin) > INTIDENTSIZ)
+	if ((yylen = input->p - input->begin) >= sizeof(yytext))
 		error("token too big");
 	memcpy(yytext, input->begin, yylen);
 	yytext[yylen] = '\0';
@@ -711,26 +711,16 @@ character(void)
 	return CONSTANT;
 }
 
-/*
- * string() parses a constant string, and convert all the
- * escape sequences into single characters. This behaviour
- * is correct except when we parse a #define, where we want
- * to preserve the literal content of the string. In that
- * case cpp.c:/^define( sets the variable disescape to
- * disable converting escape sequences into characters.
- */
 static int
 string(void)
 {
-	char *bp = yytext;
-	int c, esc;
+	int c, multi = 0;
+	char buff[STRINGSIZ+1], *bp = buff, *beg = input->p, *end;
 
-	*bp++ = '"';
-	esc = 0;
 	for (++input->p; ; ++input->p) {
 		c = *input->p;
 
-		if (c == '"' && !esc)
+		if (c == '"')
 			break;
 
 		if (c == '\0') {
@@ -738,12 +728,10 @@ string(void)
 			break;
 		}
 
-		esc = (c == '\\' && !esc && disescape);
+		if (c == '\\')
+			c = escape(multi);
 
-		if (c == '\\' && !esc)
-			c = escape(0);
-
-		if (bp == &yytext[STRINGSIZ+1]) {
+		if (input->p - beg == STRINGSIZ + 1) {
 			/* too long, ignore everything until next quote */
 			for (++input->p; *input->p != '"'; ++input->p) {
 				if (*input->p == '\\')
@@ -757,14 +745,12 @@ string(void)
 		}
 		*bp++ = c;
 	}
+	*bp++ = '\0';
+	input->p++;
 
-	input->begin = ++input->p;
-	*bp = '\0';
+	yylval.sym = newstring(buff, bp - buff);
+	tok2str();
 
-	yylen = bp - yytext + 1;
-	yylval.sym = newstring(yytext+1, yylen-1);
-	*bp++ = '"';
-	*bp = '\0';
 	return STRING;
 }
 
