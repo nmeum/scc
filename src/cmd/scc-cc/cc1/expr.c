@@ -652,28 +652,29 @@ negation(int op, Node *np)
 static Symbol *
 adjstrings(Symbol *sym)
 {
-	char *s, *t;
-	size_t len, n;
-	Type *tp;
+	char *d, *s;
+	Type *tp, *base;
+	size_t len, n, osiz, nsiz;
 
 	tp = sym->type;
-	s = sym->u.s;
-	for (len = tp->n.elem;; len += n) {
-		next();
-		if (yytoken != STRING)
+	base = tp->type;
+	for (len = tp->n.elem; next() == STRING; len += n - 1) {
+		if (yylval.sym->type->type != base)
 			break;
-		t = yylval.sym->u.s;
-		n = yylval.sym->type->n.elem - 1;
 
-		s = xrealloc(s, len + n);
-		memcpy(s + len - 1, t, n);
-		s[len + n - 1] = '\0';
+		d = sym->u.s;
+		s = yylval.sym->u.s;
+		n = yylval.sym->type->n.elem;
+		osiz = (len-1) * base->size;
+		nsiz = n * base->size;
+
+		sym->u.s = d = xrealloc(d, osiz + nsiz);
+		memcpy(d + osiz, s, nsiz);
 	}
 
-	if (tp->n.elem != len) {
-		sym->type = mktype(chartype, ARY, len, NULL);
-		sym->u.s = s;
-	}
+	if (tp->n.elem != len)
+		sym->type = mktype(base, ARY, len, NULL);
+
 	return sym;
 }
 

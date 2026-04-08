@@ -252,6 +252,22 @@ linkhash(Symbol *sym)
 }
 
 Symbol *
+newrstring(Rune *rs, size_t len)
+{
+	Symbol *sym = newsym(NS_IDEN, NULL);
+
+	if (lexmode != CPPMODE)
+		sym->type = mktype(wchartype, ARY, len, NULL);
+	sym->id = newid();
+	sym->flags |= SRSTRING | SCONSTANT | SPRIVATE;
+	sym->u.rs = xcalloc(len, sizeof(Rune));
+	if (rs)
+		memcpy(sym->u.rs, rs, len * sizeof(Rune));
+
+	return sym;
+}
+
+Symbol *
 newstring(char *s, size_t len)
 {
 	Symbol *sym = newsym(NS_IDEN, NULL);

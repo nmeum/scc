@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <inttypes.h>
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -322,6 +323,20 @@ emittype(int op, void *arg)
 }
 
 static void
+emitrstring(Symbol *sym, Type *tp)
+{
+	Rune *bp, *lim;
+
+	bp = sym->u.rs;
+	lim = &sym->u.rs[tp->n.elem];
+	while (bp < lim) {
+		fprintf(outfp,
+			"\t#%c%" PRIX32 "\n",
+			wchartype->letter, *bp++);
+	}
+}
+
+static void
 emitstring(Symbol *sym, Type *tp)
 {
 	char *bp, *s, *lim;
@@ -389,6 +404,12 @@ emitdesig(Node *np, Type *tp, unsigned long long *addr)
 			*addr += tp->n.elem;
 			return;
 		}
+		if (sym->flags & SRSTRING) {
+			emitrstring(sym, tp);
+			*addr += tp->n.elem * wchartype->size;
+			return;
+		}
+		
 		if ((sym->flags & SINITLST) == 0)
 			goto emit_expression;
 	}

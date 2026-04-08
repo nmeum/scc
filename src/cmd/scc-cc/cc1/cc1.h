@@ -116,6 +116,7 @@ enum {
 	SLOCAL    = 1 << 9,
 	SEMITTED  = 1 << 10,
 	SDEFINED  = 1 << 11,
+	SRSTRING  = 1 << 11,
 	SSTRING   = 1 << 12,
 	STYPEDEF  = 1 << 13,
 	SINITLST  = 1 << 14,
@@ -356,6 +357,7 @@ struct symbol {
 		double d;
 		long double ld;
 		char *s;
+		Rune *rs;
 		unsigned char token;
 		Node **init;
 		Symbol **pars;
@@ -466,6 +468,7 @@ void killsym(Symbol *sym);
 Symbol *newlabel(void);
 void builtins(struct builtin *builts);
 Symbol *newstring(char *s, size_t len);
+Symbol *newrstring(Rune *, size_t);
 unsigned newid(void);
 void isyms(void);
 

@@ -12,6 +12,8 @@
 #include "cc1.h"
 
 #define REPLACECHAR 0xFFFD
+#define NOMULTICHAR 0
+#define MULTICHAR   1
 
 int yytoken;
 struct yystype yylval;
@@ -712,24 +714,22 @@ character(void)
 }
 
 static int
-string(void)
+rstring(void)
 {
-	int c, multi = 0;
-	char buff[STRINGSIZ+1], *bp = buff, *beg = input->p, *end;
+	char *beg = input->p++;
+	Rune c, buff[STRINGSIZ+1], *bp = buff;
 
 	for (++input->p; ; ++input->p) {
-		c = *input->p;
+		c = *(unsigned char *) input->p;
 
-		if (c == '"')
-			break;
-
-		if (c == '\0') {
+		switch (c) {
+		case '\0':
 			errorp("missing terminating '\"' character");
-			break;
+		case '"':
+			goto end_loop;
+		case '\\':
+			c = escape(MULTICHAR);
 		}
-
-		if (c == '\\')
-			c = escape(multi);
 
 		if (input->p - beg == STRINGSIZ + 1) {
 			/* too long, ignore everything until next quote */
@@ -745,6 +745,52 @@ string(void)
 		}
 		*bp++ = c;
 	}
+
+end_loop:
+	*bp++ = '\0';
+	input->p++;
+
+	yylval.sym = newrstring(buff, bp - buff);
+	tok2str();
+
+	return STRING;
+}
+
+static int
+sstring(void)
+{
+	int c;
+	struct limits *lim;
+	char buff[STRINGSIZ+1], *bp = buff, *beg = input->p;
+
+	for (++input->p; ; ++input->p) {
+		c = *input->p;
+
+		switch (c) {
+		case '\0':
+			errorp("missing terminating '\"' character");
+		case '"':
+			goto end_loop;
+		case '\\':
+			c = escape(NOMULTICHAR);
+		}
+
+		if (input->p - beg == STRINGSIZ + 1) {
+			/* too long, ignore everything until next quote */
+			for (++input->p; *input->p != '"'; ++input->p) {
+				if (*input->p == '\\')
+					++input->p;
+				if (*input->p == '\0')
+					break;
+			}
+			--bp;
+			errorp("string too long");
+			break;
+		}
+		*bp++ = c;
+	}
+
+end_loop:
 	*bp++ = '\0';
 	input->p++;
 
@@ -755,6 +801,14 @@ string(void)
 }
 
 static int
+string(void)
+{
+	if (*input->p == 'L')
+		return rstring();
+	return sstring();
+}
+
+static int
 iden(void)
 {
 	Symbol *sym;
@@ -762,6 +816,9 @@ iden(void)
 
 	if (input->p[0] == 'L' && input->p[1] == '\'')
 		return character();
+
+	if (input->p[0] == 'L' && input->p[1] == '"')
+		return string();
 
 	begin = input->p;
 	for (p = begin; isalnum(*p) || *p == '_'; ++p)
