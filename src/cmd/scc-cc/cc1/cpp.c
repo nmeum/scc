@@ -607,6 +607,7 @@ getdefs(Symbol *args[NR_MACROARG], int nargs, char *buffer, size_t bufsiz)
 			token = yytoken;
 			s = yytext;
 			len = yylen;
+			--input->p;
 		}
 
 		if (sym && nargs > 0) {
