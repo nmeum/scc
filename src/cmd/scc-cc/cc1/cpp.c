@@ -565,10 +565,9 @@ getpars(Symbol *args[NR_MACROARG])
 static int
 getdefs(Symbol *args[NR_MACROARG], int nargs, char *buffer, size_t bufsiz)
 {
-	size_t len;
-	char *bp, *p;
+	char c, *bp, *s, *p;
 	Symbol **argp, *sym;
-	int c, id, token, prevc, ispar;
+	int len, id, token, prevc, ispar;
 
 	while (isspace(*input->p))
 		++input->p;
@@ -577,15 +576,16 @@ getdefs(Symbol *args[NR_MACROARG], int nargs, char *buffer, size_t bufsiz)
 	for (prevc = 0; (c = *input->p) != '\n' && c != '\0'; ++input->p) {
 		len = 1;
 		ispar = 0;
+		s = &c;
 		token = c;
 		sym = NULL;
 
 		if (c == '#') {
 			if (input->p[1] == '#') {
-				token = CONCAT;
+				c = token = CONCAT;
 				++input->p;
 			} else {
-				token = STRINGIZE;
+				c = token = STRINGIZE;
 			}
 		} else if (c == '_' || isalpha(c)) {
 			token = IDEN;
@@ -596,7 +596,7 @@ getdefs(Symbol *args[NR_MACROARG], int nargs, char *buffer, size_t bufsiz)
 				cpperror("identifier too long in macro definition");
 				return 0;
 			}
-			memcpy(yytext, input->p, len);
+			s = memcpy(yytext, input->p, len);
 			yytext[len] = '\0';
 			yylen = len;
 			input->p = p - 1;
@@ -605,6 +605,7 @@ getdefs(Symbol *args[NR_MACROARG], int nargs, char *buffer, size_t bufsiz)
 			next();
 			assert(yytoken == STRING || yytoken == CONSTANT);
 			token = yytoken;
+			s = yytext;
 			len = yylen;
 		}
 
@@ -635,11 +636,7 @@ getdefs(Symbol *args[NR_MACROARG], int nargs, char *buffer, size_t bufsiz)
 			return 0;
 		}
 
-		if (token == IDEN || token == STRING || token == CONSTANT)
-			memcpy(bp, yytext, yylen);
-		else
-			*bp = token;
-
+		memcpy(bp, s, len);
 		bp += len;
 		bufsiz -= len;
 		prevc = token;
