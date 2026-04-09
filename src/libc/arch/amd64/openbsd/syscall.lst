@@ -17,4 +17,4 @@
 67	_gettimeofday	2
 122	_kill	2
 128	_rename	2
-198	_lseek	3
+166	_lseek	3

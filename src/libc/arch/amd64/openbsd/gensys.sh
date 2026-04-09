@@ -20,12 +20,16 @@ $name:
 		;;
 	esac`
 	movq	\$$num,%rax
-	syscall
-	jb	1f
+1:	syscall
+	jb	2f
 	retq
 
-1:	movq	%rax,(errno)
+2:	movq	%rax,(errno)
 	movq	\$-1,%rax
 	retq
+
+	.section .openbsd.syscalls, "a", @progbits
+	.long 1b
+	.long $num
 EOF
 done
