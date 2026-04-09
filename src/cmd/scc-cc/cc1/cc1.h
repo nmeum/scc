@@ -92,7 +92,14 @@ enum namespaces {
 	NS_CPP,
 	NS_KEYWORD,
 	NS_CPPCLAUSES,
-	NS_STRUCTS
+	NS_MACROPAR,
+
+	/*
+	 * This must be the last constant of the enum definition
+	 * because it marks the beginning of the independent
+	 * struct namespaces
+	 */
+	NS_STRUCTS,
 };
 
 /* symbol flags */

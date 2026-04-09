@@ -533,7 +533,7 @@ getpars(Symbol *args[NR_MACROARG])
 		}
 
 		if (yytoken == ELLIPSIS) {
-			sym = newsym(NS_IDEN, "__VA_ARGS__");
+			sym = newsym(NS_MACROPAR, "__VA_ARGS__");
 		} else if (yytoken == IDEN) {
 			sym = yylval.sym;
 			next();
@@ -565,8 +565,8 @@ getpars(Symbol *args[NR_MACROARG])
 static int
 getdefs(Symbol *args[NR_MACROARG], int nargs, char *buffer, size_t bufsiz)
 {
+	Symbol **argp;
 	char c, *bp, *s, *p;
-	Symbol **argp, *sym;
 	int len, id, token, prevc, ispar;
 
 	while (isspace(*input->p))
@@ -578,7 +578,6 @@ getdefs(Symbol *args[NR_MACROARG], int nargs, char *buffer, size_t bufsiz)
 		ispar = 0;
 		s = &c;
 		token = c;
-		sym = NULL;
 
 		if (c == '#') {
 			if (input->p[1] == '#') {
@@ -587,40 +586,27 @@ getdefs(Symbol *args[NR_MACROARG], int nargs, char *buffer, size_t bufsiz)
 			} else {
 				c = token = STRINGIZE;
 			}
-		} else if (c == '_' || isalpha(c)) {
-			token = IDEN;
-			for (p = input->p; isalnum(*p) || *p == '_'; ++p)
-				;
-			len = p - input->p;
-			if (len >  INTIDENTSIZ) {
-				cpperror("identifier too long in macro definition");
-				return 0;
-			}
-			s = memcpy(yytext, input->p, len);
-			yytext[len] = '\0';
-			yylen = len;
-			input->p = p - 1;
-			sym = lookup(NS_IDEN, yytext, NOALLOC);
-		} else if (c == '"' || c == '\'') {
+		} else if (c == '"' || c == '\'' || c == '_' || isalpha(c)) {
 			next();
-			assert(yytoken == STRING || yytoken == CONSTANT);
+			assert(yytoken == STRING ||
+			       yytoken == CONSTANT ||
+			       yytoken == IDEN);
 			token = yytoken;
 			s = yytext;
 			len = yylen;
 			--input->p;
 		}
 
-		if (sym && nargs > 0) {
+		if (token == IDEN && nargs > 0) {
 			for (argp = args; argp < &args[nargs]; ++argp) {
-				if (*argp == sym)
+				if (*argp == yylval.sym) {
+					id = argp - args;
+					sprintf(yytext,
+						"%c%02d%c", MACROPAR, id, MACROPAR);
+					ispar = 1;
+					yylen = len = 4;
 					break;
-			}
-			if (argp != &args[nargs]) {
-				id = argp - args;
-				sprintf(yytext,
-					"%c%02d%c", MACROPAR, id, MACROPAR);
-				ispar = 1;
-				yylen = len = 4;
+				}
 			}
 		}
 
@@ -678,7 +664,7 @@ define(void)
 	}
 	sym = yylval.sym;
 
-	namespace = NS_IDEN;       /* Avoid polution in NS_CPP */
+	namespace = NS_MACROPAR;   /* Avoid polution in NS_CPP */
 	if ((n = getpars(args)) == NR_MACROARG)
 		goto delete;
 	if (n > 0 && strcmp(args[n-1]->name, "__VA_ARGS__") == 0)

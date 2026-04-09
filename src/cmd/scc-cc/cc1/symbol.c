@@ -297,7 +297,7 @@ lookup(int ns, char *name, int alloc)
 		 * fields of such types.
 		 * TODO: Remove this trick
 		 */
-		if (sns == NS_KEYWORD ||
+		if (sns == NS_KEYWORD && ns != NS_MACROPAR && ns != NS_CPP ||
 		    (sym->flags & STYPEDEF) && ns >= NS_STRUCTS) {
 			return sym;
 		}
