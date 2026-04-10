@@ -197,7 +197,7 @@ i386_sysv(void)
 		},
 		.wchartype = {
 			.op = INT,
-			.letter = L_UINT32,
+			.letter = L_INT32,
 			.prop = TDEFINED | TINTEGER | TARITH | TSIGNED,
 			.size = 4,
 			.align = 4,

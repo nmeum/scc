@@ -197,11 +197,11 @@ z80_scc(void)
 		},
 		.wchartype = {
 			.op = INT,
-			.letter = L_UINT16,
+			.letter = L_INT32,
 			.prop = TDEFINED | TINTEGER | TARITH | TSIGNED,
-			.size = 2,
+			.size = 4,
 			.align = 1,
-			.n.rank = RANK_INT,
+			.n.rank = RANK_LONG,
 		},
 	};
 	arch.valid_va_list = local_valid_va_list;
