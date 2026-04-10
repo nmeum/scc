@@ -27,6 +27,8 @@ SRCDIR    = $(PROJECTDIR)/src
 CMDDIR    = $(SRCDIR)/cmd
 MANDIR    = $(PROJECTDIR)/share/man
 
+SCC       = $(BINDIR)/scc
+
 # library dependences helpers
 LIBMACH = $(LIBDIR)/scc/libmach.a
 LIBSCC  = $(LIBDIR)/scc/libscc.a

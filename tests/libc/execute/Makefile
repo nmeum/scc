@@ -1,12 +1,10 @@
 .POSIX:
 
-ROOT=../../..
-SCCPREFIX=$(ROOT)
-CC=$(ROOT)/bin/gcc-scc
-CFLAGS=
+PROJECTDIR = ../../..
+include $(PROJECTDIR)/scripts/rules.mk
 
-.c:
-	$(CC) $(CFLAGS) -o $@ $<
+CC=$(SCC)
+PROJ_CFLAGS = $(CFLAGS)
 
 all:
 	CC=$(CC) ./runtests.sh libc-tests.lst
