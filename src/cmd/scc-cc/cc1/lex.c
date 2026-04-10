@@ -598,10 +598,10 @@ escape(int multi)
 
 	if (base == 16 && i != cnt) {
 		if (uni) {
-			warn("incorrect digit for universal character constant");
+			errorp("incorrect digit for universal character constant");
 			c = REPLACECHAR;
 		} else {
-			warn("\\x used with no following hex digits");
+			errorp("\\x used with no following hex digits");
 			c = ' ';
 		}
 	}
@@ -612,7 +612,7 @@ escape(int multi)
 	if (c < 0xa0 && (c == 0x24 || c == 0x40 || c == 0x60)
 	|| c >= 0xD800 && c <= 0xDFFF
 	|| c >= 0x110000) {
-		warn("invalid universal character constant");
+		errorp("invalid universal character constant");
 		c = REPLACECHAR;
 	}
 
