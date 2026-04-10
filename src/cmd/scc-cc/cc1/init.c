@@ -465,8 +465,8 @@ emitstrings(Node *np)
 
 	if (np->op == OSYM) {
 		sym = np->sym;
-		f = sym->flags & (SSTRING|SEMITTED|SINITLST);
-		if (f == SSTRING) {
+		f = sym->flags & (SSTRING|SRSTRING|SEMITTED|SINITLST);
+		if (f == SSTRING || f == SRSTRING) {
 			sym->flags |= SHASINIT;
 			emit(ODECL, sym);
 			emit(OINIT, constnode(sym));
