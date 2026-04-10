@@ -609,7 +609,7 @@ escape(int multi)
 	if (!uni)
 		return c;
 
-	if (c < 0xa0 && (c == 0x24 || c == 0x40 || c == 0x60)
+	if (c < 0xa0 && c != 0x24 && c != 0x40 && c != 0x60
 	|| c >= 0xD800 && c <= 0xDFFF
 	|| c >= 0x110000) {
 		errorp("invalid universal character constant");
