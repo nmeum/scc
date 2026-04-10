@@ -54,7 +54,7 @@ static void
 tests_wcsrtombs(void)
 {
 	size_t r;
-	wchar_t *wc;
+	const wchar_t *wc;
 	mbstate_t st;
 	struct wcstests *tp;
 
