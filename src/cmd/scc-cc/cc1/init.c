@@ -85,23 +85,20 @@ init(Init *ip)
 static Node *
 str2ary(Type *tp)
 {
+	char *s;
+	Rune *rs;
 	Node *np;
 	Type *btp = tp->type;
-	Symbol *sym;
+	Symbol *str, *sym;
 	long long i, olen, len;
-	char *s;
 
 	disstring = 1;
 	np = assign();
 	disstring = 0;
-	sym = np->left->sym;
-	if (btp != chartype && btp != uchartype && btp != schartype) {
-		errorp("array of inappropriate type initialized from string constant");
-		return constnode(zero);
-	}
+	str = np->left->sym;
 
 	len = tp->n.elem;
-	olen = sym->type->n.elem-1;
+	olen = str->type->n.elem-1;
 	if (!(tp->prop & TDEFINED)) {
 		len = tp->n.elem = olen+1;
 		deftype(tp);
@@ -109,10 +106,24 @@ str2ary(Type *tp)
 		warn("initializer-string for array of chars is too long");
 	}
 
-	s = sym->u.s;
-	sym = newstring(NULL, len);
-	for (i = 0; i < len; i++)
-		sym->u.s[i] = (i < olen) ? *s++ : '\0';
+	if (str->flags & SSTRING) {
+		if (btp != chartype && btp != uchartype && btp != schartype)
+			goto wrong;
+		s = str->u.s;
+		sym = newstring(NULL, len);
+	} else {
+		if (btp->size != wchartype->size)
+			goto wrong;
+		rs = str->u.rs;
+		sym = newrstring(NULL, len);
+	}
+
+	for (i = 0; i < len; i++) {
+		if (str->flags & SSTRING)
+			sym->u.s[i] = (i < olen) ? *s++ : '\0';
+		else
+			sym->u.rs[i] = (i < olen) ? *rs++ : L'\0';
+	}
 
 	assert(np->op == OADDR);
 	np->left->sym = sym;
@@ -121,6 +132,10 @@ str2ary(Type *tp)
 	np->type = sym->type;
 
 	return np;
+
+wrong:
+	errorp("array of inappropriate type initialized from string constant");
+	return constnode(zero);
 }
 
 static Node *initlist(Type *);
