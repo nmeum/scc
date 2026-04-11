@@ -1,7 +1,10 @@
 .POSIX:
 
-ROOT=../../..
-CC=$(SHELL) $(ROOT)/bin/scc cc
+PROJECTDIR = ../../..
+include $(PROJECTDIR)/scripts/rules.mk
+
+CC=$(SCC)
+PROJ_CFLAGS = $(CFLAGS)
 
 all:
 	@CC='$(CC)' ./runtests.sh scc-tests.lst
