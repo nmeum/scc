@@ -14,6 +14,7 @@
 #define REPLACECHAR 0xFFFD
 #define NOMULTICHAR 0
 #define MULTICHAR   1
+#define UTF8_MAX    4
 
 int yytoken;
 struct yystype yylval;
@@ -619,35 +620,80 @@ escape(int multi)
 	return c;
 }
 
+static int
+validutf8(Rune wc, int *nbytes)
+{
+	static struct range {
+		unsigned long begin, end;
+		int valid;
+		int nbytes;
+	} ranges[] = {
+		{0,         0x80,       1, 1},
+		{0x80,      0x800,      1, 2},
+		{0x800,     0xD800,     1, 3},
+		{0xD800,    0xDD00,     0, 3},
+		{0xDD00,    0x10000,    1, 3},
+		{0x10000,   0x110000,   1, 4},
+		{0x110000,  -1ul,       0, 0},
+	};
+	struct range *bp;
+
+	for (bp = ranges; bp->begin > wc || bp->end <= wc; ++
+bp)
+		;
+	*nbytes = bp->nbytes;
+
+	return bp->valid;
+}
+
 static Rune
 utf8rune(void)
 {
 	Rune wc;
-	unsigned c;
-	size_t i, len;
+	int i, sh, n;
+	unsigned oc, c;
+	unsigned char *s = (unsigned char *) input->p;
 
-	c = *input->p;
-	for (len = 0; c & 0x80; len++)
-		c <<= 1;
-	if (len == 0)
+	/* fast track for ascii */
+	if ((c = *s) < 0x80)
 		return c;
-	if (len == 1 || len == 8)
+
+	/* out of sequence multibyte? */
+	if ((c & 0xc0) != 0xc0)
 		goto invalid;
 
-	wc = (c & 0xFF) >> len;
-	for (i = 0; i < len-1; i++) {
-		c = input->p[1];
-		if ((c & 0xC0) != 0x80)
+	sh = 1;
+	wc = 0;
+	oc = c << 1;
+
+	for (i = 0; i < UTF8_MAX; ++i) {
+		c = s[1];
+		if ((c & 0xc0) != 0x80)
 			goto invalid;
-		input->p++;
+		++s;
+
 		wc <<= 6;
-		wc |= c & 0x3F;
+		wc |= c & 0x3f;
+		oc <<= 1;
+		sh++;
+
+		if ((oc & 0x80) == 0) {
+			oc = (oc & 0xff) >> sh;
+			wc |= oc << (sh-1) * 6;
+
+			if (!validutf8(wc, &n) || sh != n)
+				goto invalid;
+			goto return_code;
+		}
 	}
-	return wc;
 
 invalid:
 	errorp("invalid multibyte sequence");
-	return 0xFFFD;
+	wc = REPLACECHAR;
+
+return_code:
+	input->p = s;
+	return wc;
 }
 
 static Rune
