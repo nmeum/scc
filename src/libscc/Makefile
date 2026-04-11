@@ -2,6 +2,7 @@
 
 PROJECTDIR = ../..
 include $(PROJECTDIR)/scripts/rules.mk
+CC=$(SCC)
 
 OBJS =\
 	debug.o\
