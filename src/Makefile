@@ -3,6 +3,7 @@
 LIBS  =\
 	libcrt\
 	libscc\
+	libscc-$(DRIVER)\
 	libmach\
 
 DIRS  =\

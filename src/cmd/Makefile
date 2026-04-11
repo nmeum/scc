@@ -19,9 +19,9 @@ TARGET =\
 	scc-objcopy\
 	scc-addr2line\
 
-MORE_LDLIBS = -lmach -lscc
+MORE_LDLIBS = -lmach -lscc -lscc-$(DRIVER)
 
 all: $(TARGET) $(DIRS)
 	@cp $(TARGET) $(BINDIR)
 
-$(TARGET): $(LIBMACH) $(LIBSCC)
+$(TARGET): $(LIBMACH) $(LIBSCC) $(LIBSCC-DRIVER)
