@@ -712,7 +712,7 @@ decode(int multi)
 static int
 character(void)
 {
-	int i, multi = 0;
+	int i, multi = NOMULTICHAR;
 	Rune r;
 	Type *tp;
 	Symbol *sym;
@@ -721,7 +721,7 @@ character(void)
 
 	tp = chartype;
 	if (*input->p == 'L') {
-		multi = 1;
+		multi = MULTICHAR;
 		input->p++;
 		tp = wchartype;
 	}
@@ -766,17 +766,14 @@ rstring(void)
 	Rune c, buff[STRINGSIZ+1], *bp = buff;
 
 	for (++input->p; ; ++input->p) {
-		c = *(unsigned char *) input->p;
-
-		switch (c) {
+		switch (*input->p) {
 		case '\0':
 			errorp("missing terminating '\"' character");
 		case '"':
 			goto end_loop;
-		case '\\':
-			c = escape(MULTICHAR);
 		}
 
+		c = decode(MULTICHAR);
 		if (input->p - beg == STRINGSIZ + 1) {
 			/* too long, ignore everything until next quote */
 			for (++input->p; *input->p != '"'; ++input->p) {
@@ -810,17 +807,14 @@ sstring(void)
 	char buff[STRINGSIZ+1], *bp = buff, *beg = input->p;
 
 	for (++input->p; ; ++input->p) {
-		c = *input->p;
-
-		switch (c) {
+		switch (*input->p) {
 		case '\0':
 			errorp("missing terminating '\"' character");
 		case '"':
 			goto end_loop;
-		case '\\':
-			c = escape(NOMULTICHAR);
 		}
 
+		c = decode(NOMULTICHAR);
 		if (input->p - beg == STRINGSIZ + 1) {
 			/* too long, ignore everything until next quote */
 			for (++input->p; *input->p != '"'; ++input->p) {
