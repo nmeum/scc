@@ -260,6 +260,9 @@ redcl(Symbol *sym, Type *tp, int sclass)
 	}
 	sym->flags = flags;
 
+	if (!(sym->type->prop & TDEFINED) && tp->prop & TDEFINED)
+		sym->type = tp;
+
 	return sym;
 
 redeclaration:
