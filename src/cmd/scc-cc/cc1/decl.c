@@ -158,7 +158,7 @@ arydcl(struct declarators *dp)
 	}
 
 	if (yytoken != ']') {
-		if ((np = constexpr()) == NULL) {
+		if ((np = iconstexpr()) == NULL) {
 			errorp("invalid storage size");
 		} else {
 			if ((n = np->sym->u.i) <= 0) {
@@ -259,6 +259,9 @@ redcl(Symbol *sym, Type *tp, int sclass)
 		break;
 	}
 	sym->flags = flags;
+
+	if (!(sym->type->prop & TDEFINED) && tp->prop & TDEFINED)
+		sym->type = tp;
 
 	return sym;
 
@@ -884,7 +887,7 @@ enumdcl(void)
 			toomany = 1;
 		}
 		if (accept('=')) {
-			Node *np = constexpr();
+			Node *np = iconstexpr();
 
 			if (np == NULL)
 				errorp("invalid enumeration value");
@@ -935,7 +938,7 @@ field(struct decl *dcl)
 		Node *np;
 		long long n;
 
-		if ((np = constexpr()) == NULL) {
+		if ((np = iconstexpr()) == NULL) {
 			unexpected();
 			n = 0;
 		} else {

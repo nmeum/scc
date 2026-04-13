@@ -9,7 +9,7 @@
 #include "fun.h"
 
 static int
-typeof(Coff32 *coff, SYMENT *ent)
+gettype(Coff32 *coff, SYMENT *ent)
 {
 	int c;
 	SCNHDR *scn;
@@ -73,7 +73,7 @@ coff32getsym(Obj *obj, int *idx, Symbol *sym)
 	ent = &ep->u.sym;
 
 	sym->name = coff32str(coff, ent);
-	sym->type = typeof(coff, ent);
+	sym->type = gettype(coff, ent);
 	sym->stype = SYMOBJECT;
 	sym->value = ent->n_value;
 	sym->size = (sym->type == 'C') ? ent->n_value : 0;

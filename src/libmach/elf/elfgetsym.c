@@ -13,7 +13,7 @@
 #include "fun.h"
 
 static int
-typeof(Elf *elf, Elfsym *ent, char *name)
+gettype(Elf *elf, Elfsym *ent, char *name)
 {
 	int c, bind, weak;
 	unsigned long flags, type;
@@ -70,7 +70,7 @@ typeof(Elf *elf, Elfsym *ent, char *name)
 }
 
 static int
-stypeof(Elfsym *ent)
+sgettype(Elfsym *ent)
 {
 	switch (ELF_ST_TYPE(ent->info)) {
 	case STT_OBJECT:
@@ -113,8 +113,8 @@ elfgetsym(Obj *obj, int *idx, Symbol *sym)
 	}
 
 	// assert(strlen(sym->name) > 0);
-	sym->type = typeof(elf, ent, sym->name);
-	sym->stype = stypeof(ent);
+	sym->type = gettype(elf, ent, sym->name);
+	sym->stype = sgettype(ent);
 	sym->value = ent->value;
 	sym->size = ent->size;
 	sym->index = *idx = n;

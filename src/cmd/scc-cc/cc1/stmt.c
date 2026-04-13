@@ -283,7 +283,7 @@ Case(Symbol *lbreak, Symbol *lcont, Switch *sw)
 	Symbol *label;
 
 	expect(CASE);
-	if ((np = constexpr()) == NULL)
+	if ((np = iconstexpr()) == NULL)
 		errorp("case label does not reduce to an integer constant");
 	if (!sw) {
 		errorp("case label not within a switch statement");

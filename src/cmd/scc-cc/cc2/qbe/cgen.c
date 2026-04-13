@@ -532,7 +532,6 @@ rhs(Node *np)
 	Node *phi, *l = np->left, *r = np->right;
 	Type *tp;
 	int cmp, sign, size, isfloat, op;
-	Symbol *true, *false;
 
 	tp = &np->type;
 
@@ -627,7 +626,7 @@ rhs(Node *np)
 static Node *
 cgen(Node *np)
 {
-	Node true, false, *p, *next;
+	Node ntrue, nfalse, *p, *next;
 
 	setlabel(np->label);
 	switch (np->op) {
@@ -639,8 +638,8 @@ cgen(Node *np)
 	case OEFUN:
 		break;
 	case OJMP:
-		label2node(&true, np->u.sym);
-		code(ASJMP, NULL, &true, NULL);
+		label2node(&ntrue, np->u.sym);
+		code(ASJMP, NULL, &ntrue, NULL);
 		break;
 	case OBRANCH:
 		/*
@@ -653,9 +652,9 @@ cgen(Node *np)
 		if (!next->label)
 			labelstmt(next, NULL);
 
-		label2node(&true, np->u.sym);
-		label2node(&false, np->next->label);
-		code(ASBRANCH, rhs(np->left), &true, &false);
+		label2node(&ntrue, np->u.sym);
+		label2node(&nfalse, np->next->label);
+		code(ASBRANCH, rhs(np->left), &ntrue, &nfalse);
 		break;
 	case ORET:
 		p = (np->left) ? rhs(np->left) : NULL;

@@ -230,7 +230,7 @@ struct block {
 	int id;
 	int printed, visited;
 	Node *entryp, *exitp;
-	Block *true, *false;
+	Block *btrue, *bfalse;
 	Swtch *swtch;
 	Block *next;
 };

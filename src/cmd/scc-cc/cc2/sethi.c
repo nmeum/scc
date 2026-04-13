@@ -30,30 +30,30 @@ branchnode(Node *cond, Symbol *sym)
 }
 
 static Node *
-bool(Node *cond, Symbol *true, Symbol *false)
+boolean(Node *cond, Symbol *strue, Symbol *sfalse)
 {
 	Symbol *label;
 	Node *p, *l = cond->left, *r = cond->right;
 
 	switch (cond->op) {
 	case ONEG:
-		l = bool(l, false, true);
+		l = boolean(l, sfalse, strue);
 		break;
 	case OAND:
 		label = newlabel();
-		l = bool(l, label, false);
+		l = boolean(l, label, sfalse);
 		prestmt(labelstmt(NULL, label));
-		r = bool(r, true, false);
+		r = boolean(r, strue, sfalse);
 		break;
 	case OOR:
 		label = newlabel();
-		l = bool(l, true, label);
+		l = boolean(l, strue, label);
 		prestmt(labelstmt(NULL, label));
-		r = bool(r, true, false);
+		r = boolean(r, strue, sfalse);
 		break;
 	default:
-		prestmt(branchnode(cond, true));
-		prestmt(branchnode(NULL, false));
+		prestmt(branchnode(cond, strue));
+		prestmt(branchnode(NULL, sfalse));
 		return NULL;
 	}
 
@@ -67,13 +67,13 @@ logicexpr(Node *np)
 {
 	Node *tmpvar, *p, *zero, *one;
 	Type *tp = &np->type;
-	Symbol *true, *false, *phi, *tmpsym;
+	Symbol *strue, *sfalse, *phi, *tmpsym;
 
-	true = newlabel();
-	false = newlabel();
+	strue = newlabel();
+	sfalse = newlabel();
 	phi = newlabel();
 
-	bool(np, true, false);
+	boolean(np, strue, sfalse);
 
 	tmpvar = tmpnode(tp, NULL);
 	tmpsym = tmpvar->u.sym;
@@ -81,12 +81,12 @@ logicexpr(Node *np)
 	one = constnode(NULL, 1, tp);
 
 	p = assignnode(tp, tmpnode(tp, tmpsym), one);
-	prestmt(labelstmt(p, true));
+	prestmt(labelstmt(p, strue));
 
 	prestmt(branchnode(NULL, phi));
 
 	p = assignnode(tp, tmpnode(tp, tmpsym), zero);
-	prestmt(labelstmt(p, false));
+	prestmt(labelstmt(p, sfalse));
 
 	prestmt(labelstmt(NULL, phi));
 
@@ -110,24 +110,24 @@ ternary(Node *np)
 {
 	Type *tp;
 	Node *tmpvar, *colon, *p;
-	Symbol *tmpsym, *true, *false, *phi;
+	Symbol *tmpsym, *strue, *sfalse, *phi;
 
-	true = newlabel();
-	false = newlabel();
+	strue = newlabel();
+	sfalse = newlabel();
 	phi = newlabel();
-	bool(np->left, true, false);
+	boolean(np->left, strue, sfalse);
 
 	tp = &np->type;
 	colon = np->right;
 	tmpvar = tmpnode(tp, NULL);
 	tmpsym = tmpvar->u.sym;
 
-	prestmt(labelstmt(NULL, true));
+	prestmt(labelstmt(NULL, strue));
 	p = assignnode(tp, tmpnode(tp, tmpsym), sethi(colon->left));
 	prestmt(p);
 	prestmt(branchnode(NULL, phi));
 
-	prestmt(labelstmt(NULL, false));
+	prestmt(labelstmt(NULL, sfalse));
 	p = assignnode(tp, tmpnode(tp, tmpsym), sethi(colon->right));
 	prestmt(p);
 
@@ -180,7 +180,7 @@ sethi(Node *np)
 			return np;
 		}
 
-		bool(np->left, np->u.sym, next->label);
+		boolean(np->left, np->u.sym, next->label);
 		np->u.sym->refcnt--;
 		return NULL;
 	case OCOMMA:

@@ -11,6 +11,11 @@ tmp=$$.tmp
 printf "\n#deps\n"
 for i in *.c
 do
+	if test "$i" = '*.c'
+	then
+		continue
+	fi
+		
 	file=`basename $i | sed 's/\.c$/.o/'`
 	dir=`dirname $i`
 

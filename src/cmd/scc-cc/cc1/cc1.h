@@ -511,7 +511,7 @@ unsigned long long ones(int);
 /* expr.c */
 Node *decay(Node *), *negate(Node *np), *assign(void);
 Node *convert(Node *, Type *, int);
-Node *constexpr(void), *condexpr(int), *expr(void);
+Node *iconstexpr(void), *condexpr(int), *expr(void);
 int isnodecmp(int);
 int negop(int);
 int cmpnode(Node *, unsigned long long);

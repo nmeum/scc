@@ -4,6 +4,7 @@ DIRS =\
 	amd64-sysv\
 	arm64-sysv\
 	i386-sysv\
+	riscv64-sysv\
 	qbe\
 	qbe_amd64-sysv\
 	qbe_arm64-sysv\
