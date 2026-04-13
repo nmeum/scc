@@ -831,7 +831,7 @@ no_pars:
 }
 
 static Type *
-typeof(Node *np)
+gettype(Node *np)
 {
 	Node *new;
 	Type *tp;
@@ -893,7 +893,7 @@ sizeexp(void)
 	Type *tp;
 
 	if (!accept('('))
-		return typeof(unary());
+		return gettype(unary());
 
 	switch (yytoken) {
 	case TYPE:
@@ -904,7 +904,7 @@ sizeexp(void)
 	default:
 		np = expr();
 		expect(')');
-		tp = typeof(postfix(np));
+		tp = gettype(postfix(np));
 		break;
 	}
 
@@ -1217,7 +1217,7 @@ expr(void)
 }
 
 Node *
-constexpr(void)
+iconstexpr(void)
 {
 	Node *np;
 

@@ -512,7 +512,7 @@ unsigned long long ones(int nbytes);
 /* expr.c */
 Node *decay(Node *), *negate(Node *np), *assign(void);
 Node *convert(Node *np, Type *tp1, int iscast);
-Node *constexpr(void), *condexpr(int neg), *expr(void);
+Node *iconstexpr(void), *condexpr(int neg), *expr(void);
 int isnodecmp(int op);
 int negop(int op);
 int cmpnode(Node *np, unsigned long long val);

@@ -43,18 +43,18 @@ prbb(Block *bb)
 
 	assert(bb->id != -1);
 	bb->printed = 1;
-	if (bb->true) {
+	if (bb->btrue) {
 		fprintf(stderr,
 		        "\t%d -> %d [label=\"true\"]\n",
-		        bb->id, bb->true->id);
+		        bb->id, bb->btrue->id);
 	}
-	if (bb->false) {
+	if (bb->bfalse) {
 		fprintf(stderr,
 		        "\t%d -> %d [label=\"false\"]\n",
-		        bb->id, bb->false->id);
+		        bb->id, bb->bfalse->id);
 	}
-	prbb(bb->true);
-	prbb(bb->false);
+	prbb(bb->btrue);
+	prbb(bb->bfalse);
 
 	swt = bb->swtch;
 	if (!swt)
@@ -116,7 +116,7 @@ newbb(Node *np)
 	bb->entryp = np;
 	bb->exitp = NULL;
 	bb->swtch = NULL;
-	bb->true = bb->false = NULL;
+	bb->btrue = bb->bfalse = NULL;
 	bb->id = cfg.nr++;
 	bb->visited = 0;
 	cfg.cur = bb;
@@ -135,7 +135,7 @@ mkcfg(Node *np)
 
 	if (np->flags & BBEXIT) {
 		cfg.cur->exitp = np;
-		cfg.cur->true = np->next->bb;
+		cfg.cur->btrue = np->next->bb;
 	}
 
 	switch (np->op) {
@@ -146,16 +146,16 @@ mkcfg(Node *np)
 		cfg.exitb = cfg.cur;
 		break;
 	case ORET:
-		cfg.cur->true = laststmt->bb;
+		cfg.cur->btrue = laststmt->bb;
 		break;
 	case OBSWITCH:
 		cfg.cur->swtch = np->u.swtch;
-		cfg.cur->true = NULL;
+		cfg.cur->btrue = NULL;
 		break;
 	case OBRANCH:
-		cfg.cur->false = np->next->bb;
+		cfg.cur->bfalse = np->next->bb;
 	case OJMP:
-		cfg.cur->true = jtargetbb(np);
+		cfg.cur->btrue = jtargetbb(np);
 		break;
 	}
 
@@ -225,8 +225,8 @@ visit(Block *bb)
 	if (!bb || bb->visited)
 		return;
 	bb->visited = 1;
-	visit(bb->true);
-	visit(bb->false);
+	visit(bb->btrue);
+	visit(bb->bfalse);
 
 	swt = bb->swtch;
 	if (!swt)
