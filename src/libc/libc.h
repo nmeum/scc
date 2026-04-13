@@ -22,15 +22,8 @@ enum {
 struct tm;
 struct _FILE;
 
-struct tzone {
-	char *name;
-	int gmtoff;
-	int isdst;
-};
-
 void *_getheap(void);
 int _dtoi(char c);
-
 
 #ifdef stdin
 int _allocbuf(FILE *);
@@ -53,7 +46,6 @@ int _newyear(int);
 extern int _tzjulian;
 extern int _daysmon[12];
 extern char *_tzname[2];
-extern struct tzone tzones[];
 
 extern unsigned _exitn;
 extern void (*_flushall)(void);

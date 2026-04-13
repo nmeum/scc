@@ -1,4 +1,4 @@
-BEGIN { print "#include \"../libc.h\"\nstruct tzone tzones[] = {" }
+BEGIN { print "struct tzone tzones[] = {" }
 {
     split($2,a,":")
     min = a[1] * 60

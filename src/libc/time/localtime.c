@@ -4,6 +4,14 @@
 #include "../libc.h"
 #undef localtime
 
+struct tzone {
+        char *name;
+        int gmtoff;
+        int isdst;
+};
+
+#include "tz.c"
+
 static time_t
 gmtoff(char *tz)
 {
