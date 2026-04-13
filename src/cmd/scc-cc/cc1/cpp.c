@@ -542,8 +542,8 @@ getpars(Symbol *args[NR_MACROARG])
 			return NR_MACROARG;
 		}
 
-		if ((sym = install(NS_IDEN, sym)) == NULL) {
-			errorp("duplicated macro parameter '%s'", yytext);
+		if (!install(NS_MACROPAR, sym)) {
+			errorp("duplicated macro parameter '%s'", sym->name);
 		} else {
 			sym->flags |= SUSED;
 			args[n++] = sym;
