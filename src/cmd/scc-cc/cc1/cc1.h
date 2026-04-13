@@ -441,39 +441,39 @@ struct input {
 #endif
 
 /* error.c */
-void error(char *fmt, ...);
-void warn(char *fmt, ...);
+void error(char *, ...);
+void warn(char *, ...);
 void unexpected(void);
-void errorp(char *fmt, ...);
-void cpperror(char *fmt, ...);
-Type *deftype(Type *tp);
+void errorp(char *, ...);
+void cpperror(char *, ...);
+Type *deftype(Type *);
 
 /* types.c */
-int eqtype(Type *tp1, Type *tp2, int eqflag);
-Type *ctype(int type, int sign, int size);
-Type *mktype(Type *tp, int op, long long nelem, Type *data[]);
-Type *duptype(Type *base);
-struct limits *getlimits(Type *tp);
-void typesize(Type *tp);
+int eqtype(Type *, Type *, int);
+Type *ctype(int, int, int);
+Type *mktype(Type *, int, long long, Type *[]);
+Type *duptype(Type *);
+struct limits *getlimits(Type *);
+void typesize(Type *);
 void flushtypes(void);
 
 /* symbol.c */
-void dumpstab(Symbol **tbl, char *msg);
-Symbol *lookup(int ns, char *name, int alloc);
-Symbol *nextsym(Symbol *sym, int ns);
-Symbol *install(int ns, Symbol *sym);
-Symbol *newsym(int ns, char *name);
+void dumpstab(Symbol **, char *);
+Symbol *lookup(int, char *, int);
+Symbol *nextsym(Symbol *, int);
+Symbol *install(int, Symbol *);
+Symbol *newsym(int, char *);
 void pushctx(void), popctx(void);
-void killsym(Symbol *sym);
+void killsym(Symbol *);
 Symbol *newlabel(void);
-void builtins(struct builtin *builts);
-Symbol *newstring(char *s, size_t len);
+void builtins(struct builtin *);
+Symbol *newstring(char *, size_t);
 Symbol *newrstring(Rune *, size_t);
 unsigned newid(void);
 void isyms(void);
 
 /* stmt.c */
-void compound(Symbol *lbreak, Symbol *lcont, Switch *sw);
+void compound(Symbol *, Symbol *, Switch *);
 
 /* decl.c */
 Type *typename(void);
@@ -482,40 +482,39 @@ void decl(void);
 /* lex.c */
 int ahead(void);
 int next(void);
-void expect(int tok);
+void expect(int);
 void discard(void);
 int moreinput(void);
 int addinput(int, void *, int);
 void delinput(void);
-void setsafe(int type);
-void setloc(char *fname, unsigned line);
+void setsafe(int);
+void setloc(char *, unsigned);
 #define accept(t) ((yytoken == (t)) ? next() : 0)
 
 /* code.c */
-Node *prtree(char *s, Node *np);
+Node *prtree(char *, Node *);
 void emit(int, void *);
-Node *node(int op, Type *tp, Node *left, Node *rigth);
-Node *varnode(Symbol *sym);
-Node *constnode(Symbol *sym);
-Node *sizeofnode(Type *tp);
+Node *node(int, Type *, Node *, Node *);
+Node *varnode(Symbol *);
+Node *constnode(Symbol *);
+Node *sizeofnode(Type *);
 Node *offsetnode(Symbol *,  Type *);
 Node *addrnode(unsigned long long);
-void freetree(Node *np);
+void freetree(Node *);
 void icode(void);
 Node *zeronode(Type *);
-#define BTYPE(np) ((np)->type->op)
 
 /* fold.c */
-Node *simplify(Node *np);
-unsigned long long ones(int nbytes);
+Node *simplify(Node *);
+unsigned long long ones(int);
 
 /* expr.c */
 Node *decay(Node *), *negate(Node *np), *assign(void);
-Node *convert(Node *np, Type *tp1, int iscast);
-Node *iconstexpr(void), *condexpr(int neg), *expr(void);
-int isnodecmp(int op);
-int negop(int op);
-int cmpnode(Node *np, unsigned long long val);
+Node *convert(Node *, Type *, int);
+Node *iconstexpr(void), *condexpr(int), *expr(void);
+int isnodecmp(int);
+int negop(int);
+int cmpnode(Node *, unsigned long long);
 int power2node(Node *, int *);
 
 /* init.c */
@@ -525,10 +524,10 @@ void initializer(Symbol *);
 void icpp(void);
 int cpp(void);
 int expand(Symbol *);
-void incdir(char *dir);
+void incdir(char *);
 void outcpp(void);
-void defdefine(char *macro, char *val, char *source);
-void undefmacro(char *s);
+void defdefine(char *, char *, char *);
+void undefmacro(char *);
 void ppragmaln(void);
 void delmacro(Macro *);
 Macro *newmacro(Symbol *);
@@ -540,7 +539,7 @@ void ibuilts(void);
 
 /* arch.c */
 void iarch(void);
-int valid_va_list(Type *tp);
+int valid_va_list(Type *);
 
 /* architectures */
 Arch *amd64_sysv(void);
