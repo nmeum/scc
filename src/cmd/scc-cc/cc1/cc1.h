@@ -503,7 +503,6 @@ Node *addrnode(unsigned long long);
 void freetree(Node *);
 void icode(void);
 Node *zeronode(Type *);
-#define BTYPE(np) ((np)->type->op)
 
 /* fold.c */
 Node *simplify(Node *);

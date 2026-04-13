@@ -355,7 +355,7 @@ parithmetic(int op, Node *lp, Node *rp)
 		goto incomplete;
 	size = sizeofnode(tp->type);
 
-	if (op == OSUB && BTYPE(rp) == PTR) {
+	if (op == OSUB && rp->type->op == PTR) {
 		if ((rp = convert(rp, lp->type, 0)) == NULL)
 			goto incorrect;
 		lp = node(OSUB, pdifftype, lp, rp);
@@ -545,7 +545,7 @@ free_np:
 static Node *
 content(int op, Node *np)
 {
-	if (BTYPE(np) != PTR) {
+	if (np->type->op != PTR) {
 		errorp("invalid argument of memory indirection");
 	} else {
 		np = node(op, np->type->type, np, NULL);
