@@ -5,12 +5,13 @@
 time_t
 _systime(struct tm *tm)
 {
+	int i;
 	time_t t = 0;
 	int year = tm->tm_year + MINYEAR;
 
-	for (int i = EPOCH; i < year; ++i)
+	for (i = EPOCH; i < year; ++i)
 		t += _daysyear(i) * SECDAY;
-	for (int i = 0; i < tm->tm_mon; ++i)
+	for (i = 0; i < tm->tm_mon; ++i)
 		t += _daysmon[i] * SECDAY;
 
 	t += tm->tm_sec;

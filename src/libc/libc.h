@@ -1,3 +1,17 @@
+struct tm;
+struct _FILE;
+
+void *_getheap(void);
+int _dtoi(char c);
+
+#ifdef stdin
+int _allocbuf(FILE *);
+int _flsbuf(FILE *);
+FILE *_fpopen(const char * restrict, const char *restrict,
+                     FILE *restrict);
+#endif
+
+#ifdef _TIME_H
 enum {
 	SUN,
 	MON,
@@ -19,33 +33,19 @@ enum {
 #define SECHOUR (60 * SECMIN)    /* 3600 */
 #define SECDAY (24 * SECHOUR)   /* 86400 */
 
-struct tm;
-struct _FILE;
-
-void *_getheap(void);
-int _dtoi(char c);
-
-#ifdef stdin
-int _allocbuf(FILE *);
-int _flsbuf(FILE *);
-FILE *_fpopen(const char * restrict, const char *restrict,
-                     FILE *restrict);
-#endif
-
-#ifdef _TIME_H
+/* _tzone.c variables */
 extern time_t _tzstdoff, _tzdstoff;
 extern time_t _tzstart, _tzend;
+extern char *_tzname[2];
+extern int _tzjulian;
+
+extern int _daysmon[12];
 
 time_t _systime(struct tm *);
-#endif
-
 void _tzset(void);
 int _daysyear(int);
 int _newyear(int);
-
-extern int _tzjulian;
-extern int _daysmon[12];
-extern char *_tzname[2];
+#endif
 
 extern unsigned _exitn;
 extern void (*_flushall)(void);

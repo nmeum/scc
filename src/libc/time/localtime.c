@@ -7,7 +7,6 @@
 struct tzone {
         char *name;
         int gmtoff;
-        int isdst;
 };
 
 #include "tz.c"
@@ -16,6 +15,9 @@ static time_t
 gmtoff(char *tz)
 {
 	struct tzone *t;
+
+	if (!strcmp(tz, "UTC"))
+		return 0;
 
 	for (t = tzones; t->name; t++) {
 		if (!strcmp(t->name, tz))
