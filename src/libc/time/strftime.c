@@ -150,14 +150,14 @@ timezone(char *s, size_t siz, const struct tm * restrict tm)
 	long off = tm->tm_gmtoff;
 
 	if (off >= 0) {
-		*s++ = '+';
+		*s = '+';
 	} else {
-		*s++ = '-';
+		*s = '-';
 		off = -off;
 	}
 
 	n = 1;
-	n += dval(s, siz-n, 2, '0', off / 3600);
+	n += dval(s + n, siz-n, 2, '0', off / 3600);
 	n += dval(s + n, siz-n, 2, '0', (off % 3600) / 60);
 
 	return n;
