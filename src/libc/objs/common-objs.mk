@@ -119,7 +119,6 @@ COMMON_OBJS =\
 	time/localtime.$O\
 	time/mktime.$O\
 	time/strftime.$O\
-	time/tz.$O\
 	wchar/_validutf8.$O\
 	wchar/btowc.$O\
 	wchar/fputwc.$O\
