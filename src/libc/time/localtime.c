@@ -27,9 +27,10 @@ gmtoff(char *tz)
 struct tm *
 localtime(const time_t *timep)
 {
+	char *name;
 	struct tm *tm;
-	time_t t;
-	int yday;
+	time_t t, off;
+	int yday, dst;
 	static int first = 1;
 
 	t = *timep;
@@ -45,21 +46,25 @@ localtime(const time_t *timep)
 	}
 	first = 0;
 
-	tm->tm_gmtoff = _tzstdoff;
-	tm->tm_zone = _tzname[0];
-	tm->tm_isdst = 0;
+	off = _tzstdoff;
+	name = _tzname[0];
+	dst = 0;
 
 	if (_tzjulian && yday+1 < 60 || FEBDAYS(tm->tm_year) < 29)
 		yday++;
 
 	if (yday >= _tzstart && yday <= _tzend && tm->tm_hour >= 2) {
-		tm->tm_gmtoff = _tzdstoff;
-		tm->tm_zone = _tzname[1];
-		tm->tm_isdst = 1;
+		off = _tzdstoff;
+		name = _tzname[1];
+		dst = 1;
 	}
 
-	t += tm->tm_gmtoff;
+	t += off;
 	tm = gmtime(&t);
+
+	tm->tm_zone = name;
+	tm->tm_isdst = dst;
+	tm->tm_gmtoff = off;
 
 	return tm;
 }
