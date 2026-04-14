@@ -32,7 +32,7 @@ gmtime(const time_t *tim)
 	tm.tm_mday = day + 1;
 
 	tm.tm_isdst = 0;
-	tm.tm_zone = "GMT";
+	tm.tm_zone = "UTC";
 	tm.tm_gmtoff = 0;
 
 	return &tm;
