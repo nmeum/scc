@@ -93,14 +93,27 @@ normalize(struct tm *tm)
 	tm->tm_mday = day;
 	tm->tm_yday = yday + day - 1;
 	tm->tm_wday = (_newyear(tm->tm_year) + tm->tm_yday) % 7;
-	tm->tm_isdst = 0;
+
 	return 1;
 }
 
 time_t
 mktime(struct tm *tm)
 {
+	time_t t;
+	struct tm *aux;
+
 	if (!normalize(tm))
 		return -1;
-	return _systime(tm);
+
+	t = _systime(tm);
+	aux = localtime(&t);
+
+	if (tm->tm_isdst == -1)
+		tm->tm_isdst = aux->tm_isdst;
+
+	tm->tm_gmtoff = (tm->tm_isdst == 1) ? _tzdstoff : _tzstdoff;
+	t += tm->tm_gmtoff;
+
+	return t;
 }
