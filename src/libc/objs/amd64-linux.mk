@@ -39,7 +39,6 @@ OBJS =\
 	arch/linux/_sigaction.$O\
 	arch/linux/_waitpid.$O\
 	arch/posix/_open.$O\
-	arch/posix/_systime.$O\
 	arch/posix/_tzone.$O\
 	arch/posix/clock.$O\
 	arch/posix/getenv.$O\

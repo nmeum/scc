@@ -41,7 +41,6 @@ extern int _tzjulian;
 
 extern int _daysmon[12];
 
-time_t _systime(struct tm *);
 void _tzset(void);
 int _daysyear(int);
 int _newyear(int);

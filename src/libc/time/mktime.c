@@ -101,12 +101,23 @@ time_t
 mktime(struct tm *tm)
 {
 	time_t t;
+	int i, year;
 	struct tm *aux;
 
 	if (!normalize(tm))
 		return -1;
 
-	t = _systime(tm);
+	year = tm->tm_year + MINYEAR;
+
+	for (i = EPOCH; i < year; ++i)
+		t += _daysyear(i) * SECDAY;
+	for (i = 0; i < tm->tm_mon; ++i)
+		t += _daysmon[i] * SECDAY;
+
+	t += tm->tm_sec;
+	t += tm->tm_min * SECMIN;
+	t += tm->tm_hour * SECHOUR;
+	t += (tm->tm_mday-1) * SECDAY;
 	aux = localtime(&t);
 
 	if (tm->tm_isdst == -1)
