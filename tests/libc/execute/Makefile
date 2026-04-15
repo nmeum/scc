@@ -3,8 +3,11 @@
 PROJECTDIR = ../../..
 include $(PROJECTDIR)/scripts/rules.mk
 
-CC=$(SCC)
 PROJ_CFLAGS = $(CFLAGS)
+CC=$(SCC)
+
+# Uncomment following line to use gcc to test the libc
+# CC = $(BINDIR)/gcc-scc
 
 all:
 	CC=$(CC) ./runtests.sh libc-tests.lst
