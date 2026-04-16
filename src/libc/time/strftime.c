@@ -99,7 +99,7 @@ sval(char *s, size_t siz, char **strs, int abrev, int idx, int max)
 	if (siz == 0)
 		return 0;
 
-	if (idx < 0 && idx >= max) {
+	if (idx < 0 || idx >= max) {
 		*s = '?';
 		return 1;
 	}
