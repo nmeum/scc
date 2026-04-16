@@ -1,4 +1,4 @@
-#define _MAXYEAR 2038
+#define _MAXYEAR 2037
 #define _MINYEAR 1902
 
 typedef long time_t;
