@@ -28,7 +28,7 @@ enum {
 
 #define FEBDAYS(y) ((_daysyear(y) == 366) ? 29 : 28)
 #define EPOCH 1970
-#define MINYEAR 1900
+#define BASEYEAR 1900
 #define SECMIN 60
 #define SECHOUR (60 * SECMIN)    /* 3600 */
 #define SECDAY (24 * SECHOUR)   /* 86400 */

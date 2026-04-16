@@ -47,15 +47,9 @@ normalize(struct tm *tm)
 	|| !norm(&tm->tm_mon, &tm->tm_year, 12))
 		return 0;
 
-	if (tm->tm_year < 0)
-		return 0;
-
 	day = tm->tm_mday;
 	yday = 0;
-	year = MINYEAR + tm->tm_year;
-
-	if (year > _MAXYEAR)
-		return 0;
+	year = BASEYEAR + tm->tm_year;
 
 	_daysmon[FEB] = FEBDAYS(year);
 
@@ -65,7 +59,7 @@ normalize(struct tm *tm)
 	 */
 	for (mon = tm->tm_mon; day < 1; --mon) {
 		if (mon == JAN) {
-			if (year == MINYEAR)
+			if (year == INT_MIN)
 				return 0;
 			year--;
 			_daysmon[FEB] = FEBDAYS(year);
@@ -77,7 +71,7 @@ normalize(struct tm *tm)
 	for (; day > _daysmon[mon]; ++mon) {
 		day -= _daysmon[mon];
 		if (mon == DEC) {
-			if (year == _MAXYEAR)
+			if (year == INT_MAX)
 				return 0;
 			year++;
 			_daysmon[FEB] = FEBDAYS(year);
@@ -85,11 +79,18 @@ normalize(struct tm *tm)
 		}
 	}
 
+	if (year < INT_MIN + BASEYEAR)
+		return 0;
+	year -= BASEYEAR;
+
+	if (year > _MAXYEAR || year < _MINYEAR)
+		return 0;
+
 	for (int i = 0; i < mon; ++i)
 		yday += _daysmon[i];
 
 	tm->tm_mon = mon;
-	tm->tm_year = year - MINYEAR;
+	tm->tm_year = year;
 	tm->tm_mday = day;
 	tm->tm_yday = yday + day - 1;
 	tm->tm_wday = (_newyear(tm->tm_year) + tm->tm_yday) % 7;
@@ -107,7 +108,7 @@ mktime(struct tm *tm)
 	if (!normalize(tm))
 		return -1;
 
-	year = tm->tm_year + MINYEAR;
+	year = tm->tm_year + BASEYEAR;
 
 	for (i = EPOCH; i < year; ++i)
 		t += _daysyear(i) * SECDAY;
