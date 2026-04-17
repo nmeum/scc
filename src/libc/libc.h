@@ -41,6 +41,7 @@ extern int _tzjulian;
 
 extern int _daysmon[12];
 
+long _gmtoff(char *);
 void _tzset(void);
 int _daysyear(int);
 int _newyear(int);

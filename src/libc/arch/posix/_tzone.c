@@ -228,7 +228,6 @@ void
 _tzset(void)
 {
 	char *tz = getenv("TZ");
-	int i;
 
 	_tzname[1] = _tzname[0] = "UTC";
 	_tzstdoff = _tzdstoff = (time_t) -1;
@@ -236,13 +235,19 @@ _tzset(void)
 	_tzjulian = 0;
 
 	if (!tz)
-		return;
+		goto adjust;
 	next(tz);
 
 	if (!std())
-		return;
+		goto adjust;
 	if (!dst())
-		return;
+		goto adjust;
 	if (!rule())
-		return;
+		goto adjust;
+
+adjust:
+	if (_tzstdoff == -1)
+		_tzstdoff = _gmtoff(_tzname[0]);
+	if (_tzdstoff == -1)
+		_tzdstoff = _gmtoff(_tzname[1]);
 }

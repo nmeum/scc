@@ -1,0 +1,39 @@
+#!/bin/sh
+
+cat <<'EOF'
+#include <string.h>
+#include <time.h>
+
+#include "../libc.h"
+
+struct tzone {
+	char *name;
+	long gmtoff;
+};
+
+static struct tzone tzones[];
+
+long
+_gmtoff(char *tz)
+{
+	struct tzone *t;
+
+	for (t = tzones; t->name; t++) {
+		if (!strcmp(t->name, tz))
+			return t->gmtoff;
+	}
+	return 0;
+}
+
+EOF
+
+awk '
+BEGIN {print "static struct tzone tzones[] = {" }
+{
+    split($2,a,":")
+    min = a[1] * 60
+    min = min + a[2]
+    sec = min * 60
+    printf "\t{\"%s\", %d},\n", $1, sec
+}
+END { print "\t{0,\t0}\n};\n" }' "$@"

@@ -13,13 +13,12 @@ OBJS =\
 	localtime.$O\
 	mktime.$O\
 	strftime.$O\
+	tz.$O\
 
 all: $(OBJS)
 
 tz.c: timezone.lst
-	awk -f gentz.awk timezone.lst > $@
-
-localtime.$O: tz.c
+	./gentz timezone.lst > $@
 
 tz.$O: tz.c
 	$(CC) $(PROJ_CFLAGS) -c -o $@ tz.c

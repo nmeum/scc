@@ -47,3 +47,4 @@ OBJS =\
 	arch/posix/time.$O\
 	arch/posix/tmpfile.$O\
 	string/strlen.$O\
+	time/tz.$O\

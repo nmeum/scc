@@ -4,28 +4,6 @@
 #include "../libc.h"
 #undef localtime
 
-struct tzone {
-        char *name;
-        int gmtoff;
-};
-
-#include "tz.c"
-
-static time_t
-gmtoff(char *tz)
-{
-	struct tzone *t;
-
-	if (!strcmp(tz, "UTC"))
-		return 0;
-
-	for (t = tzones; t->name; t++) {
-		if (!strcmp(t->name, tz))
-			return t->gmtoff;
-	}
-	return 0;
-}
-
 struct tm *
 localtime(const time_t *timep)
 {
@@ -39,13 +17,8 @@ localtime(const time_t *timep)
 	tm = gmtime(&t);
 	yday = tm->tm_yday;
 
-	if (first) {
+	if (first)
 		_tzset();
-		if (_tzstdoff == -1)
-			_tzstdoff = gmtoff(_tzname[0]);
-		if (_tzdstoff == -1)
-			_tzdstoff = gmtoff(_tzname[1]);
-	}
 	first = 0;
 
 	off = _tzstdoff;
