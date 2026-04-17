@@ -124,7 +124,13 @@ mktime(struct tm *tm)
 	if (tm->tm_isdst == -1)
 		tm->tm_isdst = aux->tm_isdst;
 
-	tm->tm_gmtoff = (tm->tm_isdst == 1) ? _tzdstoff : _tzstdoff;
+	if (tm->tm_isdst == 1) {
+		tm->tm_zone =_tzname[1];
+		tm->tm_gmtoff = _tzstdoff;
+	} else {
+		tm->tm_zone =_tzname[0];
+		tm->tm_gmtoff = _tzdstoff;
+	}
 	t += tm->tm_gmtoff;
 
 	return t;

@@ -20,7 +20,7 @@ enum {
 static char st[TOKENSIZ], ds[TOKENSIZ], tokstr[TOKENSIZ];
 static int tok;
 
-char *_tzname[2] = { st, ds };
+char *_tzname[2];
 time_t _tzstdoff, _tzdstoff;
 time_t _tzstart, _tzend;
 int _tzjulian;
