@@ -7,36 +7,28 @@
 struct tm *
 localtime(const time_t *timep)
 {
+	time_t t;
+	int dst;
+	long off;
 	char *name;
 	struct tm *tm;
-	time_t t, off;
-	int yday, dst;
-	static int first = 1;
 
 	t = *timep;
 	tm = gmtime(&t);
-	yday = tm->tm_yday;
+	_tzset();
 
-	if (first)
-		_tzset();
-	first = 0;
-
-	off = _tzstdoff;
-	name = _tzname[0];
-	dst = 0;
-
-	if (_tzjulian && yday+1 < 60 || FEBDAYS(tm->tm_year) < 29)
-		yday++;
-
-	if (yday >= _tzstart && yday <= _tzend && tm->tm_hour >= 2) {
-		off = _tzdstoff;
-		name = _tzname[1];
+	if (_daylight && _isdst(tm)) {
 		dst = 1;
+		off = _dstzone;
+		name = _tzname[1];
+	} else {
+		dst = 0;
+		off = _timezone;
+		name = _tzname[0];
 	}
 
 	t += off;
 	tm = gmtime(&t);
-
 	tm->tm_zone = name;
 	tm->tm_isdst = dst;
 	tm->tm_gmtoff = off;

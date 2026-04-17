@@ -108,8 +108,8 @@ mktime(struct tm *tm)
 	if (!normalize(tm))
 		return -1;
 
+	t = 0;
 	year = tm->tm_year + BASEYEAR;
-
 	for (i = EPOCH; i < year; ++i)
 		t += _daysyear(i) * SECDAY;
 	for (i = 0; i < tm->tm_mon; ++i)
@@ -125,11 +125,11 @@ mktime(struct tm *tm)
 		tm->tm_isdst = aux->tm_isdst;
 
 	if (tm->tm_isdst == 1) {
-		tm->tm_zone =_tzname[1];
-		tm->tm_gmtoff = _tzstdoff;
+		tm->tm_zone = _tzname[1];
+		tm->tm_gmtoff = _dstzone;
 	} else {
-		tm->tm_zone =_tzname[0];
-		tm->tm_gmtoff = _tzdstoff;
+		tm->tm_zone = _tzname[0];
+		tm->tm_gmtoff = _timezone;
 	}
 	t += tm->tm_gmtoff;
 

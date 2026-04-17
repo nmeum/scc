@@ -17,13 +17,15 @@ enum {
 	JULIAN,
 };
 
+int _daylight;
+char *_tzname[2];
+long _timezone, _dstzone;
+
 static char st[TOKENSIZ], ds[TOKENSIZ], tokstr[TOKENSIZ];
 static int tok;
 
-char *_tzname[2];
-time_t _tzstdoff, _tzdstoff;
-time_t _tzstart, _tzend;
-int _tzjulian;
+static int start, end;
+static int julian;
 
 static int
 next(char *str)
@@ -147,7 +149,7 @@ offset(void)
 static int
 std(void)
 {
-	time_t off;
+	long off;
 
 	if (tok != STR)
 		return 0;
@@ -156,7 +158,7 @@ std(void)
 
 	if ((off = offset()) == -1)
 		return 0;
-	_tzstdoff = off;
+	_timezone = off;
 
 	return 1;
 }
@@ -164,7 +166,7 @@ std(void)
 static int
 dst(void)
 {
-	time_t off;
+	long off;
 
 	if (tok != STR)
 		return 0;
@@ -172,11 +174,11 @@ dst(void)
 	next(NULL);
 
 	if ((off = offset()) == -1)
-		_tzdstoff = off;
+		_dstzone = _timezone + SECHOUR;
 	else
-		_tzdstoff = _tzstdoff + SECHOUR;
+		_dstzone = off;
 
-	return 1;
+	return _daylight = 1;
 }
 
 static int
@@ -198,7 +200,7 @@ yday(void)
 		next(NULL);
 		if (n == 0)
 			return -1;
-		_tzjulian = 1;
+		julian = 1;
 		break;
 	case GREGORIAN:
 		n = num(365);
@@ -216,23 +218,30 @@ rule(void)
 		return 0;
 	if (!accept(','))
 		return 0;
-	if ((_tzstart = yday()) == -1)
+	if ((start = yday()) == -1)
 		return 0;
 	if (!accept(','))
 		return 0;
-	if ((_tzend = yday()) == -1)
+	if ((end = yday()) == -1)
 		return 0;
 }
 
 void
 _tzset(void)
 {
-	char *tz = getenv("TZ");
+	static char *tz;
+	char *s = getenv("TZ");
 
+	if (s && tz && strcmp(s, tz) == 0)
+		return;
+	tz = s;
+
+	_daylight = 0;
 	_tzname[1] = _tzname[0] = "UTC";
-	_tzstdoff = _tzdstoff = (time_t) -1;
-	_tzstart = _tzend = (time_t) -1;
-	_tzjulian = 0;
+	_timezone = _dstzone = -1;
+
+	start = end = -1;
+	julian = 0;
 
 	if (!tz)
 		goto adjust;
@@ -246,8 +255,24 @@ _tzset(void)
 		goto adjust;
 
 adjust:
-	if (_tzstdoff == -1)
-		_tzstdoff = _gmtoff(_tzname[0]);
-	if (_tzdstoff == -1)
-		_tzdstoff = _gmtoff(_tzname[1]);
+	if (!_daylight)
+		_tzname[1] = _tzname[0];
+	if (_timezone == -1)
+		_timezone = _gmtoff(_tzname[0]);
+	if (_dstzone == -1)
+		_dstzone = _gmtoff(_tzname[1]);
+}
+
+int
+_isdst(struct tm *tm)
+{
+	int yday;
+
+	yday = tm->tm_yday;
+
+	if (julian && yday+1 < 60 || FEBDAYS(tm->tm_year) < 29)
+		yday++;
+	if (yday >= start && yday <= end && tm->tm_hour >= 2)
+		return 1;
+	return 0;
 }
