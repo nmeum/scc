@@ -12,15 +12,6 @@ FILE *_fpopen(const char * restrict, const char *restrict,
 #endif
 
 #ifdef _TIME_H
-enum {
-	SUN,
-	MON,
-	TUE,
-	WED,
-	THU,
-	FRI,
-	SAT
-};
 
 #define JAN 0
 #define FEB 1
@@ -33,18 +24,30 @@ enum {
 #define SECHOUR (60 * SECMIN)    /* 3600 */
 #define SECDAY (24 * SECHOUR)   /* 86400 */
 
+enum {
+	SUN,
+	MON,
+	TUE,
+	WED,
+	THU,
+	FRI,
+	SAT
+};
+
+struct tzone;
+
 /* _tzone.c variables */
-extern time_t _tzstdoff, _tzdstoff;
-extern time_t _tzstart, _tzend;
+extern int _daylight;
 extern char *_tzname[2];
-extern int _tzjulian;
+extern long _timezone, _dstzone;
 
 extern int _daysmon[12];
 
-long _gmtoff(char *);
 void _tzset(void);
+int _isdst(struct tm *);
 int _daysyear(int);
 int _newyear(int);
+char *_gmtoff(char *);
 #endif
 
 extern unsigned _exitn;

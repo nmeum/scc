@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
@@ -21,11 +22,10 @@ int _daylight;
 char *_tzname[2];
 long _timezone, _dstzone;
 
-static char st[TOKENSIZ], ds[TOKENSIZ], tokstr[TOKENSIZ];
 static int tok;
+static char tokstr[TOKENSIZ];
 
-static int start, end;
-static int julian;
+static int julian, start, end;
 
 static int
 next(char *str)
@@ -89,8 +89,6 @@ num(int max)
 {
 	int n;
 
-	if (tok == EOS)
-		return 0;
 	if (tok != NUM)
 		return -1;
 	n = atoi(tokstr);
@@ -102,21 +100,18 @@ num(int max)
 static long
 offset(void)
 {
-	int sign = 1;
-	int n;
 	long off;
+	int n, sign = 1;
 
 	if (tok == EOS)
 		return -1;
 
 	switch (tok) {
-	case '+':
-		sign = -1;
 	case '-':
+		sign = -1;
+	case '+':
 		next(NULL);
 		break;
-	default:
-		return -1;
 	}
 
 	if ((n = num(24)) < 0)
@@ -127,16 +122,14 @@ offset(void)
 		goto ret;
 
 	if (!accept(':'))
-		return -1;
+		goto ret;
 	if ((n = num(60)) < 0)
 		return -1;
 	off += n * SECMIN;
 	next(NULL);
-	if (tok == EOS)
-		goto ret;
 
 	if (!accept(':'))
-		return -1;
+		goto ret;
 	if ((n = num(60)) < 0)
 		return -1;
 	off += n;
@@ -150,14 +143,16 @@ static int
 std(void)
 {
 	long off;
+	char *name;
 
-	if (tok != STR)
+	if ((name = _gmtoff(tokstr)) == NULL)
 		return 0;
-	strcpy(st, tokstr);
-	next(NULL);
 
+	next(NULL);
 	if ((off = offset()) == -1)
 		return 0;
+
+	_tzname[0] = name;
 	_timezone = off;
 
 	return 1;
@@ -167,12 +162,13 @@ static int
 dst(void)
 {
 	long off;
+	char *name;
 
-	if (tok != STR)
+	if ((name = _gmtoff(tokstr)) == NULL)
 		return 0;
-	strcpy(ds, tokstr);
-	next(NULL);
+	_tzname[1] = name;
 
+	next(NULL);
 	if ((off = offset()) == -1)
 		_dstzone = _timezone + SECHOUR;
 	else
@@ -214,8 +210,6 @@ yday(void)
 static int
 rule(void)
 {
-	if (tok == EOS)
-		return 0;
 	if (!accept(','))
 		return 0;
 	if ((start = yday()) == -1)
@@ -230,43 +224,60 @@ void
 _tzset(void)
 {
 	static char *tz;
+	static char cache[80];
 	char *s = getenv("TZ");
 
-	if (s && tz && strcmp(s, tz) == 0)
-		return;
-	tz = s;
-
-	_daylight = 0;
-	_tzname[1] = _tzname[0] = "UTC";
-	_timezone = _dstzone = -1;
+	if (s) {
+		if (tz && strcmp(s, tz) == 0)
+			return;
+		snprintf(cache, sizeof(cache), "%s", s);
+		tz = cache;
+	}
 
 	start = end = -1;
-	julian = 0;
 
-	if (!tz)
+	if (!s)
 		goto adjust;
-	next(tz);
+
+	if (next(s) == EOS)
+		goto error;
 
 	if (!std())
-		goto adjust;
-	if (!dst())
-		goto adjust;
-	if (!rule())
+		goto error;
+	if (tok == EOS)
 		goto adjust;
 
+	if (!dst())
+		goto error;
+	if (tok == EOS)
+		goto adjust;
+
+	if (!rule())
+		goto error;
+
 adjust:
-	if (!_daylight)
+	if (!_daylight) {
 		_tzname[1] = _tzname[0];
-	if (_timezone == -1)
-		_timezone = _gmtoff(_tzname[0]);
-	if (_dstzone == -1)
-		_dstzone = _gmtoff(_tzname[1]);
+		_dstzone = _timezone;
+	}
+
+	return;
+
+error:
+	_daylight = 0;
+	_tzname[1] = _tzname[0] = "UTC";
+	_timezone = _dstzone = 0;
+	start = end = -1;
+	julian = 0;
 }
 
 int
 _isdst(struct tm *tm)
 {
 	int yday;
+
+	if (!_daylight)
+		return 0;
 
 	yday = tm->tm_yday;
 

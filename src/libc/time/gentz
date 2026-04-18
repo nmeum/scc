@@ -1,39 +1,40 @@
 #!/bin/sh
 
-cat <<'EOF'
+cat <<EOF
+#include <stdlib.h>
 #include <string.h>
 #include <time.h>
 
 #include "../libc.h"
 
-struct tzone {
-	char *name;
-	long gmtoff;
-};
+`
+awk '{
+	zones[$1] = 1
+	if (length($1) > max)
+		max = length($1)
+	nr++
+}
+END {
+	printf("#define MAX %d\n", max+1);
+	printf("#define NR %d\n", nr);
+	print("static char tzones[NR][MAX] = {");
+	for (z in zones)
+		printf("\t\\"%s\\",\n", z) | "sort"
+	close("sort")
+	print "};\n"
+}' "$@"`
 
-static struct tzone tzones[];
+static int
+cmp(const void *ps1, const void *ps2)
+{
+	const char *s1 = ps1, *s2 = ps2;
 
-long
+	return strcmp(s1, s2);
+}
+
+char *
 _gmtoff(char *tz)
 {
-	struct tzone *t;
-
-	for (t = tzones; t->name; t++) {
-		if (!strcmp(t->name, tz))
-			return t->gmtoff;
-	}
-	return 0;
+	return bsearch(tz, tzones, NR, MAX, cmp);
 }
-
 EOF
-
-awk '
-BEGIN {print "static struct tzone tzones[] = {" }
-{
-    split($2,a,":")
-    min = a[1] * 60
-    min = min + a[2]
-    sec = min * 60
-    printf "\t{\"%s\", %d},\n", $1, sec
-}
-END { print "\t{0,\t0}\n};\n" }' "$@"

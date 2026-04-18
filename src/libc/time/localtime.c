@@ -27,7 +27,7 @@ localtime(const time_t *timep)
 		name = _tzname[0];
 	}
 
-	t += off;
+	t -= off;
 	tm = gmtime(&t);
 	tm->tm_zone = name;
 	tm->tm_isdst = dst;
