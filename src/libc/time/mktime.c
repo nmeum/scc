@@ -111,12 +111,13 @@ mktime(struct tm *tm)
 	t = 0;
 	year = tm->tm_year + BASEYEAR;
 
+	i = EPOCH;
 	if (year >= EPOCH) {
-		for (i = EPOCH; i < year; ++i)
-			t += _daysyear(i) * SECDAY;
+		while (i < year)
+			t += _daysyear(i++) * SECDAY;
 	} else {
-		for (i = EPOCH; i > year; --i)
-			t -= _daysyear(i) * SECDAY;
+		while (i > year)
+			t -= _daysyear(--i) * SECDAY;
 	}
 
 	for (i = 0; i < tm->tm_mon; ++i)
