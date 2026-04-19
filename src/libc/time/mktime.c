@@ -110,8 +110,15 @@ mktime(struct tm *tm)
 
 	t = 0;
 	year = tm->tm_year + BASEYEAR;
-	for (i = EPOCH; i < year; ++i)
-		t += _daysyear(i) * SECDAY;
+
+	if (year >= EPOCH) {
+		for (i = EPOCH; i < year; ++i)
+			t += _daysyear(i) * SECDAY;
+	} else {
+		for (i = EPOCH; i > year; --i)
+			t -= _daysyear(i) * SECDAY;
+	}
+
 	for (i = 0; i < tm->tm_mon; ++i)
 		t += _daysmon[i] * SECDAY;
 
@@ -119,6 +126,7 @@ mktime(struct tm *tm)
 	t += tm->tm_min * SECMIN;
 	t += tm->tm_hour * SECHOUR;
 	t += (tm->tm_mday-1) * SECDAY;
+
 	aux = localtime(&t);
 
 	if (tm->tm_isdst == -1)
