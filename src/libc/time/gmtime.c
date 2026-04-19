@@ -22,14 +22,14 @@ gmtime(const time_t *tim)
 
 	d = div(tday, 60);
 	tm.tm_sec = d.rem;
-
 	d = div(d.quot, 60);
 	tm.tm_min = d.rem;
-
 	tm.tm_hour = d.quot;
 
 	/* 1/1/1970 was Thursday */
 	tm.tm_wday = (day + THU) % 7;
+	if (tm.tm_wday < 0)
+		tm.tm_wday += 7;
 
 	year = EPOCH;
 	if (day >= 0) {
