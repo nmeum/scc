@@ -234,13 +234,10 @@ _tzset(void)
 		tz = cache;
 	}
 
-	start = end = -1;
-
-	if (!s)
-		goto adjust;
-
-	if (next(s) == EOS)
+	if (!s || next(s) == EOS)
 		goto error;
+
+	start = end = -1;
 
 	if (!std())
 		goto error;
