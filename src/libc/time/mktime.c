@@ -99,19 +99,21 @@ normalize(struct tm *tm)
 }
 
 time_t
-mktime(struct tm *tm)
+mktime(struct tm *ptm)
 {
 	time_t t;
-	int i, year;
-	struct tm *aux;
+	long off;
+	char *name;
+	int i, year, dst;
+	struct tm tm;
 
-	if (!normalize(tm))
+	tm = *ptm;
+	if (!normalize(&tm))
 		return -1;
 
 	t = 0;
-	year = tm->tm_year + BASEYEAR;
-
 	i = EPOCH;
+	year = tm.tm_year + BASEYEAR;
 	if (year >= EPOCH) {
 		while (i < year)
 			t += _daysyear(i++) * SECDAY;
@@ -120,27 +122,34 @@ mktime(struct tm *tm)
 			t -= _daysyear(--i) * SECDAY;
 	}
 
-	for (i = 0; i < tm->tm_mon; ++i)
+	for (i = 0; i < tm.tm_mon; ++i)
 		t += _daysmon[i] * SECDAY;
 
-	t += tm->tm_sec;
-	t += tm->tm_min * SECMIN;
-	t += tm->tm_hour * SECHOUR;
-	t += (tm->tm_mday-1) * SECDAY;
+	t += tm.tm_sec;
+	t += tm.tm_min * SECMIN;
+	t += tm.tm_hour * SECHOUR;
+	t += (tm.tm_mday-1) * SECDAY;
 
-	aux = localtime(&t);
+	_tzset();
+	dst = _daylight && _isdst(&tm);
 
-	if (tm->tm_isdst == -1)
-		tm->tm_isdst = aux->tm_isdst;
-
-	if (tm->tm_isdst == 1) {
-		tm->tm_zone = _tzname[1];
-		tm->tm_gmtoff = _dstzone;
-	} else {
-		tm->tm_zone = _tzname[0];
-		tm->tm_gmtoff = _timezone;
+	if (tm.tm_isdst == 0 || tm.tm_isdst < 0 && !dst) {
+		off = _timezone;
+		name = _tzname[0];
+	} else  {
+		off = _dstzone;
+		name = _tzname[1];
 	}
-	t += tm->tm_gmtoff;
+
+	if (off > 0 && t > _TIME_MAX - off
+	||  off < 0 && t < _TIME_MIN + off) {
+		return -1;
+	}
+	t += off;
+	tm.tm_isdst = dst;
+	tm.tm_gmtoff = off;
+	tm.tm_zone = name;
+	*ptm = tm;
 
 	return t;
 }
