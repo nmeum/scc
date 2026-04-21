@@ -17,7 +17,7 @@ localtime(const time_t *timep)
 	tm = gmtime(&t);
 	_tzset();
 
-	if (_daylight && _isdst(tm)) {
+	if (_isdst(tm)) {
 		dst = 1;
 		off = _dstzone;
 		name = _tzname[1];

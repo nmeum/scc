@@ -131,7 +131,7 @@ mktime(struct tm *ptm)
 	t += (tm.tm_mday-1) * SECDAY;
 
 	_tzset();
-	dst = _daylight && _isdst(&tm);
+	dst = _isdst(&tm);
 
 	if (tm.tm_isdst == 0 || tm.tm_isdst < 0 && !dst) {
 		off = _timezone;
