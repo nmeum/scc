@@ -17,7 +17,11 @@ do
 	(echo $i
 	 $CC $CFLAGS -o $i $i.c
 	 echo '/^output:$/+;/^end:$/-'w $tmp1 | ed -s $i.c
-	 ./$i > $tmp2 2>&1
+	 if ./$i 2>&1 | tee $tmp2 | grep '^RESULT: SKIP$'
+	 then
+		printf '\tSKIP\t%s\n' $i $state
+		continue
+	 fi
 	 diff -u $tmp1 $tmp2) >> test.log 2>&1 &&
 
 	printf '[PASS]' || printf '[FAIL]'
