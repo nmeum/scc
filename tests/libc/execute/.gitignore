@@ -68,3 +68,4 @@ test.log
 0067-wcwidth
 0068-fseek
 0069-mktime
+0070-difftime
