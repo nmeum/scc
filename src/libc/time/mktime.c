@@ -142,7 +142,7 @@ mktime(struct tm *ptm)
 	}
 
 	if (off > 0 && t > _TIME_MAX - off
-	||  off < 0 && t < _TIME_MIN + off) {
+	||  off < 0 && t < _TIME_MIN - off) {
 		return -1;
 	}
 	t += off;
