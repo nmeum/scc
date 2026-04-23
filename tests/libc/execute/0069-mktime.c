@@ -191,7 +191,7 @@ main(void)
 		if (tp->fail) {
 			printf("tm_wday=%d, tm_yday=%d\n",
 			       tp->tm.tm_wday, tp->tm.tm_yday);
-			puts(t == (time_t) -1 ? "failed" : "not failed");
+			puts(t == -1 ? "failed" : "not failed");
 			continue;
 		}
 		printf("tm_sec=%2d, "
