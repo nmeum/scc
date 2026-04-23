@@ -17,7 +17,16 @@ do
 	(echo $i
 	 $CC $CFLAGS -o $i $i.c
 	 echo '/^output:$/+;/^end:$/-'w $tmp1 | ed -s $i.c
-	 if ./$i 2>&1 | tee $tmp2 | grep '^RESULT: SKIP$'
+
+	 $EXEC ./$i 2>&1 > $tmp2 &
+	 pid=$!
+	 sleep 10 && echo timeout >> $tmp2 && kill $pid 2>/dev/null&
+	 timer=$!
+	 wait $pid
+	 kill $timer
+	 wait $timer
+
+	 if grep '^RESULT: SKIP$' $tmp2
 	 then
 		printf '\tSKIP\t%s\n' $i $state
 		continue
