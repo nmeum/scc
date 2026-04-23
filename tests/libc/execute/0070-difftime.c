@@ -15,12 +15,12 @@ test(void)
 	double d1, d2;
 	time_t t1, t2;
 
-	for (t1 = t2 = time(NULL); difftime(t1, t2) < 1; t2 = time(NULL))
+	for (t1 = t2 = time(NULL); difftime(t2, t1) < 1; t2 = time(NULL))
 		;
 
 	d1 = difftime(t1, t2);
 	d2 = difftime(t2, t1);
-	assert(d1 + d2 < 0.0005);
+	assert(d1 + d2 < 0.00005);
 }
 
 int
