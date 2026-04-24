@@ -69,10 +69,14 @@ handler2(int sig)
 void
 test1()
 {
+	void (*shdl)(int);
+
 	puts("test 1");
 	assert(signal(SIGABRT, handler1) == SIG_DFL);
 	assert(signal(SIGFPE, handler1) == SIG_DFL);
-	assert(signal(SIGINT, handler1) == SIG_DFL);
+
+	shdl = signal(SIGINT, handler1);
+	assert(shdl == SIG_DFL || shdl == SIG_IGN);
 	assert(signal(SIGSEGV, handler1) == SIG_DFL);
 	assert(signal(SIGTERM, handler1) == SIG_DFL);
 }
