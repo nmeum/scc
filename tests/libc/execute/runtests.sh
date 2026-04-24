@@ -18,7 +18,7 @@ do
 	 $CC $CFLAGS -o $i $i.c
 	 echo '/^output:$/+;/^end:$/-'w $tmp1 | ed -s $i.c
 
-	 $EXEC ./$i 2>&1 > $tmp2 &
+	 $EXEC ./$i >$tmp2 2>&1 &
 	 pid=$!
 	 sleep 10 && echo timeout >> $tmp2 && kill $pid 2>/dev/null&
 	 timer=$!
