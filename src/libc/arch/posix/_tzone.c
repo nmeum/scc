@@ -50,6 +50,7 @@ next(char *str)
 		n = strspn(s, "0123456789");
 		t = NUM;
 		break;
+	case '/':
 	case '+':
 	case '-':
 	case ':':
@@ -62,7 +63,7 @@ next(char *str)
 		t = EOS;
 		break;
 	default:
-		n = strcspn(s, "+-0123456789");
+		n = strcspn(s, "+-0123456789,/");
 		t = STR;
 		break;
 	}
