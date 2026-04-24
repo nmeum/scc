@@ -25,7 +25,8 @@ long _timezone, _dstzone;
 static int tok;
 static char tokstr[TOKENSIZ];
 
-static int julian, start, end;
+static int sjulian, start;
+static int ejulian, end;
 
 static int
 next(char *str)
@@ -179,7 +180,7 @@ dst(void)
 }
 
 static int
-yday(void)
+yday(int *julian)
 {
 	int type, n;
 
@@ -192,14 +193,16 @@ yday(void)
 
 	switch (type) {
 	case JULIAN:
+		*julian = 1;
 		next(NULL);
 		n = num(365);
 		next(NULL);
 		if (n == 0)
 			return -1;
-		julian = 1;
+		n--;
 		break;
 	case GREGORIAN:
+		*julian = 0;
 		n = num(365);
 		next(NULL);
 		break;
@@ -213,11 +216,11 @@ rule(void)
 {
 	if (!accept(','))
 		return 0;
-	if ((start = yday()) == -1)
+	if ((start = yday(&sjulian)) == -1)
 		return 0;
 	if (!accept(','))
 		return 0;
-	if ((end = yday()) == -1)
+	if ((end = yday(&ejulian)) == -1)
 		return 0;
 }
 
@@ -265,23 +268,28 @@ error:
 	_daylight = 0;
 	_tzname[1] = _tzname[0] = "UTC";
 	_timezone = _dstzone = 0;
-	start = end = -1;
-	julian = 0;
 }
 
 int
 _isdst(struct tm *tm)
 {
-	int yday;
+	int d, bis;
 
 	if (!_daylight)
 		return 0;
+	bis = FEBDAYS(tm->tm_year) == 29;
 
-	yday = tm->tm_yday;
+	d = tm->tm_yday;
+	if (sjulian && d > 59 && bis)
+		d++;
+	if (d < start || tm->tm_hour <= 2)
+		return 0;
 
-	if (julian && yday+1 < 60 || FEBDAYS(tm->tm_year) < 29)
-		yday++;
-	if (yday >= start && yday <= end && tm->tm_hour >= 2)
-		return 1;
-	return 0;
+	d = tm->tm_yday;
+	if (ejulian && d > 59 && bis)
+		d++;
+	if (d > end || tm->tm_hour <= 2)
+		return 0;
+
+	return 1;
 }
