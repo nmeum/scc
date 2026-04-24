@@ -171,7 +171,7 @@ dst(void)
 
 	next(NULL);
 	if ((off = offset()) == -1)
-		_dstzone = _timezone + SECHOUR;
+		_dstzone = _timezone - SECHOUR;
 	else
 		_dstzone = off;
 
