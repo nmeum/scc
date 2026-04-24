@@ -273,22 +273,23 @@ error:
 int
 _isdst(struct tm *tm)
 {
-	int d, bis;
+	int d, bis, yday;
 
 	if (!_daylight)
 		return 0;
 	bis = FEBDAYS(tm->tm_year) == 29;
+	yday = tm->tm_yday;
 
-	d = tm->tm_yday;
-	if (sjulian && d > 59 && bis)
+	d = start;
+	if (sjulian && bis && d >= 59)
 		d++;
-	if (d < start || tm->tm_hour <= 2)
+	if (yday < d || tm->tm_hour <= 2)
 		return 0;
 
-	d = tm->tm_yday;
-	if (ejulian && d > 59 && bis)
+	d = end;
+	if (ejulian && bis && d >= 59)
 		d++;
-	if (d > end || tm->tm_hour <= 2)
+	if (yday > d || tm->tm_hour <= 2)
 		return 0;
 
 	return 1;
