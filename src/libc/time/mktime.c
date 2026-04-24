@@ -104,7 +104,7 @@ mktime(struct tm *ptm)
 	time_t t;
 	long off;
 	char *name;
-	int i, year, dst;
+	int i, year;
 	struct tm tm;
 
 	tm = *ptm;
@@ -131,9 +131,7 @@ mktime(struct tm *ptm)
 	t += (tm.tm_mday-1) * SECDAY;
 
 	_tzset();
-	dst = _isdst(&tm);
-
-	if (tm.tm_isdst == 0 || tm.tm_isdst < 0 && !dst)
+	if (tm.tm_isdst == 0 || tm.tm_isdst < 0 && !_isdst(&tm))
 		off = _timezone;
 	else
 		off = _dstzone;
