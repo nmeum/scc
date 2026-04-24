@@ -10,7 +10,6 @@
 #define O_APPEND  0x00000008
 
 #define AT_FDCWD  -100
-#define CLOCKS_PER_SEC ((clock_t) 1000000)
 #define RUSAGE_SELF 0
 
 #define F_OK    0

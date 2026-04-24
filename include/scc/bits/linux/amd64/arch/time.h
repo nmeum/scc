@@ -1,4 +1,4 @@
-#define CLOCKS_PER_SEC 1000000
+#define CLOCKS_PER_SEC ((clock_t) 1000000)
 
 #define _MAXYEAR 99999
 #define _MINYEAR -99999
