@@ -133,23 +133,17 @@ mktime(struct tm *ptm)
 	_tzset();
 	dst = _isdst(&tm);
 
-	if (tm.tm_isdst == 0 || tm.tm_isdst < 0 && !dst) {
+	if (tm.tm_isdst == 0 || tm.tm_isdst < 0 && !dst)
 		off = _timezone;
-		name = _tzname[0];
-	} else  {
+	else
 		off = _dstzone;
-		name = _tzname[1];
-	}
 
 	if (off > 0 && t > _TIME_MAX - off
 	||  off < 0 && t < _TIME_MIN - off) {
 		return -1;
 	}
 	t += off;
-	tm.tm_isdst = dst;
-	tm.tm_gmtoff = off;
-	tm.tm_zone = name;
-	*ptm = tm;
+	*ptm = *localtime(&t);
 
 	return t;
 }
