@@ -27,6 +27,7 @@ static char tokstr[TOKENSIZ];
 
 static int sjulian, start;
 static int ejulian, end;
+static long shour, ehour;
 
 static int
 next(char *str)
@@ -180,8 +181,9 @@ dst(void)
 }
 
 static int
-yday(int *julian)
+yday(int *julian, long *hour)
 {
+	long off;
 	int type, n;
 
 	if (tok == STR && !strcmp(tokstr, "J"))
@@ -207,20 +209,26 @@ yday(int *julian)
 		next(NULL);
 		break;
 	}
-
+	if (accept('/')) {
+		if ((off = offset()) < 0)
+			return -1;
+		*hour = off;
+	}
 	return n;
 }
 
 static int
 rule(void)
 {
+	shour = ehour = 2 * SECHOUR;
+
 	if (!accept(','))
 		return 0;
-	if ((start = yday(&sjulian)) == -1)
+	if ((start = yday(&sjulian, &shour)) == -1)
 		return 0;
 	if (!accept(','))
 		return 0;
-	if ((end = yday(&ejulian)) == -1)
+	if ((end = yday(&ejulian, &ehour)) == -1)
 		return 0;
 }
 
@@ -255,6 +263,8 @@ _tzset(void)
 
 	if (!rule())
 		goto error;
+	if (tok != EOS)
+		goto error;
 
 adjust:
 	if (!_daylight) {
@@ -273,23 +283,28 @@ error:
 int
 _isdst(struct tm *tm)
 {
-	int d, bis, yday;
+	long off;
+	int day, bis, yday;
 
 	if (!_daylight)
 		return 0;
+
 	bis = FEBDAYS(tm->tm_year) == 29;
 	yday = tm->tm_yday;
+	off = tm->tm_hour * SECHOUR;
+	off += tm->tm_min * SECMIN;
+	off += tm->tm_sec;
 
-	d = start;
-	if (sjulian && bis && d >= 59)
-		d++;
-	if (yday < d || tm->tm_hour <= 2)
+	day = start;
+	if (sjulian && bis && day >= 59)
+		day++;
+	if (yday < day || off < shour)
 		return 0;
 
-	d = end;
-	if (ejulian && bis && d >= 59)
-		d++;
-	if (yday > d || tm->tm_hour <= 2)
+	day = end;
+	if (ejulian && bis && day >= 59)
+		day++;
+	if (yday > day || off > ehour)
 		return 0;
 
 	return 1;
