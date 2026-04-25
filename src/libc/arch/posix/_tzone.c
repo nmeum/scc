@@ -298,13 +298,13 @@ _isdst(struct tm *tm)
 	day = start;
 	if (sjulian && bis && day >= 59)
 		day++;
-	if (yday < day || off < shour)
+	if (yday < day || yday == day && off < shour)
 		return 0;
 
 	day = end;
 	if (ejulian && bis && day >= 59)
 		day++;
-	if (yday > day || off > ehour)
+	if (yday > day || yday == day && off > ehour)
 		return 0;
 
 	return 1;
