@@ -7,17 +7,15 @@
 struct tm *
 localtime(const time_t *timep)
 {
-	time_t t;
 	int dst;
+	time_t t;
 	long off;
 	char *name;
 	struct tm *tm;
 
-	t = *timep;
-	tm = gmtime(&t);
 	_tzset();
-
-	if (_isdst(tm)) {
+	t = *timep - _timezone;
+	if (_isdst(gmtime(&t))) {
 		dst = 1;
 		off = _dstzone;
 		name = _tzname[1];
@@ -27,7 +25,7 @@ localtime(const time_t *timep)
 		name = _tzname[0];
 	}
 
-	t -= off;
+	t = *timep - off;
 	tm = gmtime(&t);
 	tm->tm_zone = name;
 	tm->tm_isdst = dst;
