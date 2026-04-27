@@ -1,5 +1,6 @@
 #define CLOCKS_PER_SEC ((clock_t) 1000000)
 
+#define __SCC_TZ_TIME__
 #define _MAXYEAR 2037
 #define _MINYEAR 1902
 #define _TIME_MAX LONG_MAX
