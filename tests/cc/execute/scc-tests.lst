@@ -260,3 +260,4 @@
 0267-wchar.c
 0268-string.c
 0269-extern.c
+0270-union.c
