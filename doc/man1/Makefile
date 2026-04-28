@@ -12,6 +12,7 @@ PAGES =\
 	scc-cc2.1\
 	scc-cpp.1\
 	scc-nm.1\
+	scc-make.1\
 	scc-objdump.1\
 	scc-ranlib.1\
 	scc-size.1\

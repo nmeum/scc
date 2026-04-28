@@ -1,0 +1,475 @@
+.TH SCC-MAKE 1 scc\-VERSION
+.SH NAME
+scc-make \- maintain program dependencies
+.SH SYNOPSIS
+.B scc-make
+.RB [ \-eiknprSstd ]
+.RB [ \-f
+.IR file ]
+.RB [ \-j
+.IR jobs ]
+.RI [ macro = value
+\&...]
+.RI [ target
+\&...]
+.SH DESCRIPTION
+.B scc-make
+updates files derived from other files.
+It reads a description file (the makefile) that specifies how targets
+are built from their prerequisites,
+and rebuilds only those targets whose prerequisites have changed since
+the last build.
+.PP
+.B scc-make
+conforms to the IEEE Std 1003.1\-2018 (POSIX.1) specification for the
+.BR make
+utility.
+.PP
+On startup,
+.B scc-make
+reads the
+.B MAKEFLAGS
+environment variable and applies any flags found there.
+Command-line flags are then processed,
+followed by the makefile.
+If no
+.B \-f
+option is given,
+.B scc-make
+tries to open
+.I makefile
+and then
+.I Makefile
+in the current directory.
+If no targets are specified on the command line,
+the first non-special target defined in the makefile is built.
+.SH OPTIONS
+.TP
+.B \-e
+Environment variables override macro definitions in the makefile.
+By default, macro definitions in the makefile take precedence over
+the environment.
+.B SHELL
+and
+.B MAKEFLAGS
+are never taken from the environment regardless of this flag.
+.TP
+.BI \-f " file"
+Use
+.I file
+as the makefile.
+If
+.I file
+is
+.BR \- ,
+standard input is read.
+This option may be specified multiple times;
+each file is read in order.
+.TP
+.B \-i
+Ignore non-zero exit status from commands.
+Equivalent to specifying
+.B \-
+before each command line in the makefile.
+.TP
+.BI \-j " jobs"
+Accepted for compatibility; parallel execution is not implemented.
+.TP
+.B \-k
+Continue building other targets even if an error occurs,
+as long as they do not depend on the failed target.
+.TP
+.B \-n
+Print commands without executing them.
+Commands prefixed with
+.B +
+are still executed.
+.TP
+.B \-p
+Print all macro definitions and rules to standard output, then exit.
+.TP
+.B \-q
+Query mode.
+Exit 0 if all specified targets are up to date, non-zero otherwise.
+No commands are executed.
+.TP
+.B \-r
+Clear the default suffix list.
+Equivalent to a
+.B .SUFFIXES:
+rule with no prerequisites.
+Default inference rules remain but are not reachable without suffixes.
+.TP
+.B \-S
+Stop on error.
+This is the default behaviour and is used to cancel a previous
+.B \-k
+flag inherited via
+.BR MAKEFLAGS .
+.TP
+.B \-s
+Silent mode.
+Do not echo commands before executing them.
+Equivalent to specifying
+.B @
+before each command line in the makefile.
+.TP
+.B \-t
+Touch mode.
+Touch targets and their prerequisites instead of running commands,
+marking them as up to date.
+Commands prefixed with
+.B +
+are still executed.
+.TP
+.B \-d
+Debug mode.
+Print diagnostic messages describing the decisions
+.B scc-make
+makes while processing targets.
+.SH MAKEFILE SYNTAX
+A makefile consists of macro definitions, rules, and
+.B include
+directives.
+Comments begin with
+.B #
+and extend to the end of the line.
+A backslash at the end of a line continues it on the next line.
+.SS Macro Definitions
+Macros are defined with:
+.IP
+.EX
+name = value
+.EE
+.PP
+Macro values may span multiple lines by ending each continued line
+with a backslash.
+Macro definitions in the makefile take precedence over the environment
+unless
+.B \-e
+is given.
+Command-line macro assignments always take precedence over both.
+.PP
+Macros are expanded by writing:
+.TP
+.BI $( name )
+or
+.BI ${ name }
+Expand the macro named
+.IR name .
+.TP
+.BI $ x
+Expand the single-character macro
+.IR x .
+.TP
+.B $$
+A literal dollar sign.
+.PP
+The substitution form
+.BI $( name : old = new )
+expands macro
+.I name
+replacing each word that ends in
+.I old
+with the same word but ending in
+.I new
+instead.
+.SS Rules
+Rules define how to build targets from prerequisites:
+.IP
+.EX
+target ... : prerequisite ...
+	command
+	command
+.EE
+.PP
+Each command line must begin with a tab character.
+A command may also appear on the rule line itself, separated by a semicolon.
+Commands are passed to the shell specified by the
+.B SHELL
+macro
+.RB ( /bin/sh
+by default).
+.PP
+A command line may be prefixed with one or more of:
+.TP
+.B @
+Do not echo the command before executing it.
+.TP
+.B \-
+Ignore a non-zero exit status from this command.
+.TP
+.B +
+Execute this command even when
+.BR \-n ,
+.BR \-q ,
+or
+.B \-t
+is given.
+.SS Internal Macros
+The following macros are set automatically when a rule is executed:
+.TP
+.B $@
+The name of the current target.
+.TP
+.B $<
+The name of the first prerequisite (the implicit prerequisite in
+inference rules).
+.TP
+.B $*
+The stem of the current target: the target name with its suffix removed.
+.TP
+.B $?
+The list of prerequisites that are newer than the current target.
+.SS Inference Rules
+Inference rules define how to transform a file of one suffix to a file
+of another.
+They have the form:
+.IP
+.EX
+\&.from.to:
+	command
+.EE
+.PP
+For an inference rule
+.I .from.to
+to apply,
+both suffixes must appear in the
+.B .SUFFIXES
+list.
+.B scc-make
+searches the suffix list in order to find a matching rule whose
+prerequisite exists on disk.
+.SS Include Directive
+A line of the form:
+.IP
+.EX
+include file
+.EE
+.PP
+causes
+.B scc-make
+to read and process
+.I file
+at that point.
+Macro expansions are performed on the filename.
+.SH SPECIAL TARGETS
+.TP
+.B .SUFFIXES
+Defines the list of recognized suffixes used to search for inference
+rules.
+An empty
+.B .SUFFIXES:
+rule (no prerequisites) clears the list.
+Multiple
+.B .SUFFIXES
+rules are cumulative.
+.TP
+.B .DEFAULT
+Commands associated with this target are run for any target that has
+no explicit rule and no applicable inference rule.
+.TP
+.B .PRECIOUS
+Prerequisites listed for this target are not deleted if
+.B scc-make
+is interrupted by a signal.
+.TP
+.B .SILENT
+When specified without prerequisites, enables silent mode globally.
+When listed with prerequisites, commands for those targets are not echoed.
+.TP
+.B .IGNORE
+When specified without prerequisites, errors from all commands are ignored.
+When listed with prerequisites, errors from those targets are ignored.
+.SH DEFAULT MACROS
+.B scc-make
+defines the following macros by default.
+They can be overridden in the makefile or on the command line.
+.TP
+.B AR
+Archive program (default:
+.BR ar ).
+.TP
+.B ARFLAGS
+Flags for
+.B AR
+(default:
+.BR \-rv ).
+.TP
+.B CC
+C compiler (default:
+.BR c99 ).
+.TP
+.B CFLAGS
+Flags for
+.B CC
+(default:
+.BR \-O1 ).
+.TP
+.B FC
+Fortran compiler (default:
+.BR fort77 ).
+.TP
+.B FFLAGS
+Flags for
+.B FC
+(default:
+.BR \-O1 ).
+.TP
+.B LDFLAGS
+Flags for the linker (default: empty).
+.TP
+.B LEX
+Lexical analyser generator (default:
+.BR lex ).
+.TP
+.B LFLAGS
+Flags for
+.B LEX
+(default: empty).
+.TP
+.B YACC
+Parser generator (default:
+.BR yacc ).
+.TP
+.B YFLAGS
+Flags for
+.B YACC
+(default: empty).
+.TP
+.B SHELL
+Shell used to run commands (default:
+.BR /bin/sh ).
+This macro is never taken from the environment.
+.TP
+.B MAKE
+Set to the path used to invoke
+.BR scc-make .
+.TP
+.B MAKEFLAGS
+Contains the set of flags in effect.
+Updated as flags are processed so that recursive
+.B scc-make
+invocations inherit them.
+.SH DEFAULT INFERENCE RULES
+The following inference rules are built in:
+.TP
+.B .c:
+Compile a C source file to an executable using
+.BR CC .
+.TP
+.B .f:
+Compile a Fortran source file to an executable using
+.BR FC .
+.TP
+.B .sh:
+Copy a shell script to the target and make it executable.
+.TP
+.B .c.o:
+Compile a C source file to an object file using
+.BR CC .
+.TP
+.B .f.o:
+Compile a Fortran source file to an object file using
+.BR FC .
+.TP
+.B .y.o:
+Run
+.B yacc
+on the source file, compile the result, and remove the intermediate files.
+.TP
+.B .l.o:
+Run
+.B lex
+on the source file, compile the result, and remove the intermediate files.
+.TP
+.B .y.c:
+Run
+.B yacc
+on the source file and rename the result.
+.TP
+.B .l.c:
+Run
+.B lex
+on the source file and rename the result.
+.TP
+.B .c.a:
+Compile a C source file and add the object to an archive.
+.TP
+.B .f.a:
+Compile a Fortran source file and add the object to an archive.
+.SH ENVIRONMENT VARIABLES
+.TP
+.B MAKEFLAGS
+Flags read by
+.B scc-make
+at startup, before command-line processing.
+The value may be a plain flag string (e.g.
+.BR eks )
+or a full argument list with quoted macro assignments.
+.B scc-make
+appends flags to this variable as it processes them so that recursive
+invocations inherit the current settings.
+.SH EXAMPLES
+.PP
+Build the default target in
+.IR Makefile :
+.IP
+.EX
+scc-make
+.EE
+.PP
+Build a specific target:
+.IP
+.EX
+scc-make install
+.EE
+.PP
+Override a macro on the command line:
+.IP
+.EX
+scc-make CC=gcc CFLAGS='-O2 -g'
+.EE
+.PP
+Use an alternate makefile:
+.IP
+.EX
+scc-make \-f build.mk
+.EE
+.PP
+Print all macros and rules without building:
+.IP
+.EX
+scc-make \-p
+.EE
+.PP
+Dry run showing commands that would be executed:
+.IP
+.EX
+scc-make \-n
+.EE
+.PP
+Continue building unrelated targets after an error:
+.IP
+.EX
+scc-make \-k
+.EE
+.PP
+Read the makefile from standard input:
+.IP
+.EX
+scc-make \-f \-
+.EE
+.SH STANDARDS
+.B scc-make
+is designed to conform to IEEE Std 1003.1\-2018 (POSIX.1).
+.SH SEE ALSO
+.BR scc (1),
+.BR scc\-cc (1),
+.BR scc\-ar (1),
+.BR sh (1)
+.SH BUGS
+The
+.B \-j
+option is accepted but parallel execution is not implemented.
+The library interface is not implemented.
