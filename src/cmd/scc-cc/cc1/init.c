@@ -416,7 +416,7 @@ autocomp(Symbol *sym, Node *np, Type *tp, unsigned long long *addr)
 		autofield(sym, aux, aux->type, addr);
 		break;
 	case UNION:
-		aux = (init) ? sym->u.init[0] : NULL;
+		aux = (init) ? init->u.init[0] : NULL;
 		p = (aux) ? aux->type : tp->p.fields[0]->type;
 		autocomp(sym, aux, p, addr);
 		break;
