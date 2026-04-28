@@ -2,6 +2,7 @@
 PROJECTDIR =../../..
 include $(PROJECTDIR)/scripts/rules.mk
 include ../rules.mk
+CC=$(SCC)
 
 OBJS =\
 	_daysyear.$O\
