@@ -521,7 +521,7 @@ assign(Node *np)
 		break;
 	}
 
-	code(assignop(&np->type), l, r, NULL);
+	code(assignop(&np->type), l, r, tmpnode(&np->type, NULL));
 	return ret;
 }
 

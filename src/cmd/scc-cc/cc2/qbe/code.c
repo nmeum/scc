@@ -479,7 +479,7 @@ binary(void)
 static void
 blit(void)
 {
-	Type *tp = &pc->to.u.sym->type;
+	Type *tp = &pc->from2.u.sym->type;
 	char to[ADDR_LEN], from[ADDR_LEN];
 
 	strcpy(to, addr2txt(&pc->to));
