@@ -11,15 +11,15 @@ struct sigaction {
 	int sa_flags ; 
 };
 
-int
+static int
 _sigaction(int num, struct sigaction *sa, struct sigaction *osa)
 {
 	return num != 3 ? -1 : 0;
 }
 
-void 
+static void
 (*signal(int signum, void (* func) (int)))(int) 
-{ 
+{
 	struct sigaction osa , sa = { 
 		.__sigaction_u.__sa_handler = func, 
 	}; 
@@ -30,7 +30,7 @@ void
 	return osa.__sigaction_u.__sa_handler ; 
 }
 
-void
+static void
 sighdl(int signo)
 {
 	return 0;
