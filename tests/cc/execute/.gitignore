@@ -3,3 +3,4 @@ tests.h
 tmp_*.c
 a.out
 0270-union
+0271-struct

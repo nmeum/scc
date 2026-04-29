@@ -261,3 +261,4 @@
 0268-string.c
 0269-extern.c
 0270-union.c
+0271-struct.c
