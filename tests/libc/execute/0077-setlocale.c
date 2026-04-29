@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <locale.h>
 #include <stdio.h>
+#include <string.h>
 
 /*
 output:
@@ -48,11 +49,16 @@ run(void)
 {
 	char *l1, *l2;
 
+	l1 = setlocale(LC_ALL, NULL);
+	assert(strcmp(l1, "C") == 0);
+
 	l1 = setlocale(pos, "C");
 	l2 = setlocale(neg, "C");
 
 	assert(l1 == NULL);
 	assert(l2 == NULL);
+
+	setlocale(LC_ALL, "");
 }
 
 int
