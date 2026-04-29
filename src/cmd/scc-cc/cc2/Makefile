@@ -54,7 +54,6 @@ TARGET  =\
 all:
 	+@$(MAKE) $(DIRS)
 	+@$(MAKE) $(TARGET)
-	@cp $(TARGET) $(LIBEXEC)/scc
 
 main.o: error.h
 qbe_riscv64-sysv qbe_amd64-sysv qbe_arm64-sysv: qbe
@@ -69,15 +68,19 @@ error.h: cc2.h
 
 cc2-qbe_amd64-sysv: $(LIBSCC) $(QBE_AMD64_SYSV_OBJS)
 	$(CC) $(PROJ_LDFLAGS) $(QBE_AMD64_SYSV_OBJS) $(PROJ_LDLIBS) -o $@
+	cp $@ $(LIBEXEC)/scc
 
 cc2-qbe_arm64-sysv: $(LIBSCC) $(QBE_ARM64_SYSV_OBJS)
 	$(CC) $(PROJ_LDFLAGS) $(QBE_ARM64_SYSV_OBJS) $(PROJ_LDLIBS) -o $@
+	cp $@ $(LIBEXEC)/scc
 
 cc2-qbe_riscv64-sysv: $(LIBSCC) $(QBE_RISCV64_SYSV_OBJS)
 	$(CC) $(PROJ_LDFLAGS) $(QBE_RISCV64_SYSV_OBJS) $(PROJ_LDLIBS) -o $@
+	cp $@ $(LIBEXEC)/scc
 
 cc2-z80-scc: $(LIBSCC) $(Z80_SCC_OBJS)
 	$(CC) $(PROJ_LDFLAGS) $(Z80_SCC_OBJS) $(PROJ_LDLIBS) -o $@
+	cp $@ $(LIBEXEC)/scc
 
 clean:
 	rm -f error.h
