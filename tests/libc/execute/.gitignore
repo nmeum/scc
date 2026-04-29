@@ -74,3 +74,4 @@ test.log
 0073-mktime
 0074-strftime
 0075-strftime
+0076-localeconv
