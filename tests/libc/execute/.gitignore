@@ -75,3 +75,4 @@ test.log
 0074-strftime
 0075-strftime
 0076-localeconv
+0077-setlocale
