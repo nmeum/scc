@@ -75,3 +75,4 @@
 0076-localeconv
 0077-setlocale
 0078-time
+0079-atof [TODO]
