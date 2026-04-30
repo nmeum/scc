@@ -103,7 +103,6 @@ mktime(struct tm *ptm)
 {
 	time_t t;
 	long off;
-	char *name;
 	int i, year;
 	struct tm tm;
 
