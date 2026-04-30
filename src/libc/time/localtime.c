@@ -1,4 +1,3 @@
-#include <string.h>
 #include <time.h>
 
 #include "../libc.h"
@@ -15,18 +14,20 @@ localtime(const time_t *timep)
 
 	_tzset();
 	t = *timep - _timezone;
-	if (_isdst(gmtime(&t))) {
+	tm = gmtime(&t);
+
+	if (_isdst(tm)) {
 		dst = 1;
 		off = _dstzone;
 		name = _tzname[1];
+		t = *timep - off;
+		tm = gmtime(&t);
 	} else {
 		dst = 0;
 		off = _timezone;
 		name = _tzname[0];
 	}
 
-	t = *timep - off;
-	tm = gmtime(&t);
 	tm->tm_zone = name;
 	tm->tm_isdst = dst;
 	tm->tm_gmtoff = off;
