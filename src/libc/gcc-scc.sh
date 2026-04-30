@@ -2,11 +2,14 @@
 
 set -e
 
-while getopts gr:a:s:o:c o
+while getopts gr:O:a:s:o:c o
 do
 	case $o in
 	g)
 		g=-g
+		;;
+	O)
+		opti=-O1
 		;;
 	r)
 		root=$OPTARG
@@ -52,7 +55,7 @@ OpenBSD)
 esac
 
 includes="-nostdinc -I$inc -I$arch_inc -I$sys_inc -I$sys_arch_inc"
-cflags="-std=c99 -w -fno-pie -fno-stack-protector -ffreestanding -static"
+cflags="$opti -std=c99 -w -fno-pie -fno-stack-protector -ffreestanding -static"
 ldflags="-z nodefaultlib -static -L$lib"
 
 if test ${onlycc:-0} -eq 1
