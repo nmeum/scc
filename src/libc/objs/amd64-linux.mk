@@ -41,6 +41,7 @@ OBJS =\
 	arch/posix/_tzone.$O\
 	arch/posix/clock.$O\
 	arch/posix/getenv.$O\
+	arch/posix/putenv.$O\
 	arch/posix/raise.$O\
 	arch/posix/signal.$O\
 	arch/posix/system.$O\

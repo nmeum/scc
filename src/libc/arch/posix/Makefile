@@ -10,6 +10,7 @@ OBJS=\
 	_tzone.$O\
 	clock.$O\
 	getenv.$O\
+	putenv.$O\
 	raise.$O\
 	signal.$O\
 	system.$O\
