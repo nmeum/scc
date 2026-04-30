@@ -15,7 +15,7 @@ do
 	rm -f *.o $i $tmp1 $tmp2
 
 	(echo $i
-	 $CC $CFLAGS -o $i $i.c
+	 $CC $CFLAGS $LDFLAGS -o $i $i.c
 	 echo '/^output:$/+;/^end:$/-'w $tmp1 | ed -s $i.c
 
 	 $EXEC ./$i >$tmp2 2>&1 &
