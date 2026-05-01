@@ -471,7 +471,7 @@ emitstrings(Node *np)
 			emit(ODECL, sym);
 			emit(OINIT, constnode(sym));
 		} else if (f == SINITLST)  {
-			n = np->type->n.elem;
+			n =  (np->type->op == UNION) ? 1 : np->type->n.elem;
 			for (i = 0; i < n; ++i)
 				emitstrings(sym->u.init[i]);
 		}
