@@ -59,7 +59,7 @@ xqsort(unsigned char *a, size_t n, struct qsort *qs)
 	pi = a;
 	ni = (pj - a) / es;
 	pj += es;
-	nj = n-nj-1;
+	nj = n-ni-1;
 
 	if (ni < nj) {
 		xqsort(pi, ni, qs);
