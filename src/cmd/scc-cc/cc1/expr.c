@@ -50,6 +50,14 @@ cmpnode(Node *np, unsigned long long val)
 		mask = (val > 1) ? ones(np->type->size) : -1;
 		nodeval = (tp->prop & TSIGNED) ? sym->u.i : sym->u.u;
 		return (nodeval & mask) == (val & mask);
+	case FLOAT:
+		if (tp == floattype)
+			return sym->u.f == val;
+		else if (tp == doubletype)
+			return sym->u.d == val;
+		else
+			return sym->u.d == val;
+		break;
 	default:
 		abort();
 	}

@@ -14,7 +14,7 @@ struct qsort {
 };
 
 static void
-swap(char *i, char *j, size_t n)
+swap(unsigned char *i, unsigned char *j, size_t n)
 {
 	do {
 		char c = *i;
@@ -29,10 +29,10 @@ swap(char *i, char *j, size_t n)
  * array.
  */
 static void
-xqsort(char *a, size_t n, struct qsort *qs)
+xqsort(unsigned char *a, size_t n, struct qsort *qs)
 {
 	size_t nj, ni, es = qs->es;
-	char *pi, *pj, *pn;
+	unsigned char *pi, *pj, *pn;
 
 	if (n <= 1)
 		return;
@@ -59,7 +59,7 @@ xqsort(char *a, size_t n, struct qsort *qs)
 	pi = a;
 	ni = (pj - a) / es;
 	pj += es;
-	nj = n-nj-1;
+	nj = n-ni-1;
 
 	if (ni < nj) {
 		xqsort(pi, ni, qs);
