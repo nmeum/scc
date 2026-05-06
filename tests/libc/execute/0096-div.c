@@ -14,12 +14,6 @@ done
 end:
 */
 
-/*
-div_t div(int, int);
-ldiv_t ldiv(long int, long int);
-lldiv_t lldiv(long long int, long long int);
-imaxdiv_t imaxdiv(intmax_t, intmax_t);
-*/
 static void
 test1(void)
 {
