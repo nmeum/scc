@@ -82,9 +82,6 @@ pprint(char *s)
 		case '\t':
 			t = "\\t";
 			goto print_str;
-		case '\a':
-			t = "\\a";
-			goto print_str;
 		case '\f':
 			t = "\\f";
 			goto print_str;
@@ -93,12 +90,6 @@ pprint(char *s)
 			goto print_str;
 		case '"':
 			t = "\\\"";
-			goto print_str;
-		case '\'':
-			t = "\\'";
-			goto print_str;
-		case '\?':
-			t = "\\\?";
 			goto print_str;
 		case '\\':
 			putchar('\\');
