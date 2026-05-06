@@ -1,4 +1,4 @@
-int strlen(char *);
+#include <string.h>
 
 int
 main()
