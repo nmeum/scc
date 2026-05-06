@@ -6,6 +6,10 @@
 /*
 output:
 testing
+test1
+test2
+test3
+test4
 done
 end:
 */
@@ -106,5 +110,5 @@ main(void)
 	test2();
 	test3();
 	test4();
-	puts("end");
+	puts("done");
 }
