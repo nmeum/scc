@@ -13,6 +13,7 @@ openbsd)
 	echo HOST=obsd
 	echo ARFLAGS="${ARFLAGS:--rv}"
 	echo NOPIE_LDFLAGS=-no-pie
+	LIBPROFILE=${LIBPROFILE:-scc_clang}
 	;;
 netbsd)
 	#TODO: send a patch to NetBSD to solve this problem

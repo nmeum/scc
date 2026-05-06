@@ -251,6 +251,7 @@ compatibility with other compiler driver interfaces:
 .BR \-static ,
 .BR \-dynamic ,
 .BR \-pedantic ,
+.BR \-pipe ,
 .BR \-ansi ,
 any option beginning with
 .BR \-std= ,

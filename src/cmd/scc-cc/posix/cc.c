@@ -616,6 +616,7 @@ main(int argc, char *argv[])
 		    !strcmp(arg, "-dynamic") ||
 		    !strcmp(arg, "-pedantic") ||
 		    !strcmp(arg, "-ansi") ||
+		    !strcmp(arg, "-pipe") ||
 		    !strncmp(arg, "-std=", 5)) {
 			continue;
 		}
