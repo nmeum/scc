@@ -133,18 +133,13 @@ freehash(void)
 }
 
 static int
-newmember(FILE *fp)
+newmember(FILE *fp, long off)
 {
 	int i,t, ret = 0;
 	Obj *obj;
 	Symbol sym;
 
-	offset = ftell(fp);
-
-	if (offset == EOF) {
-		error(strerror(errno));
-		return 0;
-	}
+	offset = off;
 
 	t = objprobe(fp, NULL);
 	if (t == -1 || artype != -1 && artype != t) {
@@ -210,7 +205,7 @@ readsyms(FILE *fp)
 		default:
 			membname = memb;
 			if (objprobe(fp, NULL) != -1)
-				newmember(fp);
+				newmember(fp, cur);
 			membname = NULL;
 			fseek(fp, cur, SEEK_SET);
 			fseek(fp, off, SEEK_CUR);
