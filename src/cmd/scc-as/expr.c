@@ -132,7 +132,6 @@ binary(int op, Node *l, Node *r)
 
 	if ((np = fold(op, l, r)) != NULL)
 		return np;
-	abort();
 
 	np = node(op, l, r);
 	np->addr = addr;
