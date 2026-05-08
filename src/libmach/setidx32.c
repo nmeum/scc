@@ -3,11 +3,10 @@
 
 #include <scc/mach.h>
 
-#include "../libmach.h"
-#include "fun.h"
+#include "libmach.h"
 
 int
-coff32xsetidx(int order, long nsyms, char *names[], long offs[], FILE *fp)
+setidx32(int order, long nsyms, char *names[], long offs[], FILE *fp)
 {
 	long i, n;
 	size_t len;

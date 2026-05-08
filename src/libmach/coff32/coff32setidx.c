@@ -9,5 +9,5 @@
 int
 coff32setidx(long nsymbols, char *names[], long offs[], FILE *fp)
 {
-	return coff32xsetidx(BIG_ENDIAN, nsymbols, names, offs, fp);
+	return setidx32(BIG_ENDIAN, nsymbols, names, offs, fp);
 }

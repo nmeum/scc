@@ -22,7 +22,6 @@ OBJS =\
 	coff32type.o\
 	coff32write.o\
 	coff32xgetidx.o\
-	coff32xsetidx.o\
 
 COFFHDRS =\
 	$(INCDIR)/bits/scc/coff32/aouthdr.h\

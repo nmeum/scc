@@ -31,6 +31,7 @@ OBJS =\
 	readobj.o\
 	rebase.o\
 	setindex.o\
+	setidx32.o\
 	mapsec.o\
 	mapseg.o\
 	setsec.o\

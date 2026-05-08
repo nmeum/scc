@@ -9,7 +9,6 @@ int coff32write(Obj *, Map *, FILE *);
 int coff32probe(unsigned char *, char **);
 int coff32type(char *);
 
-int coff32xsetidx(int, long , char *[], long[], FILE *);
 int coff32xgetidx(int, long *, char ***, long **, FILE *);
 
 Symbol *coff32getsym(Obj *, int *, Symbol *);
