@@ -13,7 +13,7 @@ struct arch elfarchs[] = {
 		.name = "elf-amd64",
 		.mach = EM_X86_64,
 		.endian = ELFDATA2LSB,
-		.type = OBJ(ELF, ARCHAMD64, LITTLE_ENDIAN),
+		.type = OBJ(ELF, ARCHAMD64, LITTLE_ENDIAN, OBJ64),
 		.is32 = 0,
 	},
 	NULL,

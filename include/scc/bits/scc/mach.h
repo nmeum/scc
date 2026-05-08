@@ -6,10 +6,11 @@
 #undef BIG_ENDIAN
 
 #define NBYTES 32
-#define OBJ(format,arch,order) ((order) << 10 | (arch) << 5 | (format))
+#define OBJ(fmt,arch,order,bits) ((bits) << 11 | (order) << 10 | (arch) << 5 | (fmt))
 #define FORMAT(t) ((t) & 0x1f)
 #define ARCH(t) (((t) >> 5) & 0x1f)
-#define ORDER(t) (((t) >> 10) & 0x1f)
+#define ORDER(t) (((t) >> 10) & 0x1)
+#define BITS(t) (((t) >> 11) & 0x3)
 #define objfmt(o) FORMAT((o)->type)
 
 typedef struct section Section;
@@ -22,6 +23,12 @@ enum objformat {
 	COFF32,
 	ELF,
 	NFORMATS,
+};
+
+enum objbits {
+	OBJ16,
+	OBJ32,
+	OBJ64,
 };
 
 enum objarch {

@@ -11,13 +11,14 @@
 int
 elfprobe(unsigned char *buf, char **name)
 {
-	int arch, data, endian;
+	int arch, data, endian, bits;
 	struct elfhdr32 hdr;
 	struct arch *ap;
 
 	data = buf[EI_DATA];
 	endian = (data == ELFDATA2LSB) ? LITTLE_ENDIAN : BIG_ENDIAN;
 	arch = (buf[EI_CLASS] == ELFCLASS32) ? ARCHUNK32 : ARCHUNK64;
+	bits = (buf[EI_CLASS] == ELFCLASS32) ? OBJ32 : OBJ64;
 
 	unpack(endian,
 	       buf,
@@ -36,7 +37,7 @@ elfprobe(unsigned char *buf, char **name)
 	}
 
 	for (ap = elfarchs; ap->name; ap++) {
-		if (ap->mach == hdr.e_machine &&  ap->endian == data) {
+		if (ap->mach == hdr.e_machine && ap->endian == data) {
 			if (name)
 				*name = ap->name;
 			return ap->type;
@@ -46,5 +47,5 @@ elfprobe(unsigned char *buf, char **name)
 	if  (name)
 		*name = "elf-unknown";
 
-	return OBJ(ELF, arch, endian);
+	return OBJ(ELF, arch, endian, bits);
 }
