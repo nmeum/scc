@@ -1,6 +1,6 @@
 int coff32new(Obj *, int);
 int coff32read(Obj *, FILE *);
-int coff32setidx(long, char **, long *, FILE *);
+int coff32setidx(int, long, char **, long *, FILE *);
 int coff32getidx(long *, char ***, long **, FILE *);
 int coff32pc2line(Obj *, unsigned long long, char *, int *);
 int coff32strip(Obj *);

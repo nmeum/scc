@@ -1,7 +1,7 @@
 #ifdef stdin
 int copysec(Mapsec *, FILE *);
 int setidx32(int, long, char *[], long [], FILE *);
-
+int setidx64(int, long, char *[], long [], FILE *);
 #endif
 
 /* common functions */

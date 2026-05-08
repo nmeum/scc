@@ -32,6 +32,7 @@ OBJS =\
 	rebase.o\
 	setindex.o\
 	setidx32.o\
+	setidx64.o\
 	mapsec.o\
 	mapseg.o\
 	setsec.o\

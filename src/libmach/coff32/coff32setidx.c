@@ -7,7 +7,7 @@
 #include "fun.h"
 
 int
-coff32setidx(long nsymbols, char *names[], long offs[], FILE *fp)
+coff32setidx(int type, long nsymbols, char *names[], long offs[], FILE *fp)
 {
-	return setidx32(BIG_ENDIAN, nsymbols, names, offs, fp);
+	return setidx32(ORDER(type), nsymbols, names, offs, fp);
 }
