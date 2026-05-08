@@ -29,6 +29,7 @@ MANDIR    = $(PROJECTDIR)/share/man
 
 SCC       = $(BINDIR)/scc
 SCC_AR    = $(BINDIR)/scc-ar
+SCC_RANLIB= $(BINDIR)/scc-ranlib
 
 # library dependences helpers
 LIBMACH = $(LIBDIR)/scc/libmach.a
