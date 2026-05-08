@@ -8,9 +8,13 @@
 #include "elf/fun.h"
 #include "coff32/fun.h"
 
-static int (*ops[NFORMATS])(long *, char ***, long **, FILE *) = {
-	[COFF32] = coff32getidx,
-};
+static int (*ops[NFORMATS])(int, long *, char ***, long **, FILE *);
+
+static int
+getidx(int type, long *nsyms, char ***namep, long **offsp, FILE *fp)
+{
+        return getidx32(BIG_ENDIAN, nsyms, namep, offsp, fp);
+}
 
 int
 getindex(int type, long *nsyms, char ***names, long **offs, FILE *fp)
@@ -23,6 +27,11 @@ getindex(int type, long *nsyms, char ***names, long **offs, FILE *fp)
 		return -1;
 	}
 
-	return (*ops[fmt])(nsyms, names, offs, fp);
+	return (*ops[fmt])(type, nsyms, names, offs, fp);
 }
+
+static int (*ops[NFORMATS])(int, long *, char ***, long **, FILE *) = {
+	[COFF32] = getidx,
+	[ELF] = getidx,
+};
 

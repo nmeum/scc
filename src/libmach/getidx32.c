@@ -6,11 +6,10 @@
 #include <scc/cstd.h>
 #include <scc/coff32.h>
 
-#include "../libmach.h"
-#include "fun.h"
+#include "libmach.h"
 
 int
-coff32xgetidx(int order, long *nsyms, char ***namep, long **offsp, FILE *fp)
+getidx32(int order, long *nsyms, char ***namep, long **offsp, FILE *fp)
 {
 	long i, n;
 	long *offs;

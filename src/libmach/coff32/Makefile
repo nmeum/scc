@@ -6,7 +6,6 @@ include $(PROJECTDIR)/scripts/rules.mk
 OBJS =\
 	coff32archs.o\
 	coff32del.o\
-	coff32getidx.o\
 	coff32getsec.o\
 	coff32getsym.o\
 	coff32loadmap.o\
@@ -20,7 +19,6 @@ OBJS =\
 	coff32strip.o\
 	coff32type.o\
 	coff32write.o\
-	coff32xgetidx.o\
 
 COFFHDRS =\
 	$(INCDIR)/bits/scc/coff32/aouthdr.h\

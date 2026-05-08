@@ -17,6 +17,7 @@ OBJS =\
 	delobj.o\
 	findsec.o\
 	findseg.o\
+	getidx32.o\
 	getindex.o\
 	getsec.o\
 	getsym.o\
