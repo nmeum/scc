@@ -237,10 +237,12 @@ merge(FILE *to, struct fprop *prop, FILE *lib, FILE *idx)
 	if (fread(&first, sizeof(first), 1, lib) != 1)
 		return;
 
-	if (!strncmp(first.ar_name, namidx, SARNAM))
-		fseek(lib, atol(first.ar_size), SEEK_CUR);
-	else
+	if (!strncmp(first.ar_name, namidx, strlen(namidx))) {
+		long siz = atol(first.ar_size);
+		fseek(lib, siz + (siz & 1), SEEK_CUR);
+	} else {
 		fseek(lib, SARMAG, SEEK_SET);
+	}
 
 	fwrite(ARMAG, SARMAG, 1, to);
 
