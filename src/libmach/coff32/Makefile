@@ -14,7 +14,6 @@ OBJS =\
 	coff32pc2line.o\
 	coff32probe.o\
 	coff32read.o\
-	coff32setidx.o\
 	coff32setsec.o\
 	coff32setsym.o\
 	coff32str.o\

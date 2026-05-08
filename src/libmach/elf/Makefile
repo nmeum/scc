@@ -12,7 +12,6 @@ OBJS =\
 	elfnew.o\
 	elfprobe.o\
 	elfread.o\
-	elfsetidx.o\
 	elftype.o\
 
 all: $(OBJS)
