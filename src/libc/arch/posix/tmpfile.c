@@ -13,7 +13,7 @@ tmpfile(void)
 	for (;;) {
 		if ((fname = tmpnam(NULL)) == NULL)
 			return NULL;
-		if ((fp = fopen(fname, "wt+")) == NULL)
+		if ((fp = fopen(fname, "wbt+")) == NULL)
 			continue;
 		_unlink(fname);
 		return fp;
