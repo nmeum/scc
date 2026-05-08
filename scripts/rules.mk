@@ -33,6 +33,7 @@ SCC_AR    = $(BINDIR)/scc-ar
 # library dependences helpers
 LIBMACH = $(LIBDIR)/scc/libmach.a
 LIBSCC  = $(LIBDIR)/scc/libscc.a
+LIBSCC_DRIVER = $(LIBDIR)/scc/libscc-$(DRIVER).a
 
 # Include configuration definitions
 include $(BUILDDIR)/conf/$(CONF).mk

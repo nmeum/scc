@@ -24,4 +24,4 @@ MORE_LDLIBS = -lmach -lscc -lscc-$(DRIVER)
 all: $(TARGET) $(DIRS)
 	@cp $(TARGET) $(BINDIR)
 
-$(TARGET): $(LIBMACH) $(LIBSCC) $(LIBSCC-DRIVER)
+$(TARGET): $(LIBMACH) $(LIBSCC) $(LIBSCC_DRIVER)

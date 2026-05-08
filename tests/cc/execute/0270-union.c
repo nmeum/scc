@@ -33,7 +33,6 @@ static void
 static void
 sighdl(int signo)
 {
-	return 0;
 }
 
 int

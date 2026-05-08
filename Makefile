@@ -11,7 +11,7 @@ deps: scripts/scc-make
 	+@$(SCCMAKE) dep
 	touch $@;\
 
-all dep tests install uninstall: scripts/scc-make check_config FORCE
+coverage all dep tests install uninstall: scripts/scc-make check_config FORCE
 	+@$(SCCMAKE) -f main.mk $@
 
 check_config: scripts/scc-make FORCE
