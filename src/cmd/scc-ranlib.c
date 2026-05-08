@@ -89,7 +89,7 @@ newsymbol(Symbol *sym)
 {
 	Symdef *np;
 
-	if (!isupper(sym->type) || sym->type == 'N')
+	if (!isupper(sym->type) || sym->type == 'N' || sym->type == 'U')
 		return 1;
 
 	if ((np = lookup(sym->name)) == NULL) {
