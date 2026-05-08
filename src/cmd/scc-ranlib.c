@@ -28,7 +28,7 @@ static long nsymbols;
 static int status, artype, nolib;
 static char *filename, *membname;
 static Symdef *htab[NR_SYMDEF], *head;
-static long offset;
+static long offset, oldsize;
 char *argv0;
 
 static void
@@ -180,6 +180,7 @@ readsyms(FILE *fp)
 	nolib = 0;
 	artype = -1;
 	nsymbols = 0;
+	oldsize = 0;
 
 	if (!archive(fp)) {
 		error("file format not recognized");
@@ -190,8 +191,10 @@ readsyms(FILE *fp)
 	if ((off = armember(fp, memb, NULL)) < 0)
 		goto corrupted;
 
-	if (strcmp(memb, "/") == 0 || strcmp(memb, "__.SYMDEF") == 0)
+	if (strcmp(memb, "/") == 0 || strcmp(memb, "__.SYMDEF") == 0) {
+		oldsize = off;
 		cur += off;
+	}
 
 	fseek(fp, cur, SEEK_SET);
 	for (;;) {
@@ -265,7 +268,7 @@ static void
 ranlib(char *fname)
 {
 	size_t r;
-	long *offs, i;
+	long *offs, size, i;
 	char **names;
 	FILE *fp, *idx, *out;
 	Symdef *dp;
@@ -298,6 +301,7 @@ ranlib(char *fname)
 		names[i] = dp->name;
 	}
 
+	/* First pass: write index to determine its size */
 	if (setindex(artype, nsymbols, names, offs, idx) < 0) {
 		error(strerror(errno));
 		goto err3;
@@ -307,8 +311,19 @@ ranlib(char *fname)
 		error(strerror(errno));
 		goto err3;
 	}
-	prop.size = ftell(idx);
 	prop.time = time(NULL);
+	prop.size = ftell(idx);
+
+	size = sizeof(struct ar_hdr) + prop.size + (prop.size & 1);
+	for (i = 0; i < nsymbols; i++)
+		offs[i] += size - oldsize;
+
+	/* Second pass: rewrite index with corrected offsets */
+	rewind(idx);
+	if (setindex(artype, nsymbols, names, offs, idx) < 0) {
+		error(strerror(errno));
+		goto err3;
+	}
 
 	r = snprintf(tmpname, sizeof(tmpname), "%s.tmp", fname);
 	if (r >= sizeof(tmpname)) {
