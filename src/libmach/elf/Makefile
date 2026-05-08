@@ -14,7 +14,18 @@ OBJS =\
 	elfread.o\
 	elftype.o\
 
+ELFHDRS =\
+	$(INCDIR)/bits/scc/elf/elfent.h\
+	$(INCDIR)/bits/scc/elf/elfhdr.h\
+	$(INCDIR)/bits/scc/elf/elfphdr.h\
+	$(INCDIR)/bits/scc/elf/elfrel.h\
+	$(INCDIR)/bits/scc/elf/elfshdr.h\
+	$(INCDIR)/bits/scc/elf/elftypes.h\
+
+
 all: $(OBJS)
+
+$(OBJS): $(ELFHDR)
 
 dep:
 	@{ printf 'ELFOBJS=\\\n';\
