@@ -34,7 +34,6 @@ OBJS =\
 	arch/amd64/strcpy.$O\
 	arch/bsd/_waitpid.$O\
 	arch/posix/_getheap.$O\
-	arch/posix/_open.$O\
 	arch/posix/_tzone.$O\
 	arch/posix/clock.$O\
 	arch/posix/putenv.$O\

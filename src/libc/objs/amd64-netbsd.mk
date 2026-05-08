@@ -30,7 +30,6 @@ OBJS =\
 	arch/bsd/_waitpid.$O\
 	arch/netbsd/_sigaction.$O\
 	arch/posix/_getheap.$O\
-	arch/posix/_open.$O\
 	arch/posix/_tzone.$O\
 	arch/posix/clock.$O\
 	arch/posix/putenv.$O\
