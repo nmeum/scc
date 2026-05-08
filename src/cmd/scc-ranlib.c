@@ -196,7 +196,7 @@ readsyms(FILE *fp)
 		goto corrupted;
 
 	if (strcmp(memb, "/") == 0 || strcmp(memb, "__.SYMDEF") == 0)
-		cur = ftell(fp) + off;
+		cur += off;
 
 	fseek(fp, cur, SEEK_SET);
 	for (;;) {
