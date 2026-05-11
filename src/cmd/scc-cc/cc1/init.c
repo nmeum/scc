@@ -31,14 +31,21 @@ int disstring;
 static long long
 arydesig(Type *tp, Init *ip)
 {
+
 	long long npos;
 	Node *np;
 
 	if (tp->op != ARY)
 		errorp("array index in non-array initializer");
+
 	next();
-	np = iconstexpr();
-	npos = np->sym->u.i;
+	if ((np = iconstexpr()) == NULL) {
+		errorp("array index in initializer not of integer type");
+		npos = 0;
+	} else {
+		npos = np->sym->u.i;
+	}
+
 	if (npos < 0 || (tp->prop & TDEFINED) && npos >= tp->n.elem) {
 		errorp("array index in initializer exceeds array bounds");
 		npos = 0;
