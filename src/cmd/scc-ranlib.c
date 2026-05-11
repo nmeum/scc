@@ -28,7 +28,6 @@ static long nsymbols;
 static int status, artype, nolib;
 static char *filename, *membname;
 static Symdef *htab[NR_SYMDEF], *head;
-static long offset, oldsize;
 char *argv0;
 
 static void
@@ -85,7 +84,7 @@ lookup(char *name)
 }
 
 static int
-newsymbol(Symbol *sym)
+newsymbol(Symbol *sym, long off)
 {
 	Symdef *np;
 
@@ -103,7 +102,7 @@ newsymbol(Symbol *sym)
 			break;
 	case 'U':
 		np->type = sym->type;
-		np->offset = offset;
+		np->offset = off;
 		break;
 	default:
 		if (sym->type != 'C') {
@@ -139,8 +138,6 @@ newmember(FILE *fp, long off)
 	Obj *obj;
 	Symbol sym;
 
-	offset = off;
-
 	t = objprobe(fp, NULL);
 	if (t == -1 || artype != -1 && artype != t) {
 		nolib = 1;
@@ -160,7 +157,7 @@ newmember(FILE *fp, long off)
 	}
 
 	for (i = 0; getsym(obj, &i, &sym); i++) {
-		if (!newsymbol(&sym))
+		if (!newsymbol(&sym, off))
 			goto error;
 	}
 
@@ -174,13 +171,13 @@ error:
 static int
 readsyms(FILE *fp)
 {
-	long cur, off;
+	long idxsiz, cur, off;
 	char memb[SARNAM+1];
 
 	nolib = 0;
 	artype = -1;
 	nsymbols = 0;
-	oldsize = 0;
+	idxsiz = 0;
 
 	if (!archive(fp)) {
 		error("file format not recognized");
@@ -192,7 +189,7 @@ readsyms(FILE *fp)
 		goto corrupted;
 
 	if (strcmp(memb, "/") == 0 || strcmp(memb, "__.SYMDEF") == 0) {
-		oldsize = off;
+		idxsiz = off;
 		cur += off;
 	}
 
@@ -208,7 +205,7 @@ readsyms(FILE *fp)
 		default:
 			membname = memb;
 			if (objprobe(fp, NULL) != -1)
-				newmember(fp, cur);
+				newmember(fp, cur - idxsiz);
 			membname = NULL;
 			fseek(fp, cur, SEEK_SET);
 			fseek(fp, off, SEEK_CUR);
@@ -316,7 +313,7 @@ ranlib(char *fname)
 
 	size = sizeof(struct ar_hdr) + prop.size + (prop.size & 1);
 	for (i = 0; i < nsymbols; i++)
-		offs[i] += size - oldsize;
+		offs[i] += size;
 
 	/* Second pass: rewrite index with corrected offsets */
 	rewind(idx);
