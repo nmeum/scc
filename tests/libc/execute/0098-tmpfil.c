@@ -52,7 +52,7 @@ test2(void)
 
 	max = TMP_MAX - 2;
 	if (max > FOPEN_MAX)
-		max = FOPEN_MAX;
+		max = FOPEN_MAX - 3;
 	if (max > 32)
 		max = 32;
 
