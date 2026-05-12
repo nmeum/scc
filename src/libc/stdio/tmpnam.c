@@ -11,18 +11,20 @@ char *
 tmpnam(char *s)
 {
 	static char tmpl[] = _TMPNAME;
-	char *p;
+	char *p, *beg;
 
-	for (;;) {
-		for (p = tmpl; *p && *p != '9'; ++p)
+
+	for (beg = tmpl; *beg < '0' || *beg > '9'; ++beg)
+			;
+
+	do {
+		for (p = beg; *p == '9'; *p++ = '0')
 			;
 		if (*p == '\0')
 			return NULL;
 		++*p;
+	} while (_access(tmpl, F_OK) == 0);
 
-		if (_access(tmpl, F_OK) != 0)
-			break;
-	}
 	if (s)
 		strcpy(s, tmpl);
 	return tmpl;
