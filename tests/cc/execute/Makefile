@@ -3,8 +3,10 @@
 PROJECTDIR = ../../..
 include $(PROJECTDIR)/scripts/rules.mk
 
-CC=$(SCC)
+CC=$(BINDIR)/scc
 PROJ_CFLAGS = $(CFLAGS)
+PROJ_LDFLAGS= $(LDFLAGS)
+PROJ_LDLIBS =
 
 all:
 	@CC='$(CC)' ./runtests.sh scc-tests.lst

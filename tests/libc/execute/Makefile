@@ -7,9 +7,6 @@ PROJ_CFLAGS = $(CFLAGS)
 PROJ_LDFLAGS = $(LDFLAGS)
 CC=$(SCC)
 
-# Uncomment following line to use gcc to test the libc
-# CC = $(BINDIR)/gcc-scc
-
 all:
 	@CC='$(CC)' \
 	CFLAGS='$(PROJ_CFLAGS)' \
