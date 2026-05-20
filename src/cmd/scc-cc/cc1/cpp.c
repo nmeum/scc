@@ -341,9 +341,9 @@ copymacro(Macro *mp)
 		case CONCAT:
 			/* token concatenation operator */
 			DBG("MACRO concat");
-			while (bp[-1] == ' ')
+			while (isspace(bp[-1]))
 				--bp, ++bufsiz;
-			while (s[1] == ' ')
+			while (isspace(s[1]))
 				++s;
 			break;
 		case STRINGIZE:
