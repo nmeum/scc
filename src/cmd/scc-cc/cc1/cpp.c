@@ -172,7 +172,7 @@ parameter(Macro *mp, int n)
 
 			while (begin < end && isspace(*begin))
 				begin++;
-			while (end > begin && isspace(*end))
+			while (end > begin && isspace(end[-1]))
 				end--;
 
 			siz = end - begin;
