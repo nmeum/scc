@@ -263,6 +263,79 @@ concatoper(char *def, char *cur)
 }
 
 static int
+stringoper(char **bpp, int *sizep, char *arg)
+{
+	int c, esc, delim, siz;
+	char *bp;
+
+	bp = *bpp;
+	siz = *sizep;
+
+	if (siz < 3)
+		return 0;
+
+	esc = delim = 0;
+
+	*bp++ = '"';
+	while ((c = *arg++) != '\0') {
+		switch (c) {
+		case '\'':
+		case '"':
+			if (!esc) {
+				if (!delim)
+					delim = c;
+				else if (delim == c)
+					delim = 0;
+			}
+
+			if (c == '"') {
+				if (siz < 4)
+					return 0;
+				*bp++ = '\\';
+				siz--;
+			} else {
+				if (siz < 3)
+					return 0;
+			}
+
+			*bp++ = c;
+			siz--;
+			break;
+		case '\\':
+			if (siz < 4)
+				return 0;
+			*bp++ = '\\';
+			*bp++ = '\\';
+			siz -= 2;
+
+			if (!esc) {
+				esc = 1;
+				continue;
+			}
+			break;
+		default:
+			if (!delim && isspace(c)) {
+				while (isspace(*arg))
+					++arg;
+				c = ' ';
+			}
+			if (siz < 3)
+				return 0;
+			*bp++ = c;
+			siz--;
+			break;
+		}
+		esc = 0;
+	}
+	*bp++ = '"';
+
+	*bpp = bp;
+	*sizep = siz;
+
+	return 1;
+}
+
+static int
 expandarg(char *arg, char *def, char *curdef, char *buf, int bufsiz)
 {
 	int siz;
@@ -352,26 +425,8 @@ copymacro(Macro *mp)
 			arg = mp->arglist[atoi(s += 2)];
 			s += 2;
 
-			if (bufsiz < 3)
+			if (!stringoper(&bp, &bufsiz, arg))
 				goto expansion_too_long;
-
-			*bp++ = '"';
-			while ((c = *arg++) != '\0') {
-				if (c == '"') {
-					if (bufsiz < 3)
-						goto expansion_too_long;
-					*bp++ = '\\';
-					*bp++ = '"';
-					bufsiz -= 2;
-				} else {
-					if (bufsiz < 2)
-						goto expansion_too_long;
-					*bp++ = c;
-					bufsiz--;
-				}
-			}
-			*bp++ = '"';
-
 			break;
 		case MACROPAR:
 			/* parameter substitution */
