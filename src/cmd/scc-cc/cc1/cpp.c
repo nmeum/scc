@@ -142,6 +142,12 @@ unterminated:
 	      mp->sym->name);
 }
 
+static int
+cppspace(int c)
+{
+	return c == ' ' || c == '\t' || c == '\v' || c == '\n' || c == '\f';
+}
+
 static char *
 parameter(Macro *mp, int n)
 {
@@ -170,9 +176,9 @@ parameter(Macro *mp, int n)
 			begin = mp->arg;
 			end = begin + mp->argsiz;
 
-			while (begin < end && isspace(*begin))
+			while (begin < end && cppspace(*begin))
 				begin++;
-			while (end > begin && isspace(end[-1]))
+			while (end > begin && cppspace(end[-1]))
 				end--;
 
 			siz = end - begin;
@@ -249,12 +255,12 @@ concatoper(char *def, char *cur)
 {
 	char *s;
 
-	for (s = cur + 4; isspace(*s); ++s)
+	for (s = cur + 4; cppspace(*s); ++s)
 		;
 	if (*s == CONCAT)
 		return 1;
 
-	for (s = cur; s > def && isspace(s[-1]); --s)
+	for (s = cur; s > def && cppspace(s[-1]); --s)
 		;
 	if (s > def && s[-1] == CONCAT)
 		return 1;
@@ -314,8 +320,8 @@ stringoper(char **bpp, int *sizep, char *arg)
 			}
 			break;
 		default:
-			if (!delim && isspace(c)) {
-				while (isspace(*arg))
+			if (!delim && cppspace(c)) {
+				while (cppspace(*arg))
 					++arg;
 				c = ' ';
 			}
@@ -414,9 +420,9 @@ copymacro(Macro *mp)
 		case CONCAT:
 			/* token concatenation operator */
 			DBG("MACRO concat");
-			while (isspace(bp[-1]))
+			while (cppspace(bp[-1]))
 				--bp, ++bufsiz;
-			while (isspace(s[1]))
+			while (cppspace(s[1]))
 				++s;
 			break;
 		case STRINGIZE:
@@ -624,7 +630,7 @@ getdefs(Symbol *args[NR_MACROARG], int nargs, char *buffer, size_t bufsiz)
 	char c, *bp, *s, *p;
 	int len, id, token, prevc, ispar;
 
-	while (isspace(*input->p))
+	while (cppspace(*input->p))
 		++input->p;
 
 	bp = buffer;
@@ -640,7 +646,7 @@ getdefs(Symbol *args[NR_MACROARG], int nargs, char *buffer, size_t bufsiz)
 				++input->p;
 			} else {
 				c = token = STRINGIZE;
-				while (isspace(input->p[1]))
+				while (cppspace(input->p[1]))
 					++input->p;
 			}
 		} else if (c == '"' || c == '\'' || c == '_' || isalpha(c)) {
@@ -691,7 +697,7 @@ end_loop:
 		yytoken = EOFTOK;
 	if (prevc == CONCAT)
 		goto wrong_concat;
-	for ( ; bp > buffer && isspace(bp[-1]); --bp);
+	for ( ; bp > buffer && cppspace(bp[-1]); --bp);
 		;
 	*bp = '\0';
 	return 1;
@@ -1134,7 +1140,7 @@ cpp(void)
 	int ns;
 	char *p;
 
-	for (p = input->p; isspace(*p); ++p)
+	for (p = input->p; cppspace(*p); ++p)
 		;
 
 	if (*p != '#') {
