@@ -585,6 +585,8 @@ getdefs(Symbol *args[NR_MACROARG], int nargs, char *buffer, size_t bufsiz)
 				++input->p;
 			} else {
 				c = token = STRINGIZE;
+				while (isspace(input->p[1]))
+					++input->p;
 			}
 		} else if (c == '"' || c == '\'' || c == '_' || isalpha(c)) {
 			next();
