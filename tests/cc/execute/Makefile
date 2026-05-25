@@ -3,7 +3,7 @@
 PROJECTDIR = ../../..
 include $(PROJECTDIR)/scripts/rules.mk
 
-CC=$(BINDIR)/scc
+CC=$(SCC)
 PROJ_CFLAGS = $(CFLAGS)
 PROJ_LDFLAGS= $(LDFLAGS)
 PROJ_LDLIBS =
