@@ -145,7 +145,8 @@ unterminated:
 static int
 cppspace(int c)
 {
-	return c == ' ' || c == '\t' || c == '\v' || c == '\n' || c == '\f';
+	return c == ' ' || c == '\t' || c == '\v' ||
+	       c == '\n' || c == '\f' || c == '\r';
 }
 
 static char *
