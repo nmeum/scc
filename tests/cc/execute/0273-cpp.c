@@ -1,11 +1,7 @@
 #define a(x) #   x
 
-static char *s1 = a(3);
-static char *s2 = a( 3 );
-static char *s3 = a( 3  2 );
-static char *s4 = a ( 3
+static char *s = a ( 3
 2);
-static char *s5 = a("3 2  1\n");
 
 static int
 cmp(char *s1, char *s2)
@@ -18,20 +14,22 @@ cmp(char *s1, char *s2)
 int
 main(void)
 {
-	if (!cmp(s1, "3"))
+	if (!cmp(a(3), "3"))
 		return 1;
-	if (!cmp(s2, "3"))
+	if (!cmp(a( 3 ), "3"))
 		return 2;
-	if (!cmp(s3, "3 2"))
+	if (!cmp(a( 3  2 ), "3 2"))
 		return 3;
-	if (!cmp(s4, "3 2"))
+	if (!cmp(s, "3 2"))
 		return 4;
-	if (!cmp(s5, "\"3 2  1\\n\""))
+	if (!cmp(a("3 2  1\n"), "\"3 2  1\\n\""))
 		return 5;
 	if (!cmp(a('\n'), "'\\n'"))
 		return 6;
 	if (!cmp(a('"'), "'\"'"))
 		return 6;
+	if (!cmp(a(: @\n), ": @\n"))
+		return 7;
 
 	return 0;
 }

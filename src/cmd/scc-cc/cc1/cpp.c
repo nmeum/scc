@@ -309,6 +309,8 @@ stringoper(char **bpp, int *sizep, char *arg)
 			siz--;
 			break;
 		case '\\':
+			if (!delim)
+				goto copy;
 			if (siz < 4)
 				return 0;
 			*bp++ = '\\';
@@ -326,6 +328,7 @@ stringoper(char **bpp, int *sizep, char *arg)
 					++arg;
 				c = ' ';
 			}
+		copy:
 			if (siz < 3)
 				return 0;
 			*bp++ = c;
