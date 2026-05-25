@@ -5,7 +5,7 @@ static char *s2 = a( 3 );
 static char *s3 = a( 3  2 );
 static char *s4 = a ( 3
 2);
-static char *s5 = a("3 2  1");
+static char *s5 = a("3 2  1\n");
 
 static int
 cmp(char *s1, char *s2)
@@ -26,8 +26,12 @@ main(void)
 		return 3;
 	if (!cmp(s4, "3 2"))
 		return 4;
-	if (!cmp(s5, "\"3 2  1\""))
+	if (!cmp(s5, "\"3 2  1\\n\""))
 		return 5;
+	if (!cmp(a('\n'), "'\\n'"))
+		return 6;
+	if (!cmp(a('"'), "'\"'"))
+		return 6;
 
 	return 0;
 }
