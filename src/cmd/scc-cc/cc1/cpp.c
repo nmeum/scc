@@ -362,15 +362,24 @@ expandarg(char *arg, char *def, char *curdef, char *buf, int bufsiz)
 		}
 	} else {
 		addinput(IPARAM, arg, FAIL);
-		for (siz = 0; next() != EOFTOK; siz += yylen+1) {
+		for (siz = 0; ; siz += yylen) {
+			yyspace = '\0';
+			if (next() == EOFTOK)
+				break;
 			if (yylen > bufsiz-2) {
 				siz = -1;
 				break;
 			}
+
+			if (yyspace) {
+				*buf++ = ' ';
+				bufsiz--;
+				siz++;
+			}
+
 			memcpy(buf, yytext, yylen);
-			bufsiz -= yylen + 1;
+			bufsiz -= yylen;
 			buf += yylen;
-			*buf++ = ' ';
 		}
 
 		delinput();

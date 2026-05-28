@@ -20,7 +20,7 @@ int yytoken;
 struct yystype yylval;
 char yytext[STRINGSIZ+3];
 unsigned short yylen;
-int lexmode = CCMODE;
+int yyspace, lexmode = CCMODE;
 unsigned lineno;
 char filenam[FILENAME_MAX];
 
@@ -1024,19 +1024,19 @@ skipspaces(void)
 
 	for (;;) {
 		switch (c = *input->p) {
-		case '\n':
-			if (lexmode == CPPMODE)
-				goto return_byte;
-			++input->p;
 		case '\0':
 			if (!moreinput())
 				return EOF;
 			break;
+		case '\n':
 		case ' ':
 		case '\t':
 		case '\v':
 		case '\r':
 		case '\f':
+			yyspace = c;
+			if (c == '\n' && lexmode == CPPMODE)
+				goto return_byte;
 			++input->p;
 			break;
 		default:
