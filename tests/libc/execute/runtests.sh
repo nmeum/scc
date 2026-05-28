@@ -15,16 +15,10 @@ do
 	rm -f *.o $i $tmp1 $tmp2
 
 	(echo $i
-	 $CC $CFLAGS $LDFLAGS -o $i $i.c
+	 ${MAKE-make} $i
 	 echo '/^output:$/+;/^end:$/-'w $tmp1 | ed -s $i.c
 
-	 $EXEC ./$i >$tmp2 2>&1 &
-	 pid=$!
-	 sleep 10 && echo timeout >> $tmp2 && kill $pid 2>/dev/null&
-	 timer=$!
-	 wait $pid
-	 kill $timer
-	 wait $timer
+	 timeout 30 $EXEC ./$i >$tmp2 2>&1
 
 	 if grep '^RESULT: SKIP$' $tmp2
 	 then
