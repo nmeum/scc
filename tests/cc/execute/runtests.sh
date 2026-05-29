@@ -18,7 +18,7 @@ do
 	state=${state:-""}
 	rm -f a.out
 
-	(($CC -Isysinclude $CFLAGS "$i" test.c && ./a.out) >>test.log 2>&1 &&
+	((${MAKE-make} -s $i && ./$i) >>test.log 2>&1 &&
 		printf '[PASS]' || printf '[FAIL]'
 	printf '\t%s\t%s\n' $i $state) | tee -a test.log
 done < $file
