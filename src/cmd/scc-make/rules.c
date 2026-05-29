@@ -87,13 +87,20 @@ cleanup(Target *tp)
 }
 
 static int
-depends(char *target, char *dep)
+depends(char *dep, char *target)
 {
-	int i;
-	Target **p, *tp = lookup(target);
 
+	int i;
+	char *dname;
+	Target **p, *tp;
+
+	if (strcmp(target, dep) == 0)
+		return 1;
+
+	tp = lookup(dep);
 	for (p = tp->deps; p && *p; ++p) {
-		if (strcmp((*p)->name, target) == 0)
+		dname = (*p)->name;
+		if (depends(dname, target))
 			return 1;
 	}
 

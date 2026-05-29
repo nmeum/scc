@@ -553,7 +553,7 @@ Arch *i386_sysv(void);
  */
 extern struct yystype yylval;
 extern char yytext[];
-extern int yytoken;
+extern int yytoken, yyspace;
 extern unsigned short yylen;
 extern int disexpand, disstring;
 extern unsigned cppctx;

@@ -2,6 +2,3 @@ test.log
 tests.h
 tmp_*.c
 a.out
-0270-union
-0271-struct
-0272-div

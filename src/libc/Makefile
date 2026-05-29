@@ -24,8 +24,5 @@ all: $(DIRS)
 	+@$(MAKE) $(TARGET)
 
 $(LIBC): $(OBJS)
-	$(AR) $(PROJ_ARFLAGS) $(LIBC) $?
-	$(RL) $(PROJ_RLFLAGS) $(LIBC)
-
-$(BINDIR)/gcc-scc: gcc-scc.sh
-	cp gcc-scc.sh $@
+	$(AR) $(ARFLAGS) $(LIBC) $?
+	$(RL) $(RLFLAGS) $(LIBC)

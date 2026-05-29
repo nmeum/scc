@@ -38,3 +38,4 @@
 0038-void.c
 0039-struct.c
 0040-vararg.c
+0041-iconst.c

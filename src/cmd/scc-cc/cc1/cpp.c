@@ -142,6 +142,13 @@ unterminated:
 	      mp->sym->name);
 }
 
+static int
+cppspace(int c)
+{
+	return c == ' ' || c == '\t' || c == '\v' ||
+	       c == '\n' || c == '\f' || c == '\r';
+}
+
 static char *
 parameter(Macro *mp, int n)
 {
@@ -170,9 +177,9 @@ parameter(Macro *mp, int n)
 			begin = mp->arg;
 			end = begin + mp->argsiz;
 
-			while (begin < end && isspace(*begin))
+			while (begin < end && cppspace(*begin))
 				begin++;
-			while (end > begin && isspace(*end))
+			while (end > begin && cppspace(end[-1]))
 				end--;
 
 			siz = end - begin;
@@ -249,17 +256,93 @@ concatoper(char *def, char *cur)
 {
 	char *s;
 
-	for (s = cur + 4; isspace(*s); ++s)
+	for (s = cur + 4; cppspace(*s); ++s)
 		;
 	if (*s == CONCAT)
 		return 1;
 
-	for (s = cur; s > def && isspace(s[-1]); --s)
+	for (s = cur; s > def && cppspace(s[-1]); --s)
 		;
 	if (s > def && s[-1] == CONCAT)
 		return 1;
 
 	return 0;
+}
+
+static int
+stringoper(char **bpp, int *sizep, char *arg)
+{
+	int c, esc, delim, siz;
+	char *bp;
+
+	bp = *bpp;
+	siz = *sizep;
+
+	if (siz < 3)
+		return 0;
+
+	esc = delim = 0;
+
+	*bp++ = '"';
+	while ((c = *arg++) != '\0') {
+		switch (c) {
+		case '\'':
+		case '"':
+			if (!esc) {
+				if (!delim)
+					delim = c;
+				else if (delim == c)
+					delim = 0;
+			}
+
+			if (c == '"') {
+				if (siz < 4)
+					return 0;
+				*bp++ = '\\';
+				siz--;
+			} else {
+				if (siz < 3)
+					return 0;
+			}
+
+			*bp++ = c;
+			siz--;
+			break;
+		case '\\':
+			if (!delim)
+				goto copy;
+			if (siz < 4)
+				return 0;
+			*bp++ = '\\';
+			*bp++ = '\\';
+			siz -= 2;
+
+			if (!esc) {
+				esc = 1;
+				continue;
+			}
+			break;
+		default:
+			if (!delim && cppspace(c)) {
+				while (cppspace(*arg))
+					++arg;
+				c = ' ';
+			}
+		copy:
+			if (siz < 3)
+				return 0;
+			*bp++ = c;
+			siz--;
+			break;
+		}
+		esc = 0;
+	}
+	*bp++ = '"';
+
+	*bpp = bp;
+	*sizep = siz;
+
+	return 1;
 }
 
 static int
@@ -279,15 +362,24 @@ expandarg(char *arg, char *def, char *curdef, char *buf, int bufsiz)
 		}
 	} else {
 		addinput(IPARAM, arg, FAIL);
-		for (siz = 0; next() != EOFTOK; siz += yylen+1) {
+		for (siz = 0; ; siz += yylen) {
+			yyspace = '\0';
+			if (next() == EOFTOK)
+				break;
 			if (yylen > bufsiz-2) {
 				siz = -1;
 				break;
 			}
+
+			if (yyspace) {
+				*buf++ = ' ';
+				bufsiz--;
+				siz++;
+			}
+
 			memcpy(buf, yytext, yylen);
-			bufsiz -= yylen + 1;
+			bufsiz -= yylen;
 			buf += yylen;
-			*buf++ = ' ';
 		}
 
 		delinput();
@@ -341,9 +433,9 @@ copymacro(Macro *mp)
 		case CONCAT:
 			/* token concatenation operator */
 			DBG("MACRO concat");
-			while (bp[-1] == ' ')
+			while (cppspace(bp[-1]))
 				--bp, ++bufsiz;
-			while (s[1] == ' ')
+			while (cppspace(s[1]))
 				++s;
 			break;
 		case STRINGIZE:
@@ -352,26 +444,8 @@ copymacro(Macro *mp)
 			arg = mp->arglist[atoi(s += 2)];
 			s += 2;
 
-			if (bufsiz < 3)
+			if (!stringoper(&bp, &bufsiz, arg))
 				goto expansion_too_long;
-
-			*bp++ = '"';
-			while ((c = *arg++) != '\0') {
-				if (c == '"') {
-					if (bufsiz < 3)
-						goto expansion_too_long;
-					*bp++ = '\\';
-					*bp++ = '"';
-					bufsiz -= 2;
-				} else {
-					if (bufsiz < 2)
-						goto expansion_too_long;
-					*bp++ = c;
-					bufsiz--;
-				}
-			}
-			*bp++ = '"';
-
 			break;
 		case MACROPAR:
 			/* parameter substitution */
@@ -569,7 +643,7 @@ getdefs(Symbol *args[NR_MACROARG], int nargs, char *buffer, size_t bufsiz)
 	char c, *bp, *s, *p;
 	int len, id, token, prevc, ispar;
 
-	while (isspace(*input->p))
+	while (cppspace(*input->p))
 		++input->p;
 
 	bp = buffer;
@@ -585,6 +659,8 @@ getdefs(Symbol *args[NR_MACROARG], int nargs, char *buffer, size_t bufsiz)
 				++input->p;
 			} else {
 				c = token = STRINGIZE;
+				while (cppspace(input->p[1]))
+					++input->p;
 			}
 		} else if (c == '"' || c == '\'' || c == '_' || isalpha(c)) {
 			next();
@@ -634,7 +710,7 @@ end_loop:
 		yytoken = EOFTOK;
 	if (prevc == CONCAT)
 		goto wrong_concat;
-	for ( ; bp > buffer && isspace(bp[-1]); --bp);
+	for ( ; bp > buffer && cppspace(bp[-1]); --bp);
 		;
 	*bp = '\0';
 	return 1;
@@ -1077,7 +1153,7 @@ cpp(void)
 	int ns;
 	char *p;
 
-	for (p = input->p; isspace(*p); ++p)
+	for (p = input->p; cppspace(*p); ++p)
 		;
 
 	if (*p != '#') {

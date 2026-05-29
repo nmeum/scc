@@ -1,8 +1,9 @@
 .POSIX:
 
-ROOT=../../..
-SCCPREFIX=$(ROOT)
-CC=$(EXEC) $(ROOT)/bin/scc cc
+PROJECTDIR = ../../..
+include $(PROJECTDIR)/scripts/rules.mk
+
+CC=$(SCC)
 
 all:
 	@CC='$(CC)' ./runtests.sh scc-tests.lst

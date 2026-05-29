@@ -424,7 +424,9 @@ writeout(void)
 		       (p->type.flags & AGGRF) ? "" : ".val");
 		sep = ",";
 	}
-	printf("%s)\n{\n", (curfun->type.flags&ELLIPS) ? ", ..." : "");
+	printf("%s)\n{\n@%s.body\n",
+	       (curfun->type.flags&ELLIPS) ? ", ..." : "",
+	       curfun->name);
 
 	/* emit assembler instructions */
 	for (pc = prog; pc; pc = pc->next) {
