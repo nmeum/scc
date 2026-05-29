@@ -15,7 +15,7 @@ do
 	rm -f *.o $i $tmp1 $tmp2
 
 	(echo $i
-	 ${MAKE-make} $i
+	 ${MAKE-make} -s $i
 	 echo '/^output:$/+;/^end:$/-'w $tmp1 | ed -s $i.c
 
 	 timeout 30 $EXEC ./$i >$tmp2 2>&1
