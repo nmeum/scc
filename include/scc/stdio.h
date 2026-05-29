@@ -77,42 +77,47 @@ int remove(const char *);
 int rename(const char *, const char *);
 FILE *tmpfile(void);
 char *tmpnam(char *);
-int fclose(FILE *);
-int fflush(FILE *);
+
 FILE *fopen(const char *restrict, const char *restrict);
 FILE *freopen(const char *restrict, const char *restrict,
                      FILE *restrict);
+int fclose(FILE *);
+int fflush(FILE *);
 void setbuf(FILE *restrict, char *restrict);
 int setvbuf(FILE *restrict, char *restrict, int, size_t);
+
 int fprintf(FILE *restrict, const char *restrict, ...);
-int fscanf(FILE *restrict, const char *restrict, ...);
 int printf(const char *restrict, ...);
-int scanf(const char *restrict, ...);
 int snprintf(char *restrict, size_t, const char *restrict, ...);
 int sprintf(char *restrict, const char *restrict, ...);
-int sscanf(const char *restrict, const char *restrict, ...);
-
 int vfprintf(FILE *restrict, const char *restrict, __va_list);
-int vfscanf(FILE *restrict, const char *restrict, __va_list);
 int vprintf(const char *restrict, __va_list);
-int vscanf(const char *restrict, __va_list);
 int vsnprintf(char *restrict, size_t, const char *restrict, __va_list);
 int vsprintf(char *restrict, const char *restrict, __va_list);
+
+int fscanf(FILE *restrict, const char *restrict, ...);
+int scanf(const char *restrict, ...);
+int sscanf(const char *restrict, const char *restrict, ...);
+int vfscanf(FILE *restrict, const char *restrict, __va_list);
+int vscanf(const char *restrict, __va_list);
 int vsscanf(const char *restrict, const char *restrict, __va_list);
 
 int fgetc(FILE *);
 char *fgets(char *restrict, int, FILE *restrict);
-int fputc(int, FILE *);
-int fputs(const char *restrict, FILE *restrict);
 int getc(FILE *);
 int getchar(void);
 char *gets(char *);
+
+int fputc(int, FILE *);
+int fputs(const char *restrict, FILE *restrict);
 int putc(int, FILE *);
 int putchar(int);
 int puts(const char *);
 int ungetc(int, FILE *);
+
 size_t fread(void *restrict, size_t, size_t, FILE *restrict);
 size_t fwrite(const void *restrict, size_t, size_t, FILE *restrict);
+
 int fseek(FILE *, long int, int);
 long int ftell(FILE *);
 void rewind(FILE *);
