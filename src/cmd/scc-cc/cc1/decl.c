@@ -872,7 +872,7 @@ enumdcl(void)
 
 	namespace = NS_IDEN;
 	if (!accept('{')) {
-		if (sym->name == NULL)
+		if (tagsym->name == NULL)
 			unexpected();
 		namespace = ns;
 		return tp;
