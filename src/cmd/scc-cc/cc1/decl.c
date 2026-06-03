@@ -755,7 +755,6 @@ specifier(int *sclass, int *qualifier)
 			if (size || sign)
 				errorp("invalid type specification");
 			tp = (*dcl)();
-			goto return_type;
 		} else {
 			next();
 		}
