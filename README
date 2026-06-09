@@ -208,6 +208,8 @@ file `include/bits/scc/sys.h` and it included basically 5 elements:
 
 	- ASBIN: macro with the name of the assembler binary.
 
+	- QBEBIN: macro with the name of the qbe binary.
+
 	- sysincludes: It is a list of diretories used to locate
 	  the system headers
 
