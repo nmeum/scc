@@ -428,7 +428,7 @@ struct macro {
 };
 #endif
 
-#ifdef stdin
+#if defined(stdin) && defined(NR_MACROARG)
 struct input {
 	char flags;
 	unsigned lineno;
@@ -436,6 +436,7 @@ struct input {
 	FILE *fp;
 	Macro *macro;
 	char *line, *begin, *p;
+	Symbol *hideset[NR_MACROARG];
 	struct input *next;
 };
 #endif
@@ -530,6 +531,7 @@ void defdefine(char *, char *, char *);
 void undefmacro(char *);
 void ppragmaln(void);
 void delmacro(Macro *);
+void sethideset(Input *), unsethideset(Input *);
 Macro *newmacro(Symbol *);
 Node *defined(void);
 

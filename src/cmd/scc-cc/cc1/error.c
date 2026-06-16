@@ -2,7 +2,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <scc/cstd.h>
 #include <scc/scc.h>
+
 #include "cc1.h"
 
 #define MAXERRNUM 10

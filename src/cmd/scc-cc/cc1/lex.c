@@ -60,7 +60,7 @@ addinput(int type, void *arg, int fail)
 	char *extp, *fname, *buffer, *infile;
 	int infileln;
 	Macro *mp;
-	Symbol *sym;
+	Symbol *sym, **hs;
 	Input *newip, *curip = input;
 
 	if (curip)
@@ -122,6 +122,9 @@ addinput(int type, void *arg, int fail)
 		buffer = xstrdup(buffer);
 	}
 
+	if (input)
+		unsethideset(input);
+
 	newip = xmalloc(sizeof(*newip));
 	newip->next = curip;
 	newip->macro = mp;
@@ -130,7 +133,20 @@ addinput(int type, void *arg, int fail)
 	newip->lineno = 0;
 	newip->fp = fp;
 	newip->flags = type;
+	memset(newip->hideset, 0, sizeof(newip->hideset));
 	input = newip;
+
+	hs = NULL;
+	if (curip)
+		hs = curip->hideset;
+	if (type == IMACRO)
+		hs = mp->hideset;
+	if (type == IPARAM && curip)
+		hs = curip->macro->hideset;
+	if (hs) {
+		memcpy(input->hideset, hs, sizeof(input->hideset));
+		sethideset(input);
+	}
 
 	setloc(fname, lineno);
 	return 1;
@@ -160,13 +176,16 @@ delinput(void)
 	default:
 		abort();
 	}
+	unsethideset(input);
 
 	input = ip->next;
 	free(ip->filenam);
 	free(ip->line);
 	free(ip);
-	if (input)
+	if (input) {
+		sethideset(input);
 		setloc(input->filenam, input->lineno);
+	}
 }
 
 static void
