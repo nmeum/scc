@@ -24,9 +24,9 @@ enum {
 enum typeprops {
 	TDEFINED = 1 << 0,    /* type defined */
 	TSIGNED  = 1 << 1,    /* signedness of the type */
-	TINTEGER = 1 << 2,    /* the type is INT of enum */
+	TINTEGER = 1 << 2,    /* the type is INT or ENUM */
 	TARITH   = 1 << 3,    /* the type is INT, ENUM or FLOAT */
-	TAGGREG  = 1 << 4,    /* the type is struct or union */
+	TAGGREG  = 1 << 4,    /* the type is STRUCT or UNION */
 	TK_R     = 1 << 5,    /* this is a K&R-function */
 	TELLIPSIS= 1 << 6,    /* this function has an ellipsis par */
 	TFUNDEF  = 1 << 7,    /* function definition */

@@ -39,3 +39,4 @@
 0039-struct.c
 0040-vararg.c
 0041-iconst.c
+0042-struct-enum.c [TODO]

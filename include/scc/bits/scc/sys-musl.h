@@ -1,5 +1,6 @@
 #define LDBIN "ld"
 #define ASBIN "as"
+#define QBEBIN "qbe"
 
 /* configure below your system linker command line */
 #define GCCLIBPATH "/usr/lib/gcc/x86_64-unknown-linux-gnu/10.2/"

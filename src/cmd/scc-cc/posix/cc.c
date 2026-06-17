@@ -53,7 +53,7 @@ static struct tool {
 	[TEEIR]  = {.bin = "tee"},
 	[CC2]    = {.bin = "cc2"},
 	[TEEQBE] = {.bin = "tee"},
-	[QBE]    = {.bin = "qbe"},
+	[QBE]    = {.bin = QBEBIN},
 	[TEEAS]  = {.bin = "tee"},
 	[AS]     = {.bin = ASBIN},
 	[LD]     = {.bin = LDBIN},
@@ -242,7 +242,7 @@ settool(int tool, char *infile, int nexttool)
 			die("scc-cc: target tool path is too long");
 		break;
 	case QBE:
-		strcpy(t->cmd, "qbe");
+		strcpy(t->cmd, QBEBIN);
 
 		if (!strcmp(arch, "amd64") && !strcmp(abi, "sysv"))
 			fmt = "amd64_sysv";

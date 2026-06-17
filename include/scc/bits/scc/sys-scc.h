@@ -1,5 +1,6 @@
 #define LDBIN "ld"
 #define ASBIN "as"
+#define QBEBIN "qbe"
 
 /* configure below your standard sys include paths */
 char *sysincludes[] = {

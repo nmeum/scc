@@ -755,7 +755,6 @@ specifier(int *sclass, int *qualifier)
 			if (size || sign)
 				errorp("invalid type specification");
 			tp = (*dcl)();
-			goto return_type;
 		} else {
 			next();
 		}
@@ -833,8 +832,11 @@ structdcl(void)
 	sym = newtag();
 	tp = sym->type;
 
-	if (!accept('{'))
+	if (!accept('{')) {
+		if (sym->name == NULL)
+			unexpected();
 		return tp;
+	}
 
 	ns = namespace;
 	namespace = tp->ns;
@@ -869,6 +871,8 @@ enumdcl(void)
 
 	namespace = NS_IDEN;
 	if (!accept('{')) {
+		if (tagsym->name == NULL)
+			unexpected();
 		namespace = ns;
 		return tp;
 	}

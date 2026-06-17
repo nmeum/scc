@@ -18,7 +18,7 @@ include rules.mk
 include objs/$(ARCH)-$(SYS).mk
 
 NODEP = 1
-TARGET = $(LIBC) $(BINDIR)/gcc-scc
+TARGET = $(LIBC)
 
 all: $(DIRS)
 	+@$(MAKE) $(TARGET)
