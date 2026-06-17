@@ -179,7 +179,7 @@
 0186-dec_ary
 0187-zero_struct
 0188-multi_string
-0189-cpp [TODO]
+0189-cpp
 0190-enum_ary
 0191-ary_addr
 0192-ptrcmp
