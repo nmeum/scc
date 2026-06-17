@@ -510,7 +510,7 @@ addhideset(Symbol *sym)
 	Symbol **set, **p;
 
 	set = input->hideset;
-	for (p = set; p < &set[NR_MACROARG] && *p; ++p) {
+	for (p = set; p < &set[NR_MACROARG-1] && *p; ++p) {
 		if (*p == sym)
 			return;
 	}
@@ -540,20 +540,18 @@ unhide(Symbol *sym)
 void
 unsethideset(Input *ip)
 {
-	Symbol **set, **p;
+	Symbol **p;
 
-	set = ip->hideset;
-	for (p = set; p < &set[NR_MACROARG] && *p; ++p)
+	for (p = ip->hideset; *p; ++p)
 		unhide(*p);
 }
 
 void
 sethideset(Input *ip)
 {
-	Symbol **set, **p;
+	Symbol **p;
 
-	set = ip->hideset;
-	for (p = set; p < &set[NR_MACROARG] && *p; ++p)
+	for (p = ip->hideset; *p; ++p)
 		hide(*p);
 }
 
