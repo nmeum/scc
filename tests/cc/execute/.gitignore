@@ -268,3 +268,4 @@ tmp_*.c
 0272-div
 0273-cpp
 0274-loop
+0275-struct
