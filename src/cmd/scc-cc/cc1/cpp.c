@@ -353,38 +353,61 @@ expandarg(char *arg, char *def, char *curdef, char *buf, int bufsiz)
 
 	/* gives priority to concatenation operators */
 	if (concatoper(def, curdef)) {
-		siz = strlen(arg);
-		if (siz >= bufsiz) {
-			siz = -1;
-		} else {
-			memcpy(buf, arg, siz);
-			buf += siz;
+		char *p;
+		int c;
+
+		for (siz = 0, p = arg; (c = *p) != '\0'; p++) {
+			if (c == NOEXPAND || c == EXPAND)
+				continue;
+			if (siz >= bufsiz) {
+				siz = -1;
+				break;
+			}
+			*buf++ = c;
+			siz++;
 		}
 	} else {
-		disexpand++;
+		int n;
+		char noex[2] = {0, 0}, ex[2] = {0, 0};
+
+		/*
+		 * Here we have to deal with a special case,
+		 * because the recursive input expansion deals
+		 * correctly with the hideset manipulation,
+		 * but once the macro expansion is flattened in
+		 * a buffer associated to the macro expansion
+		 * all the hideset information is lost. To solve
+		 * this problem we have to add annotation tokens
+		 * to maintain this information and avoid expanding
+		 * macros hidden due to the recursive hidesets
+		 */
 		addinput(IPARAM, arg, FAIL);
-		for (siz = 0; ; siz += yylen) {
-			yyspace = '\0';
+		for (siz = 0; ; siz += n) {
+			yyspace = noex[0] = ex[0] = '\0';
 			if (next() == EOFTOK)
 				break;
-			if (yylen > bufsiz-2) {
+
+			if (yytoken == IDEN) {
+				Symbol *sym = yylval.cppsym;
+				if (disexpand || sym && sym->hide) {
+					noex[0] = NOEXPAND;
+					ex[0] = EXPAND;
+				}
+			}
+
+			n = snprintf(buf, bufsiz, "%s%s%s%s",
+			             yyspace ? " " : "", noex, yytext, ex);
+
+			if (n < 0 || n == bufsiz) {
 				siz = -1;
 				break;
 			}
 
-			if (yyspace) {
-				*buf++ = ' ';
-				bufsiz--;
-				siz++;
-			}
-
-			memcpy(buf, yytext, yylen);
-			bufsiz -= yylen;
-			buf += yylen;
+			buf += n;
+			bufsiz -= n;
 		}
 
 		delinput();
-		disexpand--;
 	}
 	*buf = '\0';
 

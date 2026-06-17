@@ -884,10 +884,13 @@ iden(void)
 		;
 	input->p = p;
 	tok2str();
-	if ((sym = lookup(NS_CPP, yytext, NOALLOC)) != NULL) {
+
+	sym = lookup(NS_CPP, yytext, NOALLOC);
+	if ((yylval.cppsym = sym) != NULL) {
 		if (expand(sym))
 			return next();
 	}
+
 	sym = lookup(namespace, yytext, ALLOC);
 	yylval.sym = sym;
 	if (sym->flags & SCONSTANT)
@@ -1068,23 +1071,38 @@ return_byte:
 	return c;
 }
 
-int
-next(void)
+static int
+lex(void)
 {
 	int c;
 
 	if ((c = skipspaces()) == EOF)
-		yytoken = EOFTOK;
-	else if (isalpha(c) || c == '_')
-		yytoken = iden();
+		return EOFTOK;
+
+	if (c == NOEXPAND) {
+		disexpand++;
+		input->begin = ++input->p;
+	} else if (c == EXPAND) {
+		disexpand--;
+		input->begin = ++input->p;
+	}
+
+	if (isalpha(c) || c == '_')
+		return iden();
 	else if (isdigit(c))
-		yytoken = number();
+		return number();
 	else if (c == '"')
-		yytoken = string();
+		return string();
 	else if (c == '\'')
-		yytoken = character();
+		return character();
 	else
-		yytoken = operator();
+		return operator();
+}
+
+int
+next(void)
+{
+	yytoken = lex();
 
 	if (yytoken == EOFTOK) {
 		strcpy(yytext, "<EOF>");

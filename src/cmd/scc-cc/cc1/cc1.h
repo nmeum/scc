@@ -148,6 +148,8 @@ enum tokens {
 	MACROPAR   = 17,
 	CONCAT     = 18,
 	STRINGIZE  = 19,
+	NOEXPAND   = 20,
+	EXPAND     = 21,
 	TYPE       = 129,
 	IDEN,
 	SCLASS,
@@ -410,6 +412,7 @@ struct arch {
 
 struct yystype {
 	Symbol *sym;
+	Symbol *cppsym;
 	unsigned char token;
 };
 
