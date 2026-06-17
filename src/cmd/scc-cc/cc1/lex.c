@@ -1076,27 +1076,28 @@ lex(void)
 {
 	int c;
 
-	if ((c = skipspaces()) == EOF)
+repeat:
+	switch (c = skipspaces()) {
+	case EOF:
 		return EOFTOK;
-
-	if (c == NOEXPAND) {
-		disexpand++;
-		input->begin = ++input->p;
-	} else if (c == EXPAND) {
-		disexpand--;
-		input->begin = ++input->p;
-	}
-
-	if (isalpha(c) || c == '_')
+	case NOEXPAND:
+	case EXPAND:
+		disexpand += (c == NOEXPAND) ? +1 : -1;
+		input->p++;
+		goto repeat;
+	case '_':
 		return iden();
-	else if (isdigit(c))
-		return number();
-	else if (c == '"')
+	case '"':
 		return string();
-	else if (c == '\'')
+	case '\'':
 		return character();
-	else
+	default:
+		if (isalpha(c))
+			return iden();
+		if (isdigit(c))
+			return number();
 		return operator();
+	}
 }
 
 int
