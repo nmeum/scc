@@ -73,14 +73,14 @@ addinput(int type, void *arg, int fail)
 		sym = mp->sym;
 		fname = mp->fname;
 		buffer = mp->buffer;
-		DBG("INPUT: expanding macro %s", sym->name);
+		DBG("INPUT expanding macro %s", sym->name);
 		break;
 	case IPARAM:
 		fp = NULL;
 		mp = NULL;
 		buffer = arg;
 		fname = filenam;
-		DBG("INPUT: macro parameter '%s'", buffer);
+		DBG("INPUT macro parameter '%s'", buffer);
 		break;
 	case IFILE:
 		fname = arg;
@@ -101,7 +101,7 @@ addinput(int type, void *arg, int fail)
 			       infileln, infile, infile, fname);
 		}
 		lineno = 0;
-		DBG("INPUT: file input '%s'", fname);
+		DBG("INPUT file input '%s'", fname);
 		break;
 	case ISTDIN:
 		fp = stdin;
@@ -109,7 +109,7 @@ addinput(int type, void *arg, int fail)
 		fname = "<stdin>";
 		buffer = NULL;
 		lineno = 0;
-		DBG("INPUT: file input 'stdin'");
+		DBG("INPUT file input 'stdin'");
 		break;
 	default:
 		abort();
@@ -159,19 +159,19 @@ delinput(void)
 
 	switch (ip->flags & ITYPE) {
 	case IFILE:
-		DBG("INPUT: file finished '%s'", ip->filenam);
+		DBG("INPUT file finished '%s'", ip->filenam);
 		if (fclose(ip->fp))
 			die("cc1: %s: %s", ip->filenam, strerror(errno));
 		break;
 	case IMACRO:
-		DBG("INPUT: macro %s finished", ip->macro->sym->name);
+		DBG("INPUT macro %s finished", ip->macro->sym->name);
 		delmacro(ip->macro);
 		break;
 	case IPARAM:
-		DBG("INPUT: macro param finished");
+		DBG("INPUT macro param finished");
 		break;
 	case ISTDIN:
-		DBG("INPUT: stdin finished");
+		DBG("INPUT stdin finished");
 		break;
 	default:
 		abort();
