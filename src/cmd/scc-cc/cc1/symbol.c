@@ -311,7 +311,6 @@ lookup(int ns, char *name, int alloc)
 		 * to a struct we also want symbols of NS_IDEN which
 		 * are typedef, because in other case we cannot declare
 		 * fields of such types.
-		 * TODO: Remove this trick
 		 */
 		if (sns == NS_KEYWORD && ns != NS_MACROPAR && ns != NS_CPP ||
 		    (sym->flags & STYPEDEF) && ns >= NS_STRUCTS) {

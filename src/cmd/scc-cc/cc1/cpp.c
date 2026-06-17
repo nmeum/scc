@@ -506,7 +506,6 @@ expansion_too_long:
 static void
 addhideset(Symbol *sym)
 {
-	char *iname;
 	Symbol **set, **p;
 
 	set = input->hideset;
