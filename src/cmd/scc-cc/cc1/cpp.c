@@ -356,16 +356,20 @@ expandarg(char *arg, char *def, char *curdef, char *buf, int bufsiz)
 		char *p;
 		int c;
 
+		/*
+		 * ignore NOEXPAND and EXPAND because ## has
+		 * precedence over macro expansion, and we just
+		 * want the argument as it is
+		 */
 		for (siz = 0, p = arg; (c = *p) != '\0'; p++) {
 			if (c == NOEXPAND || c == EXPAND)
 				continue;
-			if (siz >= bufsiz) {
-				siz = -1;
-				break;
-			}
+			if (siz == bufsiz - 1)
+				return -1;
 			*buf++ = c;
 			siz++;
 		}
+		*buf = '\0';
 	} else {
 		int n;
 		char noex[2] = {0, 0}, ex[2] = {0, 0};
@@ -398,10 +402,8 @@ expandarg(char *arg, char *def, char *curdef, char *buf, int bufsiz)
 			n = snprintf(buf, bufsiz, "%s%s%s%s",
 			             yyspace ? " " : "", noex, yytext, ex);
 
-			if (n < 0 || n == bufsiz) {
-				siz = -1;
-				break;
-			}
+			if (n < 0 || n == bufsiz)
+				return -1;
 
 			buf += n;
 			bufsiz -= n;
@@ -409,7 +411,6 @@ expandarg(char *arg, char *def, char *curdef, char *buf, int bufsiz)
 
 		delinput();
 	}
-	*buf = '\0';
 
 	DBG("MACRO parameter '%s' expanded to '%s'", arg, s);
 
