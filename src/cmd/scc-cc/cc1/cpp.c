@@ -408,7 +408,6 @@ expandarg(char *arg, char *def, char *curdef, char *buf, int bufsiz)
 			buf += n;
 			bufsiz -= n;
 		}
-
 		delinput();
 	}
 
@@ -606,7 +605,7 @@ intersect(Symbol **dst, Symbol **set)
 int
 expand(Symbol *sym)
 {
-	int siz;
+	int spc, siz;
 	Macro *mp;
 
 	DBG("MACRO '%s' detected disexpand=%d hide=%d",
@@ -615,6 +614,7 @@ expand(Symbol *sym)
 	if (disexpand || sym->hide || sym->token != IDEN)
 		return 0;
 
+	spc = yyspace;
 	mp = newmacro(sym);
 	mp->fname = filenam;
 	memcpy(mp->hideset, input->hideset, sizeof(mp->hideset));
@@ -635,6 +635,7 @@ expand(Symbol *sym)
 
 	siz = copymacro(mp);
 	mp->buffer[siz] = '\0';
+	yyspace = spc;
 
 	DBG("MACRO '%s' expanded to :'%s'", mp->sym->name, mp->buffer);
 
@@ -1294,18 +1295,20 @@ ppragmaln(void)
 	}
 	nline = lineno;
 	printf(s, nline, file);
+
+	for (s = input->line; isspace(*s); ++s)
+		putchar(*s);
+	yyspace = 0;
 }
 
 void
 outcpp(void)
 {
-	int c;
-	char *s, *t;
-
 	for (next(); yytoken != EOFTOK; next()) {
 		if (onlyheader)
 			continue;
-		printf("%s ", yytext);
+		printf("%s%s", yyspace ? " " : "", yytext);
+		yyspace = 0;
 	}
 	putchar('\n');
 }
