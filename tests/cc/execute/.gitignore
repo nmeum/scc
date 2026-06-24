@@ -269,3 +269,5 @@ tmp_*.c
 0273-cpp
 0274-loop
 0275-struct
+0276-array
+0277-struct

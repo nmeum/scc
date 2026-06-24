@@ -482,7 +482,7 @@ assign(Node *np)
 		op = OSUB;
 	post_oper:
 		lhs_rhs(&l, &r);
-		ret = load(&l->type, l);
+		ret = load(&r->type, l);
 		aux.op = op;
 		aux.left = ret;
 		aux.right = r;
