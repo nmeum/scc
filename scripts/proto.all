@@ -1,5 +1,4 @@
 d 755 bin
-f 755 bin/gcc-scc
 f 755 bin/scc
 f 755 bin/scc-addr2line
 f 755 bin/scc-ar
