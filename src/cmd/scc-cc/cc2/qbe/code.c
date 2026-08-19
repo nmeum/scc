@@ -411,7 +411,10 @@ writeout(void)
 
 	if (curfun->kind == SGLOB)
 		fputs("export ", stdout);
-	printf("function %s %s(", size2stack(&curfun->rtype), symname(curfun));
+	printf("function ");
+	if (curfun->rtype.size > 0)
+		printf("%s ", size2stack(&curfun->rtype));
+	printf("%s(", symname(curfun));
 
 	/* declare formal parameters */
 	sep = "";
@@ -519,8 +522,9 @@ call(void)
 
 	strcpy(to, addr2txt(&pc->to));
 	strcpy(from, addr2txt(&pc->from1));
-	printf("\t%s =%s\tcall\t%s(",
-	       to, size2stack(&sym->type), from);
+	if (sym->type.size > 0)
+		printf("\t%s =%s", to, size2stack(&sym->type));
+	printf("\tcall\t%s(", from);
 }
 
 static void
