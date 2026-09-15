@@ -12,6 +12,8 @@ then
 	export SCCLIBPREFIX
 fi
 
+export PATH=$SCCPREFIX/bin:$PATH
+
 case $1  in
 cc|cpp|as|ar|addr2line|ld|make|nm|objcopy|objdump|size|strip)
 	tool=$1
