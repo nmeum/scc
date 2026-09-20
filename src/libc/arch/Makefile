@@ -15,6 +15,7 @@ DIRS =\
 	dragonfly\
 	linux\
 	posix\
+	qute\
 
 BSD =\
 	netbsd\
