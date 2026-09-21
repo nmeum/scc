@@ -1,4 +1,4 @@
-CC = $(SCC) -t $(SYS) -a $(ARCH)
+CC = $(SCC) -t $(SYS) -a $(ARCH) -k
 AR=$(SCC_AR)
 RANLIB=$(SCC_RANLIB)
 
