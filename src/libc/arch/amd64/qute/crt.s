@@ -1,0 +1,1 @@
+	.include	"../../qute/crt.s"

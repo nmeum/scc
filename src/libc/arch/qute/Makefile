@@ -1,7 +1,10 @@
 .POSIX:
-
 PROJECTDIR = ../../../..
 include $(PROJECTDIR)/scripts/rules.mk
 include ../../rules.mk
 
-NODEP = 1
+OBJS=\
+	_brk.$O\
+	_exit.$O\
+
+all: $(OBJS)
