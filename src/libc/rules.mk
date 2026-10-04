@@ -32,7 +32,7 @@ clean-libc: FORCE
 	rm -f *.5? *.6? *.7? *.8? *.z *.q
 
 .c.$O:
-	$(CC) $(CFLAGS) $(CPPINCLUDES) -o $@ -c $<
+	$(CC) $(CFLAGS) $(CPPINCLUDES) -o $@ -c $< $(SYS_CFLAGS)
 
 .s.$O:
 	$(AS) $(PROJ_ASFLAGS) $< -o $@

@@ -1,5 +1,6 @@
 ARCH = amd64
 ABI  = sysv
 SYS  = qute
-FORMAT = elf
-O = 6l
+FORMAT = none
+SYS_CFLAGS = -R
+O = qbe
