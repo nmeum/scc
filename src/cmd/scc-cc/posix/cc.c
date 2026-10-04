@@ -67,7 +67,7 @@ static size_t tmpdirln;
 static struct items objtmp, objout;
 static struct items linkargs, cc1args;
 
-static int Mflag, Eflag, Sflag, Wflag,
+static int Mflag, Eflag, Rflag, Sflag, Wflag,
            cflag, dflag, kflag, sflag, Qflag = 1,
            gflag;
 
@@ -377,6 +377,8 @@ spawn(int tool)
 
 		if (tool == TEEAS && Sflag)
 			dup2(devnullfd, 1);
+		if (tool == TEEQBE && Rflag)
+			dup2(devnullfd, 1);
 		if (!dflag && tool != CC1 && tool != LD)
 			dup2(devnullfd, 2);
 
@@ -504,12 +506,12 @@ buildfile(char *file, int tool)
 			break;
 		case CC2:
 			if (Qflag)
-				nexttool = kflag ? TEEQBE : QBE;
+				nexttool = (Rflag || kflag) ? TEEQBE : QBE;
 			else
 				nexttool = (Sflag || kflag) ? TEEAS : AS;
 			break;
 		case TEEQBE:
-			nexttool = QBE;
+			nexttool = Rflag ? LAST_TOOL : QBE;
 			break;
 		case QBE:
 			nexttool = (Sflag || kflag) ? TEEAS : AS;
@@ -647,6 +649,9 @@ main(int argc, char *argv[])
 			case 'S':
 				Sflag = 1;
 				break;
+			case 'R':
+				Rflag = 1;
+				break;
 			case 'U':
 				newitem(&cc1args, "-U");
 				newitem(&cc1args, param(&arg, &argv));
@@ -710,7 +715,7 @@ main(int argc, char *argv[])
 		newitem(&linkchain, "-");
 
 	if (Eflag && Mflag ||
-            (Eflag || Mflag) && (Sflag || kflag) ||
+            (Eflag || Mflag) && (Sflag || Rflag || kflag) ||
 	    linkchain.n == 0 ||
 	    linkchain.n > 1 && cflag && outfile)
 		usage();
@@ -724,7 +729,7 @@ main(int argc, char *argv[])
 		tmpdir = ".";
 	tmpdirln = strlen(tmpdir);
 
-	build(&linkchain, (link = !(Mflag || Eflag || Sflag || cflag)));
+	build(&linkchain, (link = !(Mflag || Eflag || Rflag || Sflag || cflag)));
 
 	if (!(link || cflag))
 		return failure;

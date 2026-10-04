@@ -123,6 +123,12 @@ Stop after compilation; do not assemble.
 Assembly source is written to a file with the same base name as
 the input and the suffix
 .BR .s .
+.TP
+.B \-R
+Stop after generation of the intermediate QBE representation.
+The QBE source is written to a file with the same base name as
+the input and the suffix
+.BR .qbe .
 .SS Preprocessor
 .TP
 .BI \-D macro [ =value ]
