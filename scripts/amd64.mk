@@ -5,7 +5,6 @@ amd64:
 	+@$(MAKE) -f main.mk CONF=amd64-dragonfly libc libcrt
 	+@$(MAKE) -f main.mk CONF=amd64-darwin libc libcrt
 	+@$(MAKE) -f main.mk CONF=amd64-freebsd libc libcrt
-	+@$(MAKE) -f main.mk CONF=amd64-qute libc libcrt
 
 install-amd64: amd64
 	$(SCRIPTDIR)/install -p $(SCRIPTDIR)/proto.amd64 $(ROOT)
