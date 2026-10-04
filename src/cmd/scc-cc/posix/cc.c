@@ -279,7 +279,10 @@ settool(int tool, char *infile, int nexttool)
 		addarg(tool, t->outfile);
 		break;
 	case TEEAS:
-		t->outfile = outfname(infile, "s");
+		if (Sflag && outfile)
+			t->outfile = xstrdup(outfile);
+		else
+			t->outfile = outfname(infile, "s");
 		addarg(tool, t->outfile);
 		break;
 	case AS:
