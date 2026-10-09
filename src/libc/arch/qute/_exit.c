@@ -1,7 +1,7 @@
-extern void quebex_exit(long status);
+extern void qute_exit(long status);
 
 void
 _exit(int status)
 {
-	quebex_exit(status);
+	qute_exit(status);
 }
