@@ -1,5 +1,6 @@
 *.o
 *.a
+*.qbe
 *.tar.gz
 *.tar.gz.asc
 /bin/
