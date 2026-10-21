@@ -37,3 +37,26 @@ Compile this as follows to QBE using SCC:
 Afterward, execute the resulting `test.qbe` file using Qute:
 
 	$ qute-symex -p ./lib/scc/amd64-qute/libc.a test.qbe
+
+---
+
+stdio support is currently work in progress, but some stuff works already:
+
+	#include <stdio.h>
+
+	void greet(const char *name) {
+		printf("Hello, %s!\n", name);
+	}
+
+	int main(void) {
+		greet("Addison");
+	}
+
+Compile this as follows to QBE using SCC:
+
+	$ ./bin/scc -c -R stdio-test.c
+
+Afterward, execute the resulting binary concretely:
+
+	$ qute -p ./lib/scc/amd64-qute/libc.a stdio-test.qbe
+	Hello, Addison!
