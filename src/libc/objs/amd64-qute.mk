@@ -6,3 +6,4 @@ OBJS =\
 	arch/qute/_exit.$O\
 	arch/qute/_write.$O\
 	arch/qute/_getheap.$O\
+	string/strlen.$O\
