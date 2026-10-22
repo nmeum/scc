@@ -13,4 +13,8 @@ OBJS =\
 	string/memmove.$O\
 	string/memmove.$O\
 	string/memset.$O\
+	string/strrchr.$O\
+	string/strchr.$O\
+	string/strcpy.$O\
+	string/strcmp.$O\
 	string/strlen.$O\
