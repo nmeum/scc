@@ -6,6 +6,7 @@ include ../../rules.mk
 OBJS=\
 	_brk.$O\
 	_exit.$O\
+	_read.$O\
 	_write.$O\
 	_getheap.$O\
 
