@@ -100,6 +100,7 @@ COMMON_OBJS =\
 	string/strcat.$O\
 	string/strcoll.$O\
 	string/strcspn.$O\
+	string/strdup.$O\
 	string/strerror.$O\
 	string/strncat.$O\
 	string/strncmp.$O\
